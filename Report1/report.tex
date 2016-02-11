@@ -116,33 +116,49 @@ In this project I will follow the algorithm presented in Callin(2005). This is p
 The first part involves computing the expansion history of the universe, as well as looking at the evolution of the density of various matter and energy components.
 I have chosen to make this first part compatible with the inclusion of neutrinos. 
 
+To ease the development of this code, I have been provided with a skeleton code of the project. This code includes a variety of methods needed to solve the project.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Analytical solution}\label{sec:analytical}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Simulating the L=2 system}\label{sec:simulate_analytic}
+\section{Results}\label{sec:simulate_analytic}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ The $\Omega_x$ values indicate the relative density of a given component compared to the critical density of the universe. 
+ The critical density being that which corresponds to the universe begin flat.
+ Looking at the figure we see radiation dominating from the start together with neutrinos.
+ This continues for some time until the dark matter component starts to rise.
+ We see that this starts before the baryon component. This is good since that makes it possible for dark matter to form structures that that baryons can later fall into. The radiation and neutrinos die out, and at a later point vacuum energy shoots up. At the end we end up with approximately 70\% vacuum energy(dark energy?), 25\% dark matter, and 5\% baryons. This is exactly as it should be since we 
  \begin{figure}
-  \includegraphics[width=.49\textwidth]{figure0.png}
+  \includegraphics[width=.49\textwidth]{figure_0.png}
   \caption{}
  \label{figure0}
  \end{figure}
  
+ Conformal time, detoneted by $\eta(x)$ measures the distance to the particle horizon for a given x value. A nice test of this is to insert the x-value of today.
+ The answer should then be the radius of the observable universe. At the present this is measured to be approximately 14 billion parsecs (14Gpc). 
+ The graph hits this value fairly well, indicating that everything is working properly so far. 
+ Note also that there are in fact two graphs in this figure, one which is calculated from the differential equation for $\eta$. 
+ And another one made by splining the first one and finding $\eta$ values at arbitrary values between those of the first function.
+ 
   \begin{figure}
-  \includegraphics[width=.49\textwidth]{figure1.png}
+  \includegraphics[width=.49\textwidth]{figure_1.png}
   \caption{}
  \label{figure1}
  \end{figure}
  
+ The Hubble parameter $H$ is depicted both as a function of $x$, and $z$. Whether this is good or not is hard to say for the first part. We can at least put some faith in its correctness by the fact that it ends at $H_0 \approx 70$km s$^{-1}$Mpc$^{-1}$
+ 
   \begin{figure}
-  \includegraphics[width=.49\textwidth]{figure2.png}
+  \includegraphics[width=.49\textwidth]{figure_2.png}
   \caption{}
  \label{figure2}
  \end{figure}
+
  
  \begin{figure}
-  \includegraphics[width=.49\textwidth]{figure3.png}
+  \includegraphics[width=.49\textwidth]{figure_3.png}
   \caption{}
  \label{figure3}
  \end{figure}
@@ -166,15 +182,11 @@ I have chosen to make this first part compatible with the inclusion of neutrinos
 % \end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Larger systems}\label{sec:Monte Carlo import}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions} \label{sec:conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Project files}\label{sec:files}
+\section{Source code}\label{sec:files}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +196,7 @@ I have chosen to make this first part compatible with the inclusion of neutrinos
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% references
 \section{References}
-
+Itzhak Bars; John Terning (November 2009). Extra Dimensions in Space and Time. Springer. pp. 27
 
 %\bibliographystyle{aa-note} %% aa.bst but adding links and notes to references
 %\raggedright              %% only for adsaa with dvips, not for pdflatex

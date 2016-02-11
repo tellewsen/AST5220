@@ -49,6 +49,7 @@ contains
     real(dp)     :: dx, x_eta1, x_eta2, a_init,h1,eta_init,a_end,rho_crit0,rho_crit
     real(dp)     :: eps,hmin,yp1,ypn
 
+
     ! Define two epochs, 1) during and 2) after recombination.
     n1          = 200                       ! Number of grid points during recombination
     n2          = 300                       ! Number of grid points after recombination
@@ -69,18 +70,22 @@ contains
     x_eta2      = 0.d0                      ! End value of x for eta evaluation
     eta_init    = a_init/(H_0*sqrt(Omega_r))
 
+    eps = 1.d-10
+    hmin = 0.d0
 
-    ! Task: Fill in x and a grids
+    ! Task: Fill in x and a grids ( These will be used in later milestones)
     allocate(x_t(n_t))
 
-    do i = 0,n1 ! Fill interval during recombination
-        x_t(i+1)= x_start_rec + i*(x_end_rec-x_start_rec)/n1
+    do i = 0,n1-1 ! Fill interval during recombination
+       x_t(i+1)= x_start_rec + i*(x_end_rec-x_start_rec)/(n1-1)
     end do
-    do i = 2,n2 !Fill from end of recomb to today
-        x_t(n1+i) = x_end_rec + i*(x_0-x_end_rec)/n2
+
+    do i = 1,n2 !Fill from end of recomb to today
+        x_t(n1+i) = x_end_rec + (i)*(x_0-x_end_rec)/(n2)
     end do
 
     !write(*,*) x_t !print x_t to terminal
+
 
     allocate(a_t(n_t+1))
     a_t = exp(x_t) !fill the a grid using the x grid
@@ -88,10 +93,7 @@ contains
     !write(*,*) a_t !print a_t to terminal
 
 
-
-
-    ! Task: 1) Compute the conformal time at each eta time step
-    !       2) Spline the resulting function, using the provided "spline" routine in spline_1D_mod.f90
+    !Allocate and fill a,x, and z arrays
     allocate(a_eta(n_eta))
     allocate(x_eta(n_eta))
     allocate(z_eta(n_eta))
@@ -102,7 +104,6 @@ contains
     end do
 
     a_eta = exp(x_eta)
-
     z_eta = 1.d0/a_eta -1.d0
 
     !write(*,*) z_eta
@@ -117,14 +118,13 @@ contains
     !write(*,*) z_eta(1)
     !write(*,*) z_eta(-1)   
 
-    !Calculate the various densities for each time scale factor
-    rho_crit0   = 3.*H_0**2./(8.*pi*G_grav)
+    !Calculate the various densities for each scale factor
+    rho_crit0   = 3.d0*H_0**2.d0/(8.d0*pi*G_grav)
     rho_m0  	= Omega_m     *rho_crit0
     rho_b0  	= Omega_b     *rho_crit0
     rho_r0  	= Omega_r     *rho_crit0
     rho_nu0 	= Omega_nu    *rho_crit0
     rho_lambda0 = Omega_lambda*rho_crit0
-
 
     allocate(rho_m(n_eta))
     allocate(rho_b(n_eta))
@@ -142,11 +142,11 @@ contains
 
     do i=1,n_eta+1
     H(i) = get_H(x_eta(i))
-    Omega_mx(i) 	= Omega_m 	*H_0**2./H(i)**2.	*a_eta(i)**-3.
-    Omega_bx(i) 	= Omega_b 	*H_0**2./H(i)**2.	*a_eta(i)**-3.
-    Omega_rx(i) 	= Omega_r 	*H_0**2./H(i)**2.	*a_eta(i)**-4.
-    Omega_nux(i) 	= Omega_nu 	*H_0**2./H(i)**2.	*a_eta(i)**-4.
-    Omega_lambdax(i) 	= Omega_lambda	*H_0**2./H(i)**2.
+    Omega_mx(i) 	= Omega_m 	*H_0**2.d0/H(i)**2.d0	*a_eta(i)**-3.d0
+    Omega_bx(i) 	= Omega_b 	*H_0**2.d0/H(i)**2.d0	*a_eta(i)**-3.d0
+    Omega_rx(i) 	= Omega_r 	*H_0**2.d0/H(i)**2.d0	*a_eta(i)**-4.d0
+    Omega_nux(i) 	= Omega_nu 	*H_0**2.d0/H(i)**2.d0	*a_eta(i)**-4.d0
+    Omega_lambdax(i) 	= Omega_lambda	*H_0**2.d0/H(i)**2.d0
     end do
     !End of density calculations
 
@@ -155,10 +155,9 @@ contains
     allocate(eta(n_eta+1))
     eta(1) = eta_init !Start value of eta 
 
+    h1 = abs(1.d-2*(a_eta(1)-a_eta(2))) !Defines the steplength
     allocate(dydx(1))
-    h1 = abs(1.d-2*(a_eta(1)-a_eta(2))) 
-    eps = 1.d-10
-    hmin = 0.d0
+
 
     do i =2,n_eta+1
 	eta(i) =eta(i-1)
@@ -218,7 +217,7 @@ contains
     real(dp)             :: get_H
     real(dp) 		 :: a
     a = exp(x)
-    get_H = H_0*sqrt((Omega_b+Omega_m)*a**-3. + (Omega_r+Omega_nu)*a**-4. + Omega_lambda)
+    get_H = H_0*sqrt((Omega_b+Omega_m)*a**-3.d0 + (Omega_r+Omega_nu)*a**-4.d0 + Omega_lambda)
   end function get_H
 
   ! Task: Write a function that computes H' = a*H  at given x

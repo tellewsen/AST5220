@@ -21,7 +21,7 @@ program cmbspec
   open (unit=out_unit2,file="omega_mbr.dat",action="write",status="replace")
   open (unit=out_unit3,file="omega_nulambda.dat",action="write",status="replace")
   open (unit=out_unit4,file="Hz.dat",action="write",status="replace")
-  open (unit=out_unit5,file="eta2.dat",action="write",status="replace")
+  open (unit=out_unit5,file="eta_t.dat",action="write",status="replace")
 
   do i=1,n_eta+1
       write (out_unit1,*) x_eta(i) , a_eta(i),eta(i)/Mpc
