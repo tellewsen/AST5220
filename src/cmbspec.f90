@@ -24,10 +24,10 @@ program cmbspec
   open (unit=out_unit5,file="eta2.dat",action="write",status="replace")
 
   do i=1,n_eta+1
-      write (out_unit1,*) x_eta(i),a_eta(i),eta(i)/Mpc
-      write (out_unit2,*) Omega_mx(i),Omega_bx(i),Omega_rx(i)
-      write (out_unit3,*) Omega_nux(i),Omega_lambdax(i)
-      write (out_unit4,*) H(i),z_eta(i)
+      write (out_unit1,*) x_eta(i) , a_eta(i),eta(i)/Mpc
+      write (out_unit2,*) Omega_mx(i) , Omega_bx(i),Omega_rx(i)
+      write (out_unit3,*) Omega_nux(i) , Omega_lambdax(i)
+      write (out_unit4,*) H(i)*Mpc/1.d3 , z_eta(i)
   end do
   do i=1,n_t
       write (out_unit5,*) x_t(i),eta_t(i)/Mpc

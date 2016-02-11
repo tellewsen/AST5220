@@ -67,7 +67,7 @@ contains
     a_end       = 1.d0
     x_eta1      = log(a_init)               ! Start value of x for eta evaluation
     x_eta2      = 0.d0                      ! End value of x for eta evaluation
-    eta_init    = 1./(H_0*sqrt(Omega_r))*a_init
+    eta_init    = a_init/(H_0*sqrt(Omega_r))
 
 
     ! Task: Fill in x and a grids
@@ -82,7 +82,7 @@ contains
 
     !write(*,*) x_t !print x_t to terminal
 
-    allocate(a_t(n_t))
+    allocate(a_t(n_t+1))
     a_t = exp(x_t) !fill the a grid using the x grid
 
     !write(*,*) a_t !print a_t to terminal
@@ -92,21 +92,33 @@ contains
 
     ! Task: 1) Compute the conformal time at each eta time step
     !       2) Spline the resulting function, using the provided "spline" routine in spline_1D_mod.f90
-    allocate(a_eta(n_eta+1))
-    allocate(x_eta(n_eta+1))
-    allocate(z_eta(n_eta+1))
+    allocate(a_eta(n_eta))
+    allocate(x_eta(n_eta))
+    allocate(z_eta(n_eta))
 
     x_eta(1) = x_eta1
-    do i = 1,n_eta
-        x_eta(i+1) = x_eta1 + i*(x_eta2-x_eta1)/n_eta
+    do i = 1,n_eta-1
+        x_eta(i+1) = x_eta1 + i*(x_eta2-x_eta1)/(n_eta-1)
     end do
 
     a_eta = exp(x_eta)
-    z_eta = 1/a_eta -1
-   
+
+    z_eta = 1.d0/a_eta -1.d0
+
+    !write(*,*) z_eta
+    !write(*,*) size(z_eta)
+    !print *, "x"
+    !write(*,*) x_eta(1)
+    !write(*,*) x_eta(-1)
+    !print *, "a"
+    !write(*,*) a_eta(1)
+    !write(*,*) a_eta(-1)
+    !print *, "z"
+    !write(*,*) z_eta(1)
+    !write(*,*) z_eta(-1)   
 
     !Calculate the various densities for each time scale factor
-    rho_crit0   = 3*H_0**2/(8*pi*G_grav)
+    rho_crit0   = 3.*H_0**2./(8.*pi*G_grav)
     rho_m0  	= Omega_m     *rho_crit0
     rho_b0  	= Omega_b     *rho_crit0
     rho_r0  	= Omega_r     *rho_crit0
@@ -130,11 +142,11 @@ contains
 
     do i=1,n_eta+1
     H(i) = get_H(x_eta(i))
-    Omega_mx(i) 	= Omega_m 	*H_0**2/H(i)**2	*a_eta(i)**-3
-    Omega_bx(i) 	= Omega_b 	*H_0**2/H(i)**2	*a_eta(i)**-3
-    Omega_rx(i) 	= Omega_r 	*H_0**2/H(i)**2	*a_eta(i)**-4
-    Omega_nux(i) 	= Omega_nu 	*H_0**2/H(i)**2	*a_eta(i)**-4
-    Omega_lambdax(i) 	= Omega_lambda	*H_0**2/H(i)**2
+    Omega_mx(i) 	= Omega_m 	*H_0**2./H(i)**2.	*a_eta(i)**-3.
+    Omega_bx(i) 	= Omega_b 	*H_0**2./H(i)**2.	*a_eta(i)**-3.
+    Omega_rx(i) 	= Omega_r 	*H_0**2./H(i)**2.	*a_eta(i)**-4.
+    Omega_nux(i) 	= Omega_nu 	*H_0**2./H(i)**2.	*a_eta(i)**-4.
+    Omega_lambdax(i) 	= Omega_lambda	*H_0**2./H(i)**2.
     end do
     !End of density calculations
 
@@ -144,7 +156,7 @@ contains
     eta(1) = eta_init !Start value of eta 
 
     allocate(dydx(1))
-    h1 = abs(1d-2*(x_eta(1)-x_eta(2))) 
+    h1 = abs(1.d-2*(a_eta(1)-a_eta(2))) 
     eps = 1.d-10
     hmin = 0.d0
 
@@ -157,14 +169,14 @@ contains
 
     !Spline eta and place the second derivative of
     !this function in eta2
-    allocate(eta2(n_eta))
-    yp1 = 1d30
-    ypn = 1d30
+    allocate(eta2(n_eta+1))
+    yp1 = 1.d30
+    ypn = 1.d30
     call spline(a_eta, eta, yp1, ypn, eta2)
     
 
-    allocate(eta_t(n_t))
-    do i=1,n_t
+    allocate(eta_t(n_t+1))
+    do i=1,n_t+1
        eta_t(i) = get_eta(x_t(i))
     end do
 
@@ -175,15 +187,17 @@ contains
 
 
   !Begin Stuff needed to make odeint work
-  subroutine eta_derivs(x, y, dydx) !Define the derivative d/da(eta)
+  subroutine eta_derivs(a, eta, dydx) !Define the derivative d/da(eta)
        use healpix_types
          implicit none
-         real(dp),               intent(in)  :: x
-         real(dp), dimension(:), intent(in)  :: y
+         real(dp),               intent(in)  :: a
+         real(dp), dimension(:), intent(in)  :: eta
          real(dp), dimension(:), intent(out) :: dydx
 	 real(dp) :: H_p
+	 real(dp) :: x
+         x = log(a)
 	 H_p = get_H_p(x)
-         dydx = c/(H_p)
+         dydx = c/(a*H_p)
   end subroutine eta_derivs
 
   subroutine output(x, y)
@@ -204,7 +218,7 @@ contains
     real(dp)             :: get_H
     real(dp) 		 :: a
     a = exp(x)
-    get_H = H_0*sqrt((Omega_b+Omega_m)*a**-3 + (Omega_r+Omega_nu)*a**-4 + Omega_lambda)
+    get_H = H_0*sqrt((Omega_b+Omega_m)*a**-3. + (Omega_r+Omega_nu)*a**-4. + Omega_lambda)
   end function get_H
 
   ! Task: Write a function that computes H' = a*H  at given x
@@ -224,7 +238,7 @@ contains
 
     real(dp), intent(in) :: x
     real(dp)             :: get_dH_p
-    get_dH_p = H_0/2*((Omega_m+Omega_b)*exp(-x)+Omega_r*exp(-2*x)+Omega_lambda*exp(2*x))**(-1./2.) * (-(Omega_m+Omega_b)*exp(-x)-2*Omega_r*exp(-2*x)+2*Omega_lambda*exp(2*x))
+    get_dH_p = H_0/2.d0*1/sqrt((Omega_m+Omega_b)*exp(-x)+Omega_r*exp(-2.d0*x)+Omega_lambda*exp(2.d0*x)) * (-(Omega_m+Omega_b)*exp(-x)-2.d0*Omega_r*exp(-2.d0*x)+2.d0*Omega_lambda*exp(2.d0*x))
   end function get_dH_p
 
   ! Task: Write a function that computes eta(x), using the previously precomputed splined function
