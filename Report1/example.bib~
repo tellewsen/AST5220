@@ -1,0 +1,110 @@
+%% file: example.bib = bib file for example.tex
+%% init: Oct 13 2004 
+%% last: Dec  6 2010 
+%% note: each item copied from http://adsabs.harvard.edu/default_service.html
+
+@INPROCEEDINGS{1994IAUS..154..309R,
+   author = {{Rutten}, R.~J. and {Carlsson}, M.},
+    title = "{The Formation of Infrared Rydberg Lines}",
+booktitle = {IAU Symp. 154: Infrared Solar Physics},
+     year = 1994,
+    pages = {309},
+   adsurl = {http://adsabs.harvard.edu/cgi-bin/nph-bib_query?bibcode=1994IAUS..154..309R&db_key=AST},
+  adsnote = {Provided by the NASA Astrophysics Data System}
+}
+
+@ARTICLE{1981ApJ...247L..97M,
+   author = {{Murcray}, F.~J. and {Goldman}, A. and {Murcray}, F.~H. and 
+	{Bradford}, C.~M. and {Murcray}, D.~G. and {Coffey}, M.~T. and 
+	{Mankin}, W.~G.},
+    title = "{Observation of new emission lines in the infrared solar spectrum near 12.33, 12.22, and 7.38 microns}",
+  journal = {\apjl},
+     year = 1981,
+    month = jul,
+   volume = 247,
+    pages = {L97-L99},
+   adsurl = {http://adsabs.harvard.edu/cgi-bin/nph-bib_query?bibcode=1981ApJ...247L..97M&amp;db_key=AST},
+  adsnote = {Provided by the NASA Astrophysics Data System}
+}
+
+@ARTICLE{1980STIN...8031298G,
+   author = {{Goldman}, A. and {Blatherwick}, R.~D. and {Murcray}, F.~H. and 
+	{Vanallen}, J.~W. and {Bradford}, C.~M. and {Cook}, G.~R. and 
+	{Murcray}, D.~G.},
+    title = "{New atlas of IR solar spectra}",
+  journal = {NASA STI/Recon Technical Report N},
+     year = 1980,
+    month = jun,
+   volume = 80,
+    pages = {31298-+},
+   adsurl = {http://adsabs.harvard.edu/cgi-bin/nph-bib_query?bibcode=1980STIN...8031298G&amp;db_key=AST},
+  adsnote = {Provided by the NASA Astrophysics Data System}
+} %% this isn't the best reference but the Denver publication is not on ADS
+
+@ARTICLE{1992A&A...253..567C,
+   author = {{Carlsson}, M. and {Rutten}, R.~J. and {Shchukina}, N.~G.},
+    title = "{The formation of the MG I emission features near 12 microns}",
+  journal = {\aap},
+     year = 1992,
+    month = jan,
+   volume = 253,
+    pages = {567-585},
+   adsurl = {http://adsabs.harvard.edu/cgi-bin/nph-bib_query?bibcode=1992A%26A...253..567C&amp;db_key=AST},
+  adsnote = {Provided by the NASA Astrophysics Data System}
+}
+
+@ARTICLE{1973ApJ...184..605V,
+   author = {{Vernazza}, J.~E. and {Avrett}, E.~H. and {Loeser}, R.},
+    title = "{Structure of the Solar Chromosphere. Basic Computations and Summary of the Results}",
+  journal = {\apj},
+     year = 1973,
+    month = sep,
+   volume = 184,
+    pages = {605-632},
+      doi = {10.1086/152353},
+   adsurl = {http://esoads.eso.org/abs/1973ApJ...184..605V},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{1976ApJS...30....1V,
+   author = {{Vernazza}, J.~E. and {Avrett}, E.~H. and {Loeser}, R.},
+    title = "{Structure of the solar chromosphere. II - The underlying photosphere and temperature-minimum region}",
+  journal = {\apjs},
+ keywords = {CHROMOSPHERE, PHOTOSPHERE, SOLAR ATMOSPHERE, SOLAR SPECTRA, SOLAR TEMPERATURE, ASTRONOMICAL MODELS, CONTINUOUS SPECTRA, INFRARED SPECTRA, STELLAR STRUCTURE, ULTRAVIOLET SPECTRA},
+     year = 1976,
+    month = jan,
+   volume = 30,
+    pages = {1-60},
+      doi = {10.1086/190356},
+   adsurl = {http://esoads.eso.org/abs/1976ApJS...30....1V},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{1981ApJS...45..635V,
+   author = {{Vernazza}, J.~E. and {Avrett}, E.~H. and {Loeser}, R.},
+    title = "{Structure of the solar chromosphere. III - Models of the EUV brightness components of the quiet-sun}",
+  journal = {\apjs},
+ keywords = {ATMOSPHERIC MODELS, BRIGHTNESS TEMPERATURE, CHROMOSPHERE, EXTREME ULTRAVIOLET RADIATION, NONEQUILIBRIUM THERMODYNAMICS, RADIATIVE HEAT TRANSFER, SOLAR ATMOSPHERE, ULTRAVIOLET SPECTRA, ATMOSPHERIC HEATING, ATOMIC ENERGY LEVELS, CARBON, GRAPHS (CHARTS), HYDROGEN ATOMS, IRON, LYMAN SPECTRA, SOLAR TEMPERATURE, TABLES (DATA)},
+     year = 1981,
+    month = apr,
+   volume = 45,
+    pages = {635-725},
+      doi = {10.1086/190731},
+   adsurl = {http://esoads.eso.org/abs/1981ApJS...45..635V},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@online{extradim,
+    title={Extra Dimensions in Space and Time},
+    author={Bars, Itzhak and Terning,John},
+    publisher={Springer},
+    year ={2010}
+    url  = "https://books.google.no/books?id=fFSMatekilIC&pg=PA27&hl=en#v=onepage&q&f=false"
+}
+
+@online{callin,
+    author    = "Petter Callin",
+    title     = "How to calculate the CMB spectrum",
+    year      = "2005"
+    url       = "http://arxiv.org/abs/astro-ph/0606683",
+}

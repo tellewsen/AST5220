@@ -1,0 +1,8 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{Callin(2005)}]{Callin}
+Callin, P. 2005, How to calculate the CMB spectrum \csname
+  Callinlink\endcsname~\csname Callinnote\endcsname
+
+\end{thebibliography}

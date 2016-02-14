@@ -1,4 +1,4 @@
-%% file: template.tex = LaTeX template for article-like report 
+% %% file: template.tex = LaTeX template for article-like report 
 %% init: sometime 1993
 %% last: Feb  8 2015  Rob Rutten  Deil
 %% site: http://www.staff.science.uu.nl/~rutte101/rrweb/rjr-edu/manuals/student-report/
@@ -10,12 +10,14 @@
 %% Small changes to the header part will make it an A&A or ApJ manuscript.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass{aa}   %% Astronomy & Astrophysics style class
+%\documentclass{aa}   %% Astronomy & Astrophysics style class
+\documentclass[letter,10pt]{report}
 \usepackage{graphicx,url,twoopt}
 %\usepackage{biblatex}
 \usepackage{enumitem}
+\usepackage{amsmath}
 \usepackage[varg]{txfonts}           %% A&A font choice
-\usepackage{hyperref}                %% for pdflatex
+%\usepackage{hyperref}                %% for pdflatex
 %%\usepackage[breaklinks]{hyperref}  %% for latex+dvips
 %%\usepackage{breakurl}              %% for latex+dvips
 %\usepackage{pdfcomment}              %% for popup acronym meanings
@@ -23,22 +25,22 @@
 \usepackage{calrsfs}
 \DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
 
-\usepackage{natbib}
-\hypersetup{
-  colorlinks=true,   %% links colored instead of frames
-  urlcolor=blue,     %% external hyperlinks
-  linkcolor=red,     %% internal latex links (eg Fig)
-}
+%\usepackage{natbib}
+% \hypersetup{
+%   colorlinks=true,   %% links colored instead of frames
+%   urlcolor=blue,     %% external hyperlinks
+%   linkcolor=red,     %% internal latex links (eg Fig)
+% }
 
-\bibpunct{(}{)}{;}{a}{}{,}    %% natbib cite format used by A&A and ApJ
-
-\pagestyle{plain}   %% undo the fancy A&A pagestyle 
+% \bibpunct{(}{)}{;}{a}{}{,}    %% natbib cite format used by A&A and ApJ
+% 
+ \pagestyle{plain}   %% undo the fancy A&A pagestyle 
 
 %% Add commands to add a note or link to a reference
-\makeatletter
-\newcommand{\bibnote}[2]{\@namedef{#1note}{#2}}
-\newcommand{\biblink}[2]{\@namedef{#1link}{#2}}
-\makeatother
+% \makeatletter
+% \newcommand{\bibnote}[2]{\@namedef{#1note}{#2}}
+% \newcommand{\biblink}[2]{\@namedef{#1link}{#2}}
+% \makeatother
 
 %% Commands to make citations ADS clickers and to add such also to refs
 %% May 2014: they give error stops ("Illegal parameter number ..."}
@@ -46,36 +48,36 @@
 %%   latex continue instead of stop within these commands.
 %%   Please let me know if you know a better fix!
 %%   No such problem when using pdflatex.
-\makeatletter
- \newcommandtwoopt{\citeads}[3][][]{%
-   \nonstopmode%              %% fix to not stop at error message in latex
-   \href{http://adsabs.harvard.edu/abs/#3}%
-        {\def\hyper@linkstart##1##2{}%
-         \let\hyper@linkend\@empty\citealp[#1][#2]{#3}}%   %% Rutten, 2000
-   \biblink{#3}{\href{http://adsabs.harvard.edu/abs/#3}{ADS}}%
-   \errorstopmode}            %% fix to resume stopping at error messages 
- \newcommandtwoopt{\citepads}[3][][]{%
-   \nonstopmode%              %% fix to not stop at error message in latex
-   \href{http://adsabs.harvard.edu/abs/#3}%
-        {\def\hyper@linkstart##1##2{}%
-         \let\hyper@linkend\@empty\citep[#1][#2]{#3}}%     %% (Rutten 2000)
-   \biblink{#3}{\href{http://adsabs.harvard.edu/abs/#3}{ADS}}%
-   \errorstopmode}            %% fix to resume stopping at error messages
- \newcommandtwoopt{\citetads}[3][][]{%
-   \nonstopmode%              %% fix to not stop at error message in latex
-   \href{http://adsabs.harvard.edu/abs/#3}%
-        {\def\hyper@linkstart##1##2{}%
-         \let\hyper@linkend\@empty\citet[#1][#2]{#3}}%     %% Rutten (2000)
-   \biblink{#3}{\href{http://adsabs.harvard.edu/abs/#3}{ADS}}%
-   \errorstopmode}            %% fix to resume stopping at error messages 
- \newcommandtwoopt{\citeyearads}[3][][]{%
-   \nonstopmode%              %% fix to not stop at error message in latex
-   \href{http://adsabs.harvard.edu/abs/#3}%
-        {\def\hyper@linkstart##1##2{}%
-         \let\hyper@linkend\@empty\citeyear[#1][#2]{#3}}%  %% 2000
-   \biblink{#3}{\href{http://adsabs.harvard.edu/abs/#3}{ADS}}%
-   \errorstopmode}            %% fix to resume stopping at error messages 
-\makeatother
+% \makeatletter
+%  \newcommandtwoopt{\citeads}[3][][]{%
+%    \nonstopmode%              %% fix to not stop at error message in latex
+%    \href{http://adsabs.harvard.edu/abs/#3}%
+%         {\def\hyper@linkstart##1##2{}%
+%          \let\hyper@linkend\@empty\citealp[#1][#2]{#3}}%   %% Rutten, 2000
+%    \biblink{#3}{\href{http://adsabs.harvard.edu/abs/#3}{ADS}}%
+%    \errorstopmode}            %% fix to resume stopping at error messages 
+%  \newcommandtwoopt{\citepads}[3][][]{%
+%    \nonstopmode%              %% fix to not stop at error message in latex
+%    \href{http://adsabs.harvard.edu/abs/#3}%
+%         {\def\hyper@linkstart##1##2{}%
+%          \let\hyper@linkend\@empty\citep[#1][#2]{#3}}%     %% (Rutten 2000)
+%    \biblink{#3}{\href{http://adsabs.harvard.edu/abs/#3}{ADS}}%
+%    \errorstopmode}            %% fix to resume stopping at error messages
+%  \newcommandtwoopt{\citetads}[3][][]{%
+%    \nonstopmode%              %% fix to not stop at error message in latex
+%    \href{http://adsabs.harvard.edu/abs/#3}%
+%         {\def\hyper@linkstart##1##2{}%
+%          \let\hyper@linkend\@empty\citet[#1][#2]{#3}}%     %% Rutten (2000)
+%    \biblink{#3}{\href{http://adsabs.harvard.edu/abs/#3}{ADS}}%
+%    \errorstopmode}            %% fix to resume stopping at error messages 
+%  \newcommandtwoopt{\citeyearads}[3][][]{%
+%    \nonstopmode%              %% fix to not stop at error message in latex
+%    \href{http://adsabs.harvard.edu/abs/#3}%
+%         {\def\hyper@linkstart##1##2{}%
+%          \let\hyper@linkend\@empty\citeyear[#1][#2]{#3}}%  %% 2000
+%    \biblink{#3}{\href{http://adsabs.harvard.edu/abs/#3}{ADS}}%
+%    \errorstopmode}            %% fix to resume stopping at error messages 
+% \makeatother
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}  
@@ -99,20 +101,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}\label{sec:introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In this project I will follow the algorithm presented in Callin (2005)[1] for simulating the cosmic microwave background.  
+In this project I will follow the algorithm presented in Callin (2005)\cite{Callin} for simulating the cosmic microwave background.  
 This is part one of four for this project.
 The first part involves computing the expansion history of the universe, as well as looking at the evolution of the density of various matter and energy components. This sets up the background cosmology such that we in the next step can turn to perturbations.
 I have chosen to make this first part compatible with the inclusion of neutrinos.
 This can of course be removed by setting the neutrino density to zero and raising the radiation density accordingly.
 
 To ease the development of this code, I have been provided with a skeleton code of the project. 
-This code includes a variety of methods needed to solve the project. There will be a methods section for each part of the project.
+This code includes a variety of methods needed to solve the project. These methods will be explained as they are used throughout the  project.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Equations}\label{sec:Equations}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-For the background cosmology I use the standard Friendmann-Lemaitre-Robertson-Walker metric for flat space.
-This gives the line element in eq. \ref{FLRW}.
+For the background cosmology I use the standard Friedmann-Lemaître-Robertson-Walker(FLRW) metric for flat space.
+This gives the line element.
 \begin{equation}\label{FLRW}
 \begin{aligned}
 ds^2 &= -dt^2 +a^2(t)(r^2(d\theta^2+sin^2\theta d\phi^2)\\
@@ -120,9 +122,13 @@ ds^2 &= -dt^2 +a^2(t)(r^2(d\theta^2+sin^2\theta d\phi^2)\\
 \end{aligned}
 \end{equation}
 where $a(t)$ is the scale factor, and $\eta$ conformal time.
-I also introduce a parameter $x$ defined in eq. \ref{xeq}.
+I also introduce a parameter $x$ defined as 
 \begin{equation}\label{xeq}
  x = ln(a)
+\end{equation}
+The redshift is defined as
+\begin{equation}
+ 1+ z =\frac{a_0}{a}
 \end{equation}
 
 We assume that the universe consist of cold dark matter (CDM, m), baryons (b), radiation(r), neutrinos($\nu$), and a cosmological constant ($\Lambda$). 
@@ -141,10 +147,10 @@ Note that the dot means derivative with respect to conformal time. Why this is u
 We also want the derivative of this with respect to $x$.
 
 \begin{equation}
- \frac{d\pazocal{H}}{dx} = H_0\frac{\sqrt{-(\Omega_m+\Omega_b)e^{-x}-2(\Omega_r+\Omega_\nu)e^{-2x}+2\Omega_\Lambda e^{2x}}}{\sqrt{(\Omega_m+\Omega_b)e^{-x}+(\Omega_r+\Omega_\nu)e^{-2x}+\Omega_\Lambda e^{2x}}}.
+ \frac{d\pazocal{H}}{dx} = H_0\frac{-(\Omega_m+\Omega_b)e^{-x}-2(\Omega_r+\Omega_\nu)e^{-2x}+2\Omega_\Lambda e^{2x}}{\sqrt{(\Omega_m+\Omega_b)e^{-x}+(\Omega_r+\Omega_\nu)e^{-2x}+\Omega_\Lambda e^{2x}}}.
 \end{equation}
 
-$\Omega_x$ is the relative density of compenent x compared to the critical density $\rho_c$ needed for the universe to be flat.
+$\Omega_x$ is the relative density of component x compared to the critical density $\rho_c$ needed for the universe to be flat.
 \begin{equation}
  \Omega_x = \frac{\rho_x}{\rho_c}
 \end{equation}
@@ -176,7 +182,7 @@ which can be rewritten such that
 \begin{equation}\label{eta}
  \frac{d\eta}{da} = \frac{c}{a \pazocal{H}}
 \end{equation}
-There are two ways to solve this differential equation numerically. One can either intergrate directly, or one can use an ordinary differential equation solver(ODE Solver). Since the skeleton code contains an ODE Solver I have chosen the latter. (See the methods section for more information)
+There are two ways to solve this differential equation numerically. One can either intergrate directly, or one can use an ordinary differential equation solver(ODE solver). Since the skeleton code contains an ODE solver I have chosen the latter. (See section \ref{sec:Imp} for more information).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
@@ -184,13 +190,27 @@ There are two ways to solve this differential equation numerically. One can eith
 The programming language of choice is Fortran90. This is chosen because of its speed, and because the skeleton code provided was written in it. 
 
 The first step is to set up arrays for $a$, $x$, $\eta$, all five $\Omega_x$, and $\rho_x$. We will also need arrays for $\rho_c$, $H$, and $z$.
-We then set the first $x$ value to corresponds to $a= 10^{-10}$, and the last to $a=0$(today). 
-I've chosen to use 1000 points for these arrays. After that one computes the the $a$, and $z$ values for each of the points in this $x$ array. Because of this we now have linear steps in the x array. 
 
-With that done, one computes $H$, $\pazocal{H}$, $rho_x$, and $\Omega_x$ for each $x$ value.
+We then set the first $x$ value to correspond to $a= 10^{-10}$, and the last to $a=0$ (today). 
+I've chosen to use 1000 points for these arrays and make the steps equal in the $x$ array. After that one computes the $a$, and $z$ values for each of the points in this $x$ array. Because of this we now have linear steps in $x$.
+With that done, one computes $H$, $\pazocal{H}$, $\rho_x$, and $\Omega_x$ for each $x$ value.
 
-The last thing to find is $\eta(x)$. To do this we need to use an ODE solver on equation \ref{eta}
+The last thing to find is $\eta(x)$. 
+To do this we need to use an ODE solver on equation \ref{eta}. For this we must have some initial value for the function. 
+The equation we then want to solve is 
+\begin{equation}
+ \eta(a) = \int_0^a \frac{da'}{a'\pazocal{H}(a')}
+\end{equation}
 
+This can be found by considering that $a\pazocal{H} \rightarrow  H_0\sqrt{\Omega_r+\Omega_\nu}$ as $a \rightarrow 0$. This gives 
+\begin{equation}
+ \eta(a) = \frac{a}{H_0\sqrt{\Omega_r+\Omega_\nu}}
+\end{equation}
+for small $a$. And thus one has an initial value.
+
+Plugging this into the ODE solver returns $\eta(x)$ for all values in the $x$ array. Thus completing all calculations needed for the first part of the project.
+
+As preparation for the next part I also spline the resulting $\eta(x)$ values. These are then integrated and evaluated for a new set of $x$ values not equal to but inside the $x$ values used to make the spline. I have overplotted this in the plot for $\eta(x)$ and the functions overlap. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec:simulate_analytic}
@@ -199,37 +219,36 @@ The last thing to find is $\eta(x)$. To do this we need to use an ODE solver on 
  The critical density being that which corresponds to the universe begin flat.
  Looking at the figure we see radiation dominating from the start together with neutrinos.
  This continues for some time until the dark matter component starts to rise.
- We see that this starts before the baryon component. This is good since that makes it possible for dark matter to form structures that that baryons can later fall into. The radiation and neutrinos die out, and at a later point vacuum energy shoots up. At the end we end up with approximately 70\% vacuum energy(dark energy?), 25\% dark matter, and 5\% baryons. This is exactly as it should be since that is what they were set to be at the present.
+ We see that this starts before the baryon component. This is good since that makes it possible for dark matter to form structures that baryons can later fall into. The radiation and neutrinos die out, and at a later point vacuum energy shoots up. At the end we end up with approximately 70\% vacuum energy(dark energy?), 25\% dark matter, and 5\% baryons. This is exactly as it should be since that is what they were set to be at the present. See figure \ref{figure0}.
  \begin{figure}[ht]
   \includegraphics[width=.49\textwidth]{figure_0.png}
-  \caption{The figure shows the evolution of the relative densities. They behave as expected from}
+  \caption{The figure shows the evolution of the relative densities. As described they behave as they should.}
  \label{figure0}
  \end{figure}
  
- Conformal time, denoted $\eta(x)$ measures the distance to the particle horizon for a given x value. A nice test of this is to insert the x-value of today.
- The answer should then be the radius of the observable universe. At the present this is measured to be approximately 14 billion parsecs (14Gpc). 
+ Conformal time, denoted $\eta(x)$ measures the distance to the particle horizon for a given $x$ value. A nice test of this is to insert the $x$ value of today.
+ The answer should then be the radius of the observable universe. At the present this is measured to be approximately 14 billion parsecs (14Gpc)\cite{Extradim}.
  The graph hits this value fairly well, indicating that everything is working properly so far. 
  Note also that there are in fact two graphs in this figure, one which is calculated from the differential equation for $\eta$. 
  And another one made by splining the first one and finding $\eta$ values at arbitrary values between those of the first function.
  
   \begin{figure}[ht]
   \includegraphics[width=.49\textwidth]{figure_1.png}
-  \caption{}
+  \caption{The conformal time hits the value of today fairly accurately. The splined function hits the computed values so well that they overlap. Here $\eta(x)$ is the computed function, while $\eta_2(x)$ is the splined one.}
  \label{figure1}
  \end{figure}
  
- The Hubble parameter $H$ is depicted both as a function of $x$, and $z$. Whether this is good or not is hard to say for the first part. We can at least put some faith in its correctness by the fact that it ends at $H_0 \approx 70$km s$^{-1}$Mpc$^{-1}$, which is what $H_0$ was set to be. 
+ The Hubble parameter $H$ is depicted both as a function of $x$, and $z$. Whether this is good or not is hard to say for the first part. We can at least put some faith in its precision by the fact that it ends at $H_0 \approx 70$km s$^{-1}$Mpc$^{-1}$, which is what $H_0$ was set to be. 
  
   \begin{figure}[ht]
   \includegraphics[width=.49\textwidth]{figure_2.png}
-  \caption{}
+  \caption{The figure depicts the Hubble parameter as a function of $x$.}
  \label{figure2}
  \end{figure}
-
  
  \begin{figure}[ht]
   \includegraphics[width=.49\textwidth]{figure_3.png}
-  \caption{}
+  \caption{The figure depcits the Hubble parameter as a function of redshift $z$. Note that $z$ increases to the left, such that time goes towards the right.}
  \label{figure3}
  \end{figure}
 % 
@@ -255,20 +274,14 @@ The last thing to find is $\eta(x)$. To do this we need to use an ODE solver on 
 \section{Conclusions} \label{sec:conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The background cosmology of the universe is done and everything has worked the way it was expected to.
-With this, the code is ready for the introduction of perturbations in part two.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Source code}\label{sec:files}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-INSERT timemod.f90
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\begin{acknowledgements}
-%\end{acknowledgements}
+There are some values that I do not have an intuition for what should be. Namely the Hubble parameter at times before today. However, I expect these to be correct since everything else has given results generally considered to be correct.
+With this, the code is ready for the introduction of perturbations in part two. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{References}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \begin{thebibliography}{9}
-% \bibitem{Callin} P. Callin, astro-ph/0606683
+ %\begin{thebibliography}{9}
+ %\bibitem{Callin} P. Callin, astro-ph/0606683
 % \bibitem{Extradim} 
 % \href{https://books.google.no/books?id=fFSMatekilIC&pg=PA27&hl=en#v=onepage&q&f=false}{Itzhak Bars; \\John Terning, Extra Dimensions in Space and Time, Springer}
 % \end{thebibliography}
@@ -276,5 +289,12 @@ INSERT timemod.f90
 %\bibliographystyle{aa-note} %% aa.bst but adding links and notes to references
 %\raggedright              %% only for adsaa with dvips, not for pdflatex
 %\bibliography{XXX}          %% XXX.bib = your Bibtex entries copied from ADS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Source code}\label{sec:files}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+See appendix \ref{A}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{acknowledgements}
+%\end{acknowledgements}
 
 \end{document}
