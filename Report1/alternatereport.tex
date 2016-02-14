@@ -11,19 +11,18 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass{aa}   %% Astronomy & Astrophysics style class
+%\usepackage{graphicx,natbib,url,twoopt}
 \usepackage{graphicx,url,twoopt}
-%\usepackage{biblatex}
+\usepackage{calrsfs}
+\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
 \usepackage{enumitem}
 \usepackage[varg]{txfonts}           %% A&A font choice
 \usepackage{hyperref}                %% for pdflatex
 %%\usepackage[breaklinks]{hyperref}  %% for latex+dvips
 %%\usepackage{breakurl}              %% for latex+dvips
-%\usepackage{pdfcomment}              %% for popup acronym meanings
-%\usepackage{acronym}                 %% for popup acronym meanings
-\usepackage{calrsfs}
-\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
+\usepackage{pdfcomment}              %% for popup acronym meanings
+\usepackage{acronym}                 %% for popup acronym meanings
 
-\usepackage{natbib}
 \hypersetup{
   colorlinks=true,   %% links colored instead of frames
   urlcolor=blue,     %% external hyperlinks
@@ -77,6 +76,24 @@
    \errorstopmode}            %% fix to resume stopping at error messages 
 \makeatother
 
+%% Acronyms
+\newacro{ADS}{Astrophysics Data System}
+\newacro{NLTE}{non-local thermodynamic equilibrium}
+\newacro{NASA}{National Aeronautics and Space Administration}
+
+%% Add popups with meaning to acronyms 
+%% NB: only show up in Adobe Reader and do not work with \input or \include
+\gdef\acp#1{%
+  \pdfmarkupcomment[markup=Underline,color={1 1 1},author={{#1}},opacity=0]%
+  {{#1}}{{\acl{#1}}}}
+
+%% Spectral species
+\def\MgI{\ion{Mg}{I}}          %% A&A; for aastex use \def\MgI{\ion{Mg}{1}} 
+\def\MgII{\ion{Mg}{II}}        %% A&A; for aastex use \def\MgII{\ion{Mg}{2}} 
+
+%% Hyphenation
+%\hyphenation{Schrij-ver}       %% Dutch ij is a single character
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}  
 
@@ -107,6 +124,14 @@ This can of course be removed by setting the neutrino density to zero and raisin
 
 To ease the development of this code, I have been provided with a skeleton code of the project. 
 This code includes a variety of methods needed to solve the project. There will be a methods section for each part of the project.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}\label{sec:Imp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The programming of choice is Fortran90. 
+The first step is to set up arrays for the scale factor $a$, the logarithm of the scale factor $x$, and $\eta$. The relative densities $\Omega_x$, the densites of the different components $\rho_x$.
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Equations}\label{sec:Equations}
@@ -151,7 +176,6 @@ $\Omega_x$ is the relative density of compenent x compared to the critical densi
 \begin{equation}
  \rho_c = \frac{3H^2}{8\pi G}
 \end{equation}
-We want to keep track of the densities of each component.
 \begin{equation}
  \rho_m = \rho_{m,0}a^{-3}
 \end{equation}
@@ -173,23 +197,10 @@ We will also need to know the distance to the horizon at different times. This c
  \frac{d\eta}{dt} = \frac{c}{a}
 \end{equation*}
 which can be rewritten such that
-\begin{equation}\label{eta}
+\begin{equation}
  \frac{d\eta}{da} = \frac{c}{a \pazocal{H}}
 \end{equation}
 There are two ways to solve this differential equation numerically. One can either intergrate directly, or one can use an ordinary differential equation solver(ODE Solver). Since the skeleton code contains an ODE Solver I have chosen the latter. (See the methods section for more information)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Implementation}\label{sec:Imp}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The programming language of choice is Fortran90. This is chosen because of its speed, and because the skeleton code provided was written in it. 
-
-The first step is to set up arrays for $a$, $x$, $\eta$, all five $\Omega_x$, and $\rho_x$. We will also need arrays for $\rho_c$, $H$, and $z$.
-We then set the first $x$ value to corresponds to $a= 10^{-10}$, and the last to $a=0$(today). 
-I've chosen to use 1000 points for these arrays. After that one computes the the $a$, and $z$ values for each of the points in this $x$ array. Because of this we now have linear steps in the x array. 
-
-With that done, one computes $H$, $\pazocal{H}$, $rho_x$, and $\Omega_x$ for each $x$ value.
-
-The last thing to find is $\eta(x)$. To do this we need to use an ODE solver on equation \ref{eta}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,13 +276,15 @@ INSERT timemod.f90
 %\end{acknowledgements}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% references
 \section{References}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \begin{thebibliography}{9}
-% \bibitem{Callin} P. Callin, astro-ph/0606683
-% \bibitem{Extradim} 
-% \href{https://books.google.no/books?id=fFSMatekilIC&pg=PA27&hl=en#v=onepage&q&f=false}{Itzhak Bars; \\John Terning, Extra Dimensions in Space and Time, Springer}
-% \end{thebibliography}
+\begin{thebibliography}{9}
+\bibitem{Callin} 
+P. Callin, astro-ph/0606683
+
+\bibitem{Extradim} 
+\href{https://books.google.no/books?id=fFSMatekilIC&pg=PA27&hl=en#v=onepage&q&f=false}{Itzhak Bars; \\John Terning, Extra Dimensions in Space and Time, Springer (2010)}
+\end{thebibliography}
 
 %\bibliographystyle{aa-note} %% aa.bst but adding links and notes to references
 %\raggedright              %% only for adsaa with dvips, not for pdflatex

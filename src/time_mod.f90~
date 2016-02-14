@@ -68,7 +68,7 @@ contains
     a_end       = 1.d0
     x_eta1      = log(a_init)               ! Start value of x for eta evaluation
     x_eta2      = 0.d0                      ! End value of x for eta evaluation
-    eta_init    = a_init/(H_0*sqrt(Omega_r+Omega_nu))
+    eta_init    = a_init/(H_0*sqrt(Omega_r))
 
     eps = 1.d-10
     hmin = 0.d0

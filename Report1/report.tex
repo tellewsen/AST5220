@@ -11,16 +11,19 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass{aa}   %% Astronomy & Astrophysics style class
-\usepackage{graphicx,natbib,url,twoopt}
-\usepackage{calrsfs}
-\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
+\usepackage{graphicx,url,twoopt}
+%\usepackage{biblatex}
+\usepackage{enumitem}
 \usepackage[varg]{txfonts}           %% A&A font choice
 \usepackage{hyperref}                %% for pdflatex
 %%\usepackage[breaklinks]{hyperref}  %% for latex+dvips
 %%\usepackage{breakurl}              %% for latex+dvips
-\usepackage{pdfcomment}              %% for popup acronym meanings
-\usepackage{acronym}                 %% for popup acronym meanings
+%\usepackage{pdfcomment}              %% for popup acronym meanings
+%\usepackage{acronym}                 %% for popup acronym meanings
+\usepackage{calrsfs}
+\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
 
+\usepackage{natbib}
 \hypersetup{
   colorlinks=true,   %% links colored instead of frames
   urlcolor=blue,     %% external hyperlinks
@@ -74,24 +77,6 @@
    \errorstopmode}            %% fix to resume stopping at error messages 
 \makeatother
 
-%% Acronyms
-\newacro{ADS}{Astrophysics Data System}
-\newacro{NLTE}{non-local thermodynamic equilibrium}
-\newacro{NASA}{National Aeronautics and Space Administration}
-
-%% Add popups with meaning to acronyms 
-%% NB: only show up in Adobe Reader and do not work with \input or \include
-\gdef\acp#1{%
-  \pdfmarkupcomment[markup=Underline,color={1 1 1},author={{#1}},opacity=0]%
-  {{#1}}{{\acl{#1}}}}
-
-%% Spectral species
-\def\MgI{\ion{Mg}{I}}          %% A&A; for aastex use \def\MgI{\ion{Mg}{1}} 
-\def\MgII{\ion{Mg}{II}}        %% A&A; for aastex use \def\MgII{\ion{Mg}{2}} 
-
-%% Hyphenation
-\hyphenation{Schrij-ver}       %% Dutch ij is a single character
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}  
 
@@ -101,20 +86,20 @@
 \vspace*{4ex}
 \begin{center}
   {\Large \bf Milestone 1: The background evolution of the universe}\\[4ex]
-  {\large \bf Andreas Ellewsen}\\[4ex]
-  %\begin{minipage}[t]{15cm}
-  %      $^1$ Institute of theoretical astrophysics\\
+  {\large \bf Andreas Ellewsen$^1$}\\[4ex]
+  \begin{minipage}[t]{15cm}
+        $^1$ Institute of Theoretical Astrophysics\\
 
     {\bf Abstract.} I set up the background cosmology of the universe.
 
-  %\vspace*{2ex}
-  %\end{minipage}
+  \vspace*{2ex}
+  \end{minipage}
 \end{center}
 }]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}\label{sec:introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In this project I will follow the algorithm presented in Callin (2005) for simulating the cosmic microwave background.  
+In this project I will follow the algorithm presented in Callin (2005)[1] for simulating the cosmic microwave background.  
 This is part one of four for this project.
 The first part involves computing the expansion history of the universe, as well as looking at the evolution of the density of various matter and energy components. This sets up the background cosmology such that we in the next step can turn to perturbations.
 I have chosen to make this first part compatible with the inclusion of neutrinos.
@@ -122,13 +107,6 @@ This can of course be removed by setting the neutrino density to zero and raisin
 
 To ease the development of this code, I have been provided with a skeleton code of the project. 
 This code includes a variety of methods needed to solve the project. There will be a methods section for each part of the project.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Methods}\label{sec:Methods}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Equations}\label{sec:Equations}
@@ -173,6 +151,7 @@ $\Omega_x$ is the relative density of compenent x compared to the critical densi
 \begin{equation}
  \rho_c = \frac{3H^2}{8\pi G}
 \end{equation}
+We want to keep track of the densities of each component.
 \begin{equation}
  \rho_m = \rho_{m,0}a^{-3}
 \end{equation}
@@ -194,10 +173,23 @@ We will also need to know the distance to the horizon at different times. This c
  \frac{d\eta}{dt} = \frac{c}{a}
 \end{equation*}
 which can be rewritten such that
-\begin{equation}
+\begin{equation}\label{eta}
  \frac{d\eta}{da} = \frac{c}{a \pazocal{H}}
 \end{equation}
-There are two ways to solve this differential equation numerically. One can either intergrate directly, or one can use an ordinary differential equation solver(ODE Solver). Since the skeleton code contains an ODE Solver I have chosen the latter. (See the methods section for more information about this.)
+There are two ways to solve this differential equation numerically. One can either intergrate directly, or one can use an ordinary differential equation solver(ODE Solver). Since the skeleton code contains an ODE Solver I have chosen the latter. (See the methods section for more information)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}\label{sec:Imp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The programming language of choice is Fortran90. This is chosen because of its speed, and because the skeleton code provided was written in it. 
+
+The first step is to set up arrays for $a$, $x$, $\eta$, all five $\Omega_x$, and $\rho_x$. We will also need arrays for $\rho_c$, $H$, and $z$.
+We then set the first $x$ value to corresponds to $a= 10^{-10}$, and the last to $a=0$(today). 
+I've chosen to use 1000 points for these arrays. After that one computes the the $a$, and $z$ values for each of the points in this $x$ array. Because of this we now have linear steps in the x array. 
+
+With that done, one computes $H$, $\pazocal{H}$, $rho_x$, and $\Omega_x$ for each $x$ value.
+
+The last thing to find is $\eta(x)$. To do this we need to use an ODE solver on equation \ref{eta}. For this we must have some initial value for the function. This can be found 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,19 +200,19 @@ There are two ways to solve this differential equation numerically. One can eith
  Looking at the figure we see radiation dominating from the start together with neutrinos.
  This continues for some time until the dark matter component starts to rise.
  We see that this starts before the baryon component. This is good since that makes it possible for dark matter to form structures that that baryons can later fall into. The radiation and neutrinos die out, and at a later point vacuum energy shoots up. At the end we end up with approximately 70\% vacuum energy(dark energy?), 25\% dark matter, and 5\% baryons. This is exactly as it should be since that is what they were set to be at the present.
- \begin{figure}
+ \begin{figure}[ht]
   \includegraphics[width=.49\textwidth]{figure_0.png}
   \caption{The figure shows the evolution of the relative densities. They behave as expected from}
  \label{figure0}
  \end{figure}
  
- Conformal time, denoted $\eta(x)$ measures the distance to the particle horizon for a given x value. A nice test of this is to insert the x-value of today 
+ Conformal time, denoted $\eta(x)$ measures the distance to the particle horizon for a given x value. A nice test of this is to insert the x-value of today.
  The answer should then be the radius of the observable universe. At the present this is measured to be approximately 14 billion parsecs (14Gpc). 
  The graph hits this value fairly well, indicating that everything is working properly so far. 
  Note also that there are in fact two graphs in this figure, one which is calculated from the differential equation for $\eta$. 
  And another one made by splining the first one and finding $\eta$ values at arbitrary values between those of the first function.
  
-  \begin{figure}
+  \begin{figure}[ht]
   \includegraphics[width=.49\textwidth]{figure_1.png}
   \caption{}
  \label{figure1}
@@ -228,14 +220,14 @@ There are two ways to solve this differential equation numerically. One can eith
  
  The Hubble parameter $H$ is depicted both as a function of $x$, and $z$. Whether this is good or not is hard to say for the first part. We can at least put some faith in its correctness by the fact that it ends at $H_0 \approx 70$km s$^{-1}$Mpc$^{-1}$, which is what $H_0$ was set to be. 
  
-  \begin{figure}
+  \begin{figure}[ht]
   \includegraphics[width=.49\textwidth]{figure_2.png}
   \caption{}
  \label{figure2}
  \end{figure}
 
  
- \begin{figure}
+ \begin{figure}[ht]
   \includegraphics[width=.49\textwidth]{figure_3.png}
   \caption{}
  \label{figure3}
@@ -262,20 +254,25 @@ There are two ways to solve this differential equation numerically. One can eith
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions} \label{sec:conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+The background cosmology of the universe is done and everything has worked the way it was expected to.
+With this, the code is ready for the introduction of perturbations in part two.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Source code}\label{sec:files}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+INSERT timemod.f90
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{acknowledgements}
 %\end{acknowledgements}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% references
 \section{References}
-Itzhak Bars; John Terning (November 2009). Extra Dimensions in Space and Time. Springer. pp. 27
-Callin (2005)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{thebibliography}{9}
+% \bibitem{Callin} P. Callin, astro-ph/0606683
+% \bibitem{Extradim} 
+% \href{https://books.google.no/books?id=fFSMatekilIC&pg=PA27&hl=en#v=onepage&q&f=false}{Itzhak Bars; \\John Terning, Extra Dimensions in Space and Time, Springer}
+% \end{thebibliography}
+
 %\bibliographystyle{aa-note} %% aa.bst but adding links and notes to references
 %\raggedright              %% only for adsaa with dvips, not for pdflatex
 %\bibliography{XXX}          %% XXX.bib = your Bibtex entries copied from ADS
