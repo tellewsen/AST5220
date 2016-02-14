@@ -238,7 +238,7 @@ contains
     real(dp), intent(in) :: x
     real(dp)             :: get_dH_p
     get_dH_p = H_0/2.d0*1/sqrt((Omega_m+Omega_b)*exp(-x)+Omega_r*exp(-2.d0*x) &
-    + Omega_lambda*exp(2.d0*x)) * (-(Omega_m+Omega_b)*exp(-x)-2.d0*Omega_r*exp(-2.d0*x) 6
+    + Omega_lambda*exp(2.d0*x)) * (-(Omega_m+Omega_b)*exp(-x)-2.d0*Omega_r*exp(-2.d0*x) &
     + 2.d0*Omega_lambda*exp(2.d0*x))
   end function get_dH_p
 
