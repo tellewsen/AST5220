@@ -39,7 +39,7 @@ contains
     allocate(g22(n))
 
     ! Task: Fill in x (rec) grid
-
+x_rec = 
 
 
     ! Task: Compute X_e and n_e at all grid times
@@ -47,7 +47,10 @@ contains
     do i = 1, n
        if (use_saha) then
           ! Use the Saha equation
-
+		n_b = Omega_b*rho_c/m_H/a(i)**3.d0
+		T_b = T_0/a(i)
+		x_e0 = 1.d0/n_b*(m_e*T_b/2.d0/pi)**1.5d0*exp(-epsilon_0/T_b)
+		X_e(i) 
           if (X_e(i) < saha_limit) use_saha = .false.
        else
           ! Use the Peebles equation
