@@ -35,5 +35,6 @@ module params
   real(dp), parameter :: alpha        = 7.29735308d-3
   real(dp), parameter :: hbar         = 1.05457148d-34
   real(dp), parameter :: k_b          = 1.3806503d-23
+  real(dp), parameter :: lambda_2s1s  = 8.227 !s-1
 
 end module params

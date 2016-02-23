@@ -1,8 +1,11 @@
 program cmbspec
   use healpix_types
   use params
+  use rec_mod
   use time_mod
+  
   implicit none
+
   integer, parameter :: out_unit1=10
   integer, parameter :: out_unit2=20
   integer, parameter :: out_unit3=30
@@ -12,6 +15,7 @@ program cmbspec
 
   ! Initialize time grids
   call initialize_time_mod
+  call initialize_rec_mod
 
   ! Output to file desired quantities here
 
