@@ -5,22 +5,23 @@ rc('font',**{'family':'serif'}) # This is for Latex writing
 
 #Import datafiles
 #Relative densities
-nu,lamda              = loadtxt("omega_nulambda.dat",unpack=True)
-m,b,r                 = loadtxt("omega_mbr.dat",unpack=True)
-total                 = nu+lamda+m+b+r
+nu,lamda                 = loadtxt("omega_nulambda.dat",unpack=True)
+m,b,r                    = loadtxt("omega_mbr.dat",unpack=True)
+total                    = nu+lamda+m+b+r
 
 #x,scalefactor,conformal time
-x,a,eta               = loadtxt("xaeta.dat",unpack=True)
+x,a,eta                  = loadtxt("xaeta.dat",unpack=True)
 #Hubbleparam,redshift
-H,z                   = loadtxt("Hz.dat",unpack=True)
+H,z                      = loadtxt("Hz.dat",unpack=True)
 #Test x,test eta
-x_t,eta_t             = loadtxt("eta_t.dat",unpack=True)
+x_t,eta_t                = loadtxt("eta_t.dat",unpack=True)
 
 
-x_rec,z_rec,X_e       = loadtxt("X_e.dat",unpack=True)
-n_e,tau,dtau          = loadtxt("n_e.dat",unpack=True)
-x_test,z_test,n_etest = loadtxt("n_etest.dat",unpack=True)
+x_rec,z_rec,X_e          = loadtxt("X_e.dat",unpack=True)
+n_e,tau,dtau             = loadtxt("n_e.dat",unpack=True)
+x_test,z_test,n_etest    = loadtxt("n_etest.dat",unpack=True)
 ddtau,tau_test,dtau_test = loadtxt("tau2.dat",unpack=True)
+ddtau_test               = loadtxt("tau3.dat",unpack=True)
 """
 plt.figure(0)
 plt.plot(x,m,label = r'$\Omega_m$')
@@ -85,10 +86,12 @@ plt.legend()
 plt.show()
 """
 plt.figure(6)
-plt.plot(x_rec ,tau,'--',label = r'$\tau(x)$')
-plt.plot(x_test ,tau_test,'-',label = r'$\tau_{test}(x)$')
-plt.plot(x_rec ,abs(dtau),'--',label = r'$|\tau^\prime(x)|$')
-plt.plot(x_rec ,abs(dtau_test),'-',label = r'$|\tau^{\prime}_{test}(x)|$')
+plt.plot(x_rec , tau,            '--',label = r'$\tau(x)$')
+plt.plot(x_test, tau_test,       '-' ,label = r'$\tau_{test}(x)$')
+plt.plot(x_rec , abs(dtau),      '--',label = r'$|\tau^\prime(x)|$')
+plt.plot(x_test, abs(dtau_test), '-' ,label = r'$|\tau^{\prime}_{test}(x)|$')
+plt.plot(x_rec , abs(ddtau),     '--' ,label = r'$|\tau^{\prime\prime}(x)|$')
+plt.plot(x_test, abs(ddtau_test),'-' ,label = r'$|\tau^{\prime\prime}_{test}(x)|$')
 plt.yscale('log')
 #plt.xscale('log')
 plt.xlim([x_rec[0],x_rec[-1]])

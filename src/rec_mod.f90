@@ -9,7 +9,6 @@ module rec_mod
     integer(i4b)                                 :: n                        ! Number of grid points
     real(dp), allocatable, dimension(:)          :: x_rec,a_rec,z_rec        ! Grid
     real(dp), allocatable, dimension(:)          :: tau, dtau, ddtau         ! Splined tau and derivatives
-    real(dp), allocatable, dimension(:)          :: logtau, logdtau, logddtau! Splined log tau and derivatives
     real(dp), allocatable, dimension(:)          :: d4tau,logd4tau
     real(dp), allocatable, dimension(:)          :: n_e, n_e2,logn_e,logn_e2 ! Splined (log of) electron density, n_e
     real(dp), allocatable, dimension(:)          :: g, g2, g22               ! Splined visibility function
@@ -18,6 +17,8 @@ module rec_mod
     real(dp), allocatable, dimension(:)          :: x_test,n_etest,z_test,a_test  !Used for testing the splines
     real(dp), allocatable, dimension(:)          :: tau_test,dtau_test,ddtau_test  !Used for testing the splines
     real(dp)                                     :: x_0
+    real(dp)                                     :: x_test_start
+    real(dp)                                     :: x_test_end
 contains
 
     subroutine initialize_rec_mod
@@ -31,7 +32,9 @@ contains
     logical(lgt) :: use_saha
 
 
-    saha_limit = 0.99d0       ! Switch from Saha to Peebles when X_e < 0.99
+    x_test_start = -7.0d0
+    x_test_end   = -1.0d0
+    saha_limit   = 0.99d0       ! Switch from Saha to Peebles when X_e < 0.99
 
     !ODE int variables
     eps  = 1.d-10
@@ -53,39 +56,31 @@ contains
     allocate(a_rec(n))
     allocate(z_rec(n))
     allocate(H_rec(n))
-
     allocate(X_e(n))
-
     allocate(tau(n))
     allocate(dtau(n))
     allocate(ddtau(n))
     allocate(d4tau(n))
-
-    allocate(logtau(n))
-    allocate(logdtau(n))
-    allocate(logddtau(n))
-    allocate(logd4tau(n))
-
-
     allocate(n_e(n))
     allocate(n_e2(n))
     allocate(logn_e(n))
     allocate(logn_e2(n))
-
     allocate(g(n))
     allocate(g2(n))
     allocate(g22(n))
-
     allocate(x_test(n))
     allocate(z_test(n))
     allocate(a_test(n))
     allocate(n_etest(n))
     allocate(tau_test(n))
     allocate(dtau_test(n))
+    allocate(ddtau_test(n))
+
+
 
     !fill test 
-    do i=0,n-1
-        x_test(i+1) = -log(1.d0 + 1200) + i*(x_end_rec+log(1.d0 + 1200) )/(n-1)
+    do i=1,n
+        x_test(i) = x_test_start + i*(x_test_end-x_test_start)/n
     end do
     z_test = 1.d0/exp(x_test) -1.d0
 
@@ -174,10 +169,11 @@ contains
         dtau_test(i) = get_dtau(x_test(i))
     end do
 
-    !Compute splined second derivative of (log of) optical depth
+    !Compute splined second derivative of optical depth
     call spline(x_rec,ddtau,yp1,ypn,d4tau)
+    !Test get_ddtau function
     do i=1,n
-        ddtau = get_ddtau(x_rec(i))
+        ddtau_test(i) = get_ddtau(x_test(i))
     end do
 
 
@@ -277,12 +273,12 @@ contains
 
   ! Task: Complete routine for computing the second derivative of tau at arbitrary x, 
   ! using precomputed information
-  function get_ddtau(x)
+  function get_ddtau(x_in)
     implicit none
 
-    real(dp), intent(in) :: x
+    real(dp), intent(in) :: x_in
     real(dp)             :: get_ddtau
-get_ddtau = 0
+    get_ddtau = splint(x_rec,ddtau,d4tau,x_in)
   end function get_ddtau
 
   ! Task: Complete routine for computing the visibility function, g, at arbitray x
