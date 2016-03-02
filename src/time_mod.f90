@@ -1,46 +1,44 @@
 module time_mod
-  use healpix_types
-  use params
-  use spline_1D_mod
-  use ode_solver
-  implicit none
+    use healpix_types
+    use params
+    use spline_1D_mod
+    use ode_solver
+    implicit none
 
-  integer(i4b)                           :: n_t                ! Number of x-values
-  real(dp),    allocatable, dimension(:) :: x_t                ! Grid of relevant x-values
-  real(dp),    allocatable, dimension(:) :: a_t                ! Grid of relevant a-values
-  real(dp),    allocatable, dimension(:) :: eta_t              ! Grid of relevant eta-values
+    integer(i4b)                           :: n_t                ! Number of x-values
+    real(dp),    allocatable, dimension(:) :: x_t                ! Grid of relevant x-values
+    real(dp),    allocatable, dimension(:) :: a_t                ! Grid of relevant a-values
+    real(dp),    allocatable, dimension(:) :: eta_t              ! Grid of relevant eta-values
 
-  integer(i4b)                           :: n_eta              ! Number of eta grid poins
-  real(dp),    allocatable, dimension(:) :: z_eta 		!Grid points for eta
-  real(dp),    allocatable, dimension(:) :: x_eta              ! Grid points for eta
-  real(dp),    allocatable, dimension(:) :: a_eta              ! Grid points for eta
-  real(dp),    allocatable, dimension(:) :: eta, eta2          ! Eta and eta'' at each grid point
-  real(dp),    allocatable, dimension(:) :: dydx
+    integer(i4b)                           :: n_eta              ! Number of eta grid poins
+    real(dp),    allocatable, dimension(:) :: z_eta 		!Grid points for eta
+    real(dp),    allocatable, dimension(:) :: x_eta              ! Grid points for eta
+    real(dp),    allocatable, dimension(:) :: a_eta              ! Grid points for eta
+    real(dp),    allocatable, dimension(:) :: eta, eta2          ! Eta and eta'' at each grid point
+    real(dp),    allocatable, dimension(:) :: dydx
 
+    real(dp)    				 :: rho_m0 !matter density today
+    real(dp) 				 :: rho_b0 !baryong density today
+    real(dp)				 :: rho_r0 !radiation density today
+    real(dp) 				 :: rho_nu0 !neutrino density today
+    real(dp)				 :: rho_lambda0 !vacuum energy density today
 
-  real(dp)    				 :: rho_m0 !matter density today
-  real(dp) 				 :: rho_b0 !baryong density today
-  real(dp)				 :: rho_r0 !radiation density today
-  real(dp) 				 :: rho_nu0 !neutrino density today
-  real(dp)				 :: rho_lambda0 !vacuum energy density today
+    real(dp),    allocatable, dimension(:) :: rho_m !matter density
+    real(dp),    allocatable, dimension(:) :: rho_b !baryong density
+    real(dp),    allocatable, dimension(:) :: rho_r !radiation density
+    real(dp),    allocatable, dimension(:) :: rho_nu !neutrino density
+    real(dp),    allocatable, dimension(:) :: rho_lambda !vacuum energy density
 
-  real(dp),    allocatable, dimension(:) :: rho_m !matter density
-  real(dp),    allocatable, dimension(:) :: rho_b !baryong density
-  real(dp),    allocatable, dimension(:) :: rho_r !radiation density
-  real(dp),    allocatable, dimension(:) :: rho_nu !neutrino density
-  real(dp),    allocatable, dimension(:) :: rho_lambda !vacuum energy density
+    real(dp),    allocatable, dimension(:) :: Omega_mx !Relative densities
+    real(dp),    allocatable, dimension(:) :: Omega_bx
+    real(dp),    allocatable, dimension(:) :: Omega_rx 
+    real(dp),    allocatable, dimension(:) :: Omega_nux 
+    real(dp),    allocatable, dimension(:) :: Omega_lambdax 
 
-  real(dp),    allocatable, dimension(:) :: Omega_mx !Relative densities
-  real(dp),    allocatable, dimension(:) :: Omega_bx
-  real(dp),    allocatable, dimension(:) :: Omega_rx 
-  real(dp),    allocatable, dimension(:) :: Omega_nux 
-  real(dp),    allocatable, dimension(:) :: Omega_lambdax 
-
-  real(dp),    allocatable, dimension(:) :: H !Huble constant as func of x
+    real(dp),    allocatable, dimension(:) :: H !Huble constant as func of x
 
 
 contains
-
   subroutine initialize_time_mod
     implicit none
 
@@ -48,7 +46,6 @@ contains
     real(dp)     :: z_start_rec, z_end_rec, z_0, x_start_rec, x_end_rec, x_0
     real(dp)     :: dx, x_eta1, x_eta2, a_init,h1,eta_init,a_end,rho_crit0,rho_crit
     real(dp)     :: eps,hmin,yp1,ypn
-
 
     ! Define two epochs, 1) during and 2) after recombination.
     n1          = 200                       ! Number of grid points during recombination
@@ -77,7 +74,7 @@ contains
     allocate(x_t(n_t))
 
     do i = 0,n1-1 ! Fill interval during recombination
-       x_t(i+1)= x_start_rec + i*(x_end_rec-x_start_rec)/(n1-1)
+        x_t(i+1)= x_start_rec + i*(x_end_rec-x_start_rec)/(n1-1)
     end do
 
     do i = 1,n2 !Fill from end of recomb to today
@@ -87,7 +84,7 @@ contains
     !write(*,*) x_t !print x_t to terminal
 
 
-    allocate(a_t(n_t+1))
+    allocate(a_t(n_t))
     a_t = exp(x_t) !fill the a grid using the x grid
 
     !write(*,*) a_t !print a_t to terminal
@@ -140,27 +137,27 @@ contains
     allocate(H(n_eta))
 
 
-    do i=1,n_eta+1
+    do i=1,n_eta
     H(i) = get_H(x_eta(i))
-    Omega_mx(i) 	= Omega_m 	*H_0**2.d0/H(i)**2.d0	*a_eta(i)**-3.d0
-    Omega_bx(i) 	= Omega_b 	*H_0**2.d0/H(i)**2.d0	*a_eta(i)**-3.d0
-    Omega_rx(i) 	= Omega_r 	*H_0**2.d0/H(i)**2.d0	*a_eta(i)**-4.d0
-    Omega_nux(i) 	= Omega_nu 	*H_0**2.d0/H(i)**2.d0	*a_eta(i)**-4.d0
-    Omega_lambdax(i) 	= Omega_lambda	*H_0**2.d0/H(i)**2.d0
+    Omega_mx(i) 	= Omega_m 	*(H_0/H(i))**2	*a_eta(i)**-3.d0
+    Omega_bx(i) 	= Omega_b 	*(H_0/H(i))**2	*a_eta(i)**-3.d0
+    Omega_rx(i) 	= Omega_r 	*(H_0/H(i))**2	*a_eta(i)**-4.d0
+    Omega_nux(i) 	= Omega_nu 	*(H_0/H(i))**2	*a_eta(i)**-4.d0
+    Omega_lambdax(i) 	= Omega_lambda	*(H_0/H(i))**2
     end do
     !End of density calculations
 
 
 
-    allocate(eta(n_eta+1))
+    allocate(eta(n_eta))
     eta(1) = eta_init !Start value of eta 
 
     h1 = abs(1.d-2*(a_eta(1)-a_eta(2))) !Defines the steplength
     allocate(dydx(1))
 
 
-    do i =2,n_eta+1
-	eta(i) =eta(i-1)
+    do i =2,n_eta
+        eta(i) =eta(i-1)
         call odeint(eta(i:i),a_eta(i-1) ,a_eta(i), eps, h1, hmin, eta_derivs, bsstep, output) 
     end do
     !write(*,*) eta !check that eta gives reasonable values
@@ -168,15 +165,15 @@ contains
 
     !Spline eta and place the second derivative of
     !this function in eta2
-    allocate(eta2(n_eta+1))
+    allocate(eta2(n_eta))
     yp1 = 1.d30
     ypn = 1.d30
     call spline(a_eta, eta, yp1, ypn, eta2)
     
 
-    allocate(eta_t(n_t+1))
-    do i=1,n_t+1
-       eta_t(i) = get_eta(x_t(i))
+    allocate(eta_t(n_t))
+    do i=1,n_t
+        eta_t(i) = get_eta(x_t(i))
     end do
 
 
@@ -187,23 +184,23 @@ contains
 
   !Begin Stuff needed to make odeint work
   subroutine eta_derivs(a, eta, dydx) !Define the derivative d/da(eta)
-       use healpix_types
-         implicit none
-         real(dp),               intent(in)  :: a
-         real(dp), dimension(:), intent(in)  :: eta
-         real(dp), dimension(:), intent(out) :: dydx
-	 real(dp) :: H_p
-	 real(dp) :: x
-         x = log(a)
-	 H_p = get_H_p(x)
-         dydx = c/(a*H_p)
+    use healpix_types
+        implicit none
+        real(dp),               intent(in)  :: a
+        real(dp), dimension(:), intent(in)  :: eta
+        real(dp), dimension(:), intent(out) :: dydx
+	real(dp)                            :: H_p
+	real(dp)                            :: x
+        x = log(a)
+	H_p = get_H_p(x)
+        dydx = c/(a*H_p)
   end subroutine eta_derivs
 
   subroutine output(x, y)
-         use healpix_types
-         implicit none
-         real(dp),               intent(in)  :: x
-         real(dp), dimension(:), intent(in)  :: y
+        use healpix_types
+        implicit none
+        real(dp),               intent(in)  :: x
+        real(dp), dimension(:), intent(in)  :: y
   end subroutine output
   !End Stuff needed to make odeint work
 
@@ -212,45 +209,44 @@ contains
   ! Task: Write a function that computes H at given x
   function get_H(x)
     implicit none
-
-    real(dp), intent(in) :: x
-    real(dp)             :: get_H
-    real(dp) 		 :: a
-    a = exp(x)
-    get_H = H_0*sqrt((Omega_b+Omega_m)*a**-3.d0 + (Omega_r+Omega_nu)*a**-4.d0 + Omega_lambda)
+      real(dp), intent(in) :: x
+      real(dp)             :: get_H
+      real(dp) 		   :: a
+      a = exp(x)
+      get_H = H_0*sqrt((Omega_b+Omega_m)*a**-3.d0 + (Omega_r+Omega_nu)*a**-4.d0 + Omega_lambda)
   end function get_H
 
   ! Task: Write a function that computes H' = a*H  at given x
   function get_H_p(x)
     implicit none
 
-    real(dp), intent(in) :: x
-    real(dp)             :: get_H_p
-    real(dp) 		 :: a
-    a = exp(x)
-    get_H_p = a*get_H(x)
+      real(dp), intent(in) :: x
+      real(dp)             :: get_H_p
+      real(dp) 		   :: a
+      a = exp(x)
+      get_H_p = a*get_H(x)
   end function get_H_p
 
   ! Task: Write a function that computes dH'/dx at given x
   function get_dH_p(x)
-    implicit none
+      implicit none
 
-    real(dp), intent(in) :: x
-    real(dp)             :: get_dH_p
-    get_dH_p = H_0/2.d0*1/sqrt((Omega_m+Omega_b)*exp(-x)+Omega_r*exp(-2.d0*x) &
-    + Omega_lambda*exp(2.d0*x)) * (-(Omega_m+Omega_b)*exp(-x)-2.d0*Omega_r*exp(-2.d0*x) &
-    + 2.d0*Omega_lambda*exp(2.d0*x))
+      real(dp), intent(in) :: x
+      real(dp)             :: get_dH_p
+      get_dH_p = H_0/2.d0*1/sqrt((Omega_m+Omega_b)*exp(-x)+Omega_r*exp(-2.d0*x) &
+                 + Omega_lambda*exp(2.d0*x)) * (-(Omega_m+Omega_b)*exp(-x)-2.d0*Omega_r*exp(-2.d0*x) &
+                 + 2.d0*Omega_lambda*exp(2.d0*x))
   end function get_dH_p
 
   ! Task: Write a function that computes eta(x), using the previously precomputed splined function
   function get_eta(x_in)
     implicit none
 
-    real(dp), intent(in) :: x_in
-    real(dp)             :: get_eta
-    real(dp) 		 :: a_in
-    a_in = exp(x_in)
-    get_eta = splint(a_eta, eta, eta2, a_in)
+      real(dp), intent(in) :: x_in
+      real(dp)             :: get_eta
+      real(dp) 		   :: a_in
+      a_in = exp(x_in)
+      get_eta = splint(a_eta, eta, eta2, a_in)
   end function get_eta
 
 end module time_mod

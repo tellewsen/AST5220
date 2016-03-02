@@ -15,9 +15,11 @@ x,a,eta = loadtxt("xaeta.dat",unpack=True)
 H,z = loadtxt("Hz.dat",unpack=True)
 #Test x,test eta
 x_t,eta_t = loadtxt("eta_t.dat",unpack=True)
+x_rec,z_rec,X_e = loadtxt("X_e.dat",unpack=True)
+n_e = loadtxt("n_e.dat",unpack=True)
+x_test,z_test,n_etest = loadtxt("n_etest.dat",unpack=True)
 
-
-
+"""
 plt.figure(0)
 plt.plot(x,m,label = r'$\Omega_m$')
 plt.plot(x,b,label = r'$\Omega_b$')
@@ -58,7 +60,24 @@ plt.xscale('log')
 plt.xlim([z[0],z[-1]])
 plt.xlabel(r'z')
 plt.ylabel(r'H(z)[km s$^{-1}$Mpc$^{-1}$]')
+
+plt.figure(4)
+plt.plot(z_rec,X_e,label = r'$X_e$')
+plt.yscale('log')
+#plt.xscale('log')
+plt.xlim([z_rec[0],z_rec[-1]])
+plt.xlabel(r'z')
+plt.ylabel(r'$X_e$')
 plt.show()
-
-
+"""
+plt.figure(5)
+plt.plot(z_rec ,n_e,'--',label = r'$n_{e}$')
+plt.plot(z_test,n_etest,'-',label = r'Splined')
+plt.yscale('log')
+#plt.xscale('log')
+plt.xlim([z_rec[0],z_rec[-1]])
+plt.xlabel(r'z')
+plt.ylabel(r'$n_e$[m$^{-3}$]')
+plt.legend()
+plt.show()
 
