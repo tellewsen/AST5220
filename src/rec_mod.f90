@@ -12,18 +12,19 @@ module rec_mod
     real(dp), allocatable, dimension(:)          :: n_e, n_e2,logn_e,logn_e2 ! Splined (log of) electron density, n_e
     real(dp), allocatable, dimension(:)          :: g, g2, g22               ! Splined visibility function
     real(dp), allocatable, dimension(:)          :: H_rec,X_e  	             ! Variables for H and X_e
-    integer(i4b)                                 :: j                        !Used for choosing right indexes
+    integer(i4b)                                 :: j,k                        !Used for choosing right indexes
     real(dp), allocatable, dimension(:)          :: x_test,n_etest,z_test,a_test  !Used for testing the spline
+    real(dp)                                     :: x_0
 contains
 
     subroutine initialize_rec_mod
     implicit none
     
-    integer(i4b) :: i,k,n1,n2
+    integer(i4b) :: i,n1,n2
     real(dp)     :: saha_limit, y, T_b, n_b, dydx, xmin, xmax, dx, f, n_e0, X_e0, &
 		    X_econst, phi2,alpha2,beta,beta2,n1s,lambda_alpha,lambda_2s1s,C_r
     real(dp)     :: eps,hmin,yp1,ypn,h1,h2
-    real(dp)     :: z_start_rec, z_end_rec, z_0, x_start_rec, x_end_rec, x_0		
+    real(dp)     :: z_start_rec, z_end_rec, z_0, x_start_rec, x_end_rec
     logical(lgt) :: use_saha
 
 
@@ -95,11 +96,7 @@ contains
     !write(*,*) x_rec
 
 
-
-
-
-
-    h1 = abs(1.d-2*(x_rec(1)-x_rec(2)))     !Defines the steplength to 100th of length between 					   
+    h1 = abs(1.d-2*(x_rec(1)-x_rec(2)))     !Defines the steplength to 100th of length between     
     h2 = abs(1.d-2*(x_rec(n-1)-x_rec(n-2))) !neighbouring x values, for both intervals
 
     !Since we have two different steplengths in our x array 
@@ -130,16 +127,24 @@ contains
 
     !Compute splined (log of) electron density function
     logn_e =log(n_e) !Turn n_e into its logarithm
-    !Construct the spline of log(n_e)
     call spline(x_rec, logn_e, yp1, ypn,logn_e2)
-    !test spline for x values between those used for spline
+
+    !Test spline for x values between those used for spline
     do i=1,n  
         n_etest(i) = get_n_e(x_test(i))
     end do
 
-    ! Task: Compute optical depth at all grid points
 
 
+    !Compute optical depth at all grid points
+    tau(n) = 0 !Optical depth today is 0
+    do k=n-1,1,-1
+        tau(k) = tau(k+1)
+        call odeint(tau(k:k),x_rec(k+1),x_rec(k),eps,h1,hmin,dtaudx,bsstep,output2)
+    end do
+
+    call spline(x_rec, tau, yp1, ypn,tau2)
+!    write(*,*) tau
     ! Task: Compute splined (log of) optical depth
     ! Task: Compute splined second derivative of (log of) optical depth
 
@@ -197,12 +202,25 @@ contains
          real(dp), dimension(:), intent(in)  :: y
   end subroutine output1
   !End Stuff needed to make odeint work
+  subroutine output2(x, y)
+         use healpix_types
+         implicit none
+         real(dp),               intent(in)  :: x
+         real(dp), dimension(:), intent(in)  :: y
+  end subroutine output2
+  !End Stuff needed to make odeint work
+  subroutine dtaudx(x_rec,tau, dydx) 
+    use healpix_types
+    implicit none
+    real(dp),               intent(in)  :: x_rec
+    real(dp), dimension(:), intent(in)  :: tau
+    real(dp), dimension(:), intent(out) :: dydx
+    dydx         = -n_e(k)*sigma_T/H_rec(k)*c
+  end subroutine dtaudx
 
 
 
-
-  ! Task: Complete routine for computing n_e at arbitrary x, using precomputed information
-  ! Hint: Remember to exponentiate...
+  !Complete routine for computing n_e at arbitrary x, using precomputed information
   function get_n_e(x_in)
     implicit none
 

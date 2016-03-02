@@ -11,25 +11,25 @@ module time_mod
     real(dp),    allocatable, dimension(:) :: eta_t              ! Grid of relevant eta-values
 
     integer(i4b)                           :: n_eta              ! Number of eta grid poins
-    real(dp),    allocatable, dimension(:) :: z_eta 		!Grid points for eta
+    real(dp),    allocatable, dimension(:) :: z_eta 		 !Grid points for eta
     real(dp),    allocatable, dimension(:) :: x_eta              ! Grid points for eta
     real(dp),    allocatable, dimension(:) :: a_eta              ! Grid points for eta
     real(dp),    allocatable, dimension(:) :: eta, eta2          ! Eta and eta'' at each grid point
     real(dp),    allocatable, dimension(:) :: dydx
 
-    real(dp)    				 :: rho_m0 !matter density today
-    real(dp) 				 :: rho_b0 !baryong density today
-    real(dp)				 :: rho_r0 !radiation density today
-    real(dp) 				 :: rho_nu0 !neutrino density today
-    real(dp)				 :: rho_lambda0 !vacuum energy density today
+    real(dp)                               :: rho_m0             !Matter density today
+    real(dp) 				   :: rho_b0             !Baryon density today
+    real(dp)				   :: rho_r0             !Radiation density today
+    real(dp) 				   :: rho_nu0            !Neutrino density today
+    real(dp)				   :: rho_lambda0        !Vacuum energy density today
 
-    real(dp),    allocatable, dimension(:) :: rho_m !matter density
-    real(dp),    allocatable, dimension(:) :: rho_b !baryong density
-    real(dp),    allocatable, dimension(:) :: rho_r !radiation density
-    real(dp),    allocatable, dimension(:) :: rho_nu !neutrino density
-    real(dp),    allocatable, dimension(:) :: rho_lambda !vacuum energy density
+    real(dp),    allocatable, dimension(:) :: rho_m              !Matter density
+    real(dp),    allocatable, dimension(:) :: rho_b              !Baryon density
+    real(dp),    allocatable, dimension(:) :: rho_r              !Radiation density
+    real(dp),    allocatable, dimension(:) :: rho_nu             !Neutrino density
+    real(dp),    allocatable, dimension(:) :: rho_lambda         !Vacuum energy density
 
-    real(dp),    allocatable, dimension(:) :: Omega_mx !Relative densities
+    real(dp),    allocatable, dimension(:) :: Omega_mx           !Relative densities
     real(dp),    allocatable, dimension(:) :: Omega_bx
     real(dp),    allocatable, dimension(:) :: Omega_rx 
     real(dp),    allocatable, dimension(:) :: Omega_nux 
@@ -78,7 +78,7 @@ contains
     end do
 
     do i = 1,n2 !Fill from end of recomb to today
-        x_t(n1+i) = x_end_rec + (i)*(x_0-x_end_rec)/(n2)
+        x_t(n1+i) = x_end_rec + i*(x_0-x_end_rec)/(n2)
     end do
 
     !write(*,*) x_t !print x_t to terminal
@@ -96,13 +96,12 @@ contains
     allocate(z_eta(n_eta))
 
     x_eta(1) = x_eta1
-    do i = 1,n_eta-1
+    do i = 1,(n_eta-1)
         x_eta(i+1) = x_eta1 + i*(x_eta2-x_eta1)/(n_eta-1)
     end do
-
     a_eta = exp(x_eta)
     z_eta = 1.d0/a_eta -1.d0
-
+    
     !write(*,*) z_eta
     !write(*,*) size(z_eta)
     !print *, "x"

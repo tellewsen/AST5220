@@ -5,18 +5,20 @@ rc('font',**{'family':'serif'}) # This is for Latex writing
 
 #Import datafiles
 #Relative densities
-nu,lamda = loadtxt("omega_nulambda.dat",unpack=True)
-m,b,r = loadtxt("omega_mbr.dat",unpack=True)
-total=nu+lamda+m+b+r
+nu,lamda              = loadtxt("omega_nulambda.dat",unpack=True)
+m,b,r                 = loadtxt("omega_mbr.dat",unpack=True)
+total                 = nu+lamda+m+b+r
 
 #x,scalefactor,conformal time
-x,a,eta = loadtxt("xaeta.dat",unpack=True)
+x,a,eta               = loadtxt("xaeta.dat",unpack=True)
 #Hubbleparam,redshift
-H,z = loadtxt("Hz.dat",unpack=True)
+H,z                   = loadtxt("Hz.dat",unpack=True)
 #Test x,test eta
-x_t,eta_t = loadtxt("eta_t.dat",unpack=True)
-x_rec,z_rec,X_e = loadtxt("X_e.dat",unpack=True)
-n_e = loadtxt("n_e.dat",unpack=True)
+x_t,eta_t             = loadtxt("eta_t.dat",unpack=True)
+
+
+x_rec,z_rec,X_e       = loadtxt("X_e.dat",unpack=True)
+n_e,tau,tau2          = loadtxt("n_e.dat",unpack=True)
 x_test,z_test,n_etest = loadtxt("n_etest.dat",unpack=True)
 
 """
@@ -70,6 +72,7 @@ plt.xlabel(r'z')
 plt.ylabel(r'$X_e$')
 plt.show()
 """
+"""
 plt.figure(5)
 plt.plot(z_rec ,n_e,'--',label = r'$n_{e}$')
 plt.plot(z_test,n_etest,'-',label = r'Splined')
@@ -78,6 +81,18 @@ plt.yscale('log')
 plt.xlim([z_rec[0],z_rec[-1]])
 plt.xlabel(r'z')
 plt.ylabel(r'$n_e$[m$^{-3}$]')
+plt.legend()
+plt.show()
+"""
+print tau
+plt.figure(6)
+plt.plot(x_rec ,tau,'-',label = r'$\tau(x)$')
+plt.plot(x_rec ,tau2,'--',label = r'$\tau^\prime(x)$')
+plt.yscale('log')
+#plt.xscale('log')
+plt.xlim([x_rec[0],x_rec[-1]])
+plt.xlabel(r'x')
+plt.ylabel(r'$\tau(x)$]')
 plt.legend()
 plt.show()
 
