@@ -32,7 +32,7 @@ program cmbspec
     open (unit=out_unit6,file="X_e.dat"           ,action="write",status="replace")
     open (unit=out_unit7,file="n_e.dat"           ,action="write",status="replace")
     open (unit=out_unit8,file="n_etest.dat"       ,action="write",status="replace")
-    open (unit=out_unit9,file="tau2.dat"              ,action="write",status="replace")
+    open (unit=out_unit9,file="tau2.dat"          ,action="write",status="replace")
     !Write to all the files
     do i=1,n_eta
         write (out_unit1,*) x_eta(i) , a_eta(i),eta(i)/Mpc
@@ -45,9 +45,9 @@ program cmbspec
     end do
     do i=1,n
         write (out_unit6,*) x_rec(i),z_rec(i),X_e(i)
-	write (out_unit7,*) n_e(i),tau(i),tau2(i)
+	write (out_unit7,*) n_e(i),tau(i),dtau(i)
         write (out_unit8,*) x_test(i),z_test(i),n_etest(i)
-        write (out_unit9,*) tau22(i)
+        write (out_unit9,*) ddtau(i),tau_test(i),dtau_test(i)
     end do
     !Close all the files
     close (out_unit1)
@@ -58,5 +58,6 @@ program cmbspec
     close (out_unit6)
     close (out_unit7)
     close (out_unit8)
+    close (out_unit9)
 end program cmbspec
 

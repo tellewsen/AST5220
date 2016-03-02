@@ -8,12 +8,15 @@ module rec_mod
 
     integer(i4b)                                 :: n                        ! Number of grid points
     real(dp), allocatable, dimension(:)          :: x_rec,a_rec,z_rec        ! Grid
-    real(dp), allocatable, dimension(:)          :: tau, tau2, tau22         ! Splined tau and second derivatives
+    real(dp), allocatable, dimension(:)          :: tau, dtau, ddtau         ! Splined tau and derivatives
+    real(dp), allocatable, dimension(:)          :: logtau, logdtau, logddtau! Splined log tau and derivatives
+    real(dp), allocatable, dimension(:)          :: d4tau,logd4tau
     real(dp), allocatable, dimension(:)          :: n_e, n_e2,logn_e,logn_e2 ! Splined (log of) electron density, n_e
     real(dp), allocatable, dimension(:)          :: g, g2, g22               ! Splined visibility function
     real(dp), allocatable, dimension(:)          :: H_rec,X_e  	             ! Variables for H and X_e
     integer(i4b)                                 :: j,k                        !Used for choosing right indexes
-    real(dp), allocatable, dimension(:)          :: x_test,n_etest,z_test,a_test  !Used for testing the spline
+    real(dp), allocatable, dimension(:)          :: x_test,n_etest,z_test,a_test  !Used for testing the splines
+    real(dp), allocatable, dimension(:)          :: tau_test,dtau_test,ddtau_test  !Used for testing the splines
     real(dp)                                     :: x_0
 contains
 
@@ -22,7 +25,7 @@ contains
     
     integer(i4b) :: i,n1,n2
     real(dp)     :: saha_limit, y, T_b, n_b, dydx, xmin, xmax, dx, f, n_e0, X_e0, &
-		    X_econst, phi2,alpha2,beta,beta2,n1s,lambda_alpha,lambda_2s1s,C_r
+		    X_econst, phi2,alpha2,beta,beta2,n1s,lambda_alpha,C_r
     real(dp)     :: eps,hmin,yp1,ypn,h1,h2
     real(dp)     :: z_start_rec, z_end_rec, z_0, x_start_rec, x_end_rec
     logical(lgt) :: use_saha
@@ -54,8 +57,15 @@ contains
     allocate(X_e(n))
 
     allocate(tau(n))
-    allocate(tau2(n))
-    allocate(tau22(n))
+    allocate(dtau(n))
+    allocate(ddtau(n))
+    allocate(d4tau(n))
+
+    allocate(logtau(n))
+    allocate(logdtau(n))
+    allocate(logddtau(n))
+    allocate(logd4tau(n))
+
 
     allocate(n_e(n))
     allocate(n_e2(n))
@@ -70,6 +80,8 @@ contains
     allocate(z_test(n))
     allocate(a_test(n))
     allocate(n_etest(n))
+    allocate(tau_test(n))
+    allocate(dtau_test(n))
 
     !fill test 
     do i=0,n-1
@@ -135,18 +147,39 @@ contains
 
 
 
-    !Compute optical depth at all grid points
+    !Compute optical depth,and first deriv at all grid points
     tau(n) = 0 !Optical depth today is 0
     do k=n-1,1,-1
         tau(k) = tau(k+1)
-        call odeint(tau(k:k),x_rec(k+1),x_rec(k),eps,h1,hmin,dtaudx,bsstep,output2)
+        call odeint(tau(k:k),x_rec(k+1),x_rec(k),eps,h1,hmin,dtaudx,bsstep,output1)
     end do
 
-    call spline(x_rec, tau, yp1, ypn,tau2)
-    call spline(x_rec, tau2,yp1, ypn,tau22)
-!    write(*,*) tau
-    ! Task: Compute splined (log of) optical depth
-    ! Task: Compute splined second derivative of (log of) optical depth
+    !Compute splined (log of) optical depth
+    call spline(x_rec, tau, yp1, ypn,ddtau)
+    
+    !Test the get_tau function
+    do i=1,n
+        tau_test(i) = get_tau(x_test(i))
+    end do
+
+
+    !Compute firste derivative of optical depth
+    do i=1,n
+        dtau(i) = -n_e(i)*sigma_T*c/H_rec(i)
+    end do
+
+
+    !Test the get_dtau function
+    do i=1,n
+        dtau_test(i) = get_dtau(x_test(i))
+    end do
+
+    !Compute splined second derivative of (log of) optical depth
+    call spline(x_rec,ddtau,yp1,ypn,d4tau)
+    do i=1,n
+        ddtau = get_ddtau(x_rec(i))
+    end do
+
 
 
     ! Task: Compute splined visibility function
@@ -175,9 +208,9 @@ contains
     !sets it to infinity. However beta goes to zero before that 
     !so it should be 0 even if the exponent is enormous.
     if(T_b <= 169.d0) then
-        beta2 = 0.d0
+        beta2    = 0.d0
     else
-        beta2        = beta*exp((3.d0*epsilon_0)/(4.d0*k_b*T_b))
+        beta2    = beta*exp((3.d0*epsilon_0)/(4.d0*k_b*T_b))
     end if
 
     n1s          = (1.d0-Xe)*n_b
@@ -195,20 +228,6 @@ contains
     !write(*,*) beta,beta2,C_r
   end subroutine dX_edx
 
-  subroutine output1(x, y)
-         use healpix_types
-         implicit none
-         real(dp),               intent(in)  :: x
-         real(dp), dimension(:), intent(in)  :: y
-  end subroutine output1
-  !End Stuff needed to make odeint work
-  subroutine output2(x, y)
-         use healpix_types
-         implicit none
-         real(dp),               intent(in)  :: x
-         real(dp), dimension(:), intent(in)  :: y
-  end subroutine output2
-  !End Stuff needed to make odeint work
   subroutine dtaudx(x_rec,tau, dydx) 
     use healpix_types
     implicit none
@@ -218,6 +237,13 @@ contains
     dydx         = -n_e(k)*sigma_T/H_rec(k)*c
   end subroutine dtaudx
 
+  subroutine output1(x, y)
+         use healpix_types
+         implicit none
+         real(dp),               intent(in)  :: x
+         real(dp), dimension(:), intent(in)  :: y
+  end subroutine output1
+  !End Stuff needed to make odeint work
 
 
   !Complete routine for computing n_e at arbitrary x, using precomputed information
@@ -232,21 +258,21 @@ contains
   end function get_n_e
 
   ! Task: Complete routine for computing tau at arbitrary x, using precomputed information
-  function get_tau(x)
+  function get_tau(x_in)
     implicit none
 
-    real(dp), intent(in) :: x
+    real(dp), intent(in) :: x_in
     real(dp)             :: get_tau
-    get_tau=0
+    get_tau  = splint(x_rec,tau,ddtau,x_in)
   end function get_tau
 
   ! Task: Complete routine for computing the derivative of tau at arbitrary x, using precomputed information
-  function get_dtau(x)
+  function get_dtau(x_in)
     implicit none
 
-    real(dp), intent(in) :: x
+    real(dp), intent(in) :: x_in
     real(dp)             :: get_dtau
-get_dtau=0
+    get_dtau = splint_deriv(x_rec,tau,ddtau,x_in)
   end function get_dtau
 
   ! Task: Complete routine for computing the second derivative of tau at arbitrary x, 
