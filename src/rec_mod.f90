@@ -81,7 +81,6 @@ contains
     do i = 0,n1-1 ! Fill interval during recombination
        x_rec(i+1)= x_start_rec + i*(x_end_rec-x_start_rec)/(n1-1)
     end do
-
     do i = 1,n2 !Fill from end of recomb to today
         x_rec(n1+i) = x_end_rec + i*(x_0-x_end_rec)/(n2)
     end do
@@ -109,10 +108,10 @@ contains
     !Compute X_e and n_e at all grid times
     use_saha = .true.
     do j = 1, n
+        n_b = Omega_b*rho_c/(m_H*a_rec(j)**3)	
         if (use_saha) then
             ! Use the Saha equation
 	    T_b = T_0/a_rec(j)
-            n_b = Omega_b*rho_c/(m_H*a_rec(j)**3)
             X_econst = 1.d0/n_b*(m_e*k_b*T_b/(2.d0*hbar**2*pi))**1.5d0*exp(-epsilon_0/(k_b*T_b))
             X_e(j) = (-X_econst + sqrt(X_econst**2 +4.d0*X_econst))/2.d0
 
@@ -128,7 +127,7 @@ contains
     !Compute splined (log of) electron density function
     logn_e =log(n_e) !Turn n_e into its logarithm
     call spline(x_rec, logn_e, yp1, ypn,logn_e2)
-
+    !call splint_deriv()
     !Test spline for x values between those used for spline
     do i=1,n  
         n_etest(i) = get_n_e(x_test(i))
@@ -144,6 +143,7 @@ contains
     end do
 
     call spline(x_rec, tau, yp1, ypn,tau2)
+    call spline(x_rec, tau2,yp1, ypn,tau22)
 !    write(*,*) tau
     ! Task: Compute splined (log of) optical depth
     ! Task: Compute splined second derivative of (log of) optical depth

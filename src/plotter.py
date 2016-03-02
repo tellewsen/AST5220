@@ -20,7 +20,7 @@ x_t,eta_t             = loadtxt("eta_t.dat",unpack=True)
 x_rec,z_rec,X_e       = loadtxt("X_e.dat",unpack=True)
 n_e,tau,tau2          = loadtxt("n_e.dat",unpack=True)
 x_test,z_test,n_etest = loadtxt("n_etest.dat",unpack=True)
-
+tau22                 = loadtxt("tau2.dat",unpack=True)
 """
 plt.figure(0)
 plt.plot(x,m,label = r'$\Omega_m$')
@@ -84,15 +84,15 @@ plt.ylabel(r'$n_e$[m$^{-3}$]')
 plt.legend()
 plt.show()
 """
-print tau
 plt.figure(6)
 plt.plot(x_rec ,tau,'-',label = r'$\tau(x)$')
-plt.plot(x_rec ,tau2,'--',label = r'$\tau^\prime(x)$')
+plt.plot(x_rec ,abs(tau2),'--',label = r'$|\tau^\prime(x)|$')
+plt.plot(x_rec ,abs(tau22),'-.',label = r'$|\tau^{\prime\prime}(x)|$')
 plt.yscale('log')
 #plt.xscale('log')
 plt.xlim([x_rec[0],x_rec[-1]])
 plt.xlabel(r'x')
-plt.ylabel(r'$\tau(x)$]')
+plt.ylabel(r'$\tau$,$|\tau^\prime|$,$|\tau^{\prime\prime}|$')
 plt.legend()
 plt.show()
 
