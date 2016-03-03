@@ -85,21 +85,19 @@ contains
     z_test = 1.d0/exp(x_test) -1.d0
 
     !Fill in x,a,z (rec) grids
-    do i = 0,n1-1 ! Fill interval during recombination
-       x_rec(i+1)= x_start_rec + i*(x_end_rec-x_start_rec)/(n1-1)
+    do i = 1,n1 ! Fill interval during recombination
+        x_rec(i)  = x_start_rec + (i-1)*(x_end_rec-x_start_rec)/(n1-1)
     end do
     do i = 1,n2 !Fill from end of recomb to today
         x_rec(n1+i) = x_end_rec + i*(x_0-x_end_rec)/(n2)
     end do
-
+    write(*,*) x_rec
     a_rec = exp(x_rec)
     z_rec = 1.d0/a_rec -1.d0
 
     do i = 1,n
         H_rec(i) = get_H(x_rec(i))
     end do
-
-    !write(*,*) x_rec
 
 
     h1 = abs(1.d-2*(x_rec(1)-x_rec(2)))     !Defines the steplength to 100th of length between     
@@ -151,6 +149,7 @@ contains
 
     !Compute splined (log of) optical depth
     call spline(x_rec, tau, yp1, ypn,ddtau)
+    !write(*,*) ddtau
     
     !Test the get_tau function
     do i=1,n
