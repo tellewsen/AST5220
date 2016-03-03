@@ -6,16 +6,17 @@ module rec_mod
     use spline_1D_mod
     implicit none
 
-    integer(i4b)                                 :: n                        ! Number of grid points
-    real(dp), allocatable, dimension(:)          :: x_rec,a_rec,z_rec        ! Grid
-    real(dp), allocatable, dimension(:)          :: tau, dtau, ddtau         ! Splined tau and derivatives
+    integer(i4b)                                 :: n                             ! Number of grid points
+    real(dp), allocatable, dimension(:)          :: x_rec,a_rec,z_rec             ! Grid
+    real(dp), allocatable, dimension(:)          :: tau, dtau, ddtau              ! Splined tau and derivatives
     real(dp), allocatable, dimension(:)          :: d4tau
-    real(dp), allocatable, dimension(:)          :: n_e, n_e2,logn_e,logn_e2 ! Splined (log of) electron density, n_e
-    real(dp), allocatable, dimension(:)          :: g, g2, g22               ! Splined visibility function
-    real(dp), allocatable, dimension(:)          :: H_rec,X_e  	             ! Variables for H and X_e
-    integer(i4b)                                 :: j,k                        !Used for choosing right indexes
+    real(dp), allocatable, dimension(:)          :: n_e, n_e2,logn_e,logn_e2      ! Splined (log of) electron density, n_e
+    real(dp), allocatable, dimension(:)          :: g,dg,ddg,d4g                    ! Splined visibility function
+    real(dp), allocatable, dimension(:)          :: g_test,dg_test,ddg_test       ! Splined visibility function
+    real(dp), allocatable, dimension(:)          :: H_rec,X_e  	                  ! Variables for H and X_e
+    integer(i4b)                                 :: j,k                           !Used for choosing right indexes
     real(dp), allocatable, dimension(:)          :: x_test,n_etest,z_test,a_test  !Used for testing the splines
-    real(dp), allocatable, dimension(:)          :: tau_test,dtau_test,ddtau_test  !Used for testing the splines
+    real(dp), allocatable, dimension(:)          :: tau_test,dtau_test,ddtau_test !Used for testing the splines
     real(dp)                                     :: x_0
     real(dp)                                     :: x_test_start
     real(dp)                                     :: x_test_end
@@ -32,7 +33,7 @@ contains
     logical(lgt) :: use_saha
 
 
-    x_test_start = -7.0d0
+    x_test_start = -7.2d0
     x_test_end   = -1.0d0
     saha_limit   = 0.99d0       ! Switch from Saha to Peebles when X_e < 0.99
 
@@ -66,8 +67,10 @@ contains
     allocate(logn_e(n))
     allocate(logn_e2(n))
     allocate(g(n))
-    allocate(g2(n))
-    allocate(g22(n))
+    allocate(dg(n))
+    allocate(ddg(n))
+    allocate(d4g(n))
+
     allocate(x_test(n))
     allocate(z_test(n))
     allocate(a_test(n))
@@ -75,8 +78,9 @@ contains
     allocate(tau_test(n))
     allocate(dtau_test(n))
     allocate(ddtau_test(n))
-
-
+    allocate(g_test(n))
+    allocate(dg_test(n))
+    allocate(ddg_test(n))
 
     !fill test 
     do i=1,n
@@ -91,10 +95,11 @@ contains
     do i = 1,n2 !Fill from end of recomb to today
         x_rec(n1+i) = x_end_rec + i*(x_0-x_end_rec)/(n2)
     end do
-    write(*,*) x_rec
+
+    !write(*,*) x_rec
     a_rec = exp(x_rec)
     z_rec = 1.d0/a_rec -1.d0
-
+    
     do i = 1,n
         H_rec(i) = get_H(x_rec(i))
     end do
@@ -108,7 +113,7 @@ contains
     if (h2<h1) then
     h1=h2
     end if
-    
+    !print*,x_rec
 
     !Compute X_e and n_e at all grid times
     use_saha = .true.
@@ -117,7 +122,7 @@ contains
         if (use_saha) then
             ! Use the Saha equation
 	    T_b = T_0/a_rec(j)
-            X_econst = 1.d0/n_b*(m_e*k_b*T_b/(2.d0*hbar**2*pi))**1.5d0*exp(-epsilon_0/(k_b*T_b))
+            X_econst = 1.d0/n_b*((m_e*k_b*T_b)/(2.d0*hbar**2*pi))**1.5d0*exp(-epsilon_0/(k_b*T_b))
             X_e(j) = (-X_econst + sqrt(X_econst**2 +4.d0*X_econst))/2.d0
 
         if (X_e(j) < saha_limit) use_saha = .false.
@@ -127,12 +132,15 @@ contains
             call odeint(X_e(j:j),x_rec(j-1) ,x_rec(j), eps, h1, hmin, dX_edx, bsstep, output1) 
         end if
 	n_e(j) = X_e(j)*n_b !Calculate electron density
+        print *,use_saha, x_rec(j),X_e(j),n_e(j)
     end do
 
+
     !Compute splined (log of) electron density function
-    logn_e =log(n_e) !Turn n_e into its logarithm
+    logn_e =log(n_e)
     call spline(x_rec, logn_e, yp1, ypn,logn_e2)
-    !call splint_deriv()
+
+
     !Test spline for x values between those used for spline
     do i=1,n  
         n_etest(i) = get_n_e(x_test(i))
@@ -141,44 +149,52 @@ contains
 
 
     !Compute optical depth,and first deriv at all grid points
-    tau(n) = 0 !Optical depth today is 0
+    tau(n) = 0.d0 !Optical depth today is 0
     do k=n-1,1,-1
         tau(k) = tau(k+1)
         call odeint(tau(k:k),x_rec(k+1),x_rec(k),eps,h1,hmin,dtaudx,bsstep,output1)
     end do
 
-    !Compute splined (log of) optical depth
+    !Compute splined optical depth,and second derivative
     call spline(x_rec, tau, yp1, ypn,ddtau)
+    call spline(x_rec,ddtau,yp1,ypn,d4tau)
     !write(*,*) ddtau
-    
-    !Test the get_tau function
-    do i=1,n
-        tau_test(i) = get_tau(x_test(i))
-    end do
-
-
+ 
     !Compute firste derivative of optical depth
     do i=1,n
         dtau(i) = -n_e(i)*sigma_T*c/H_rec(i)
     end do
-
-
-    !Test the get_dtau function
+   
+    !Test the get_tau,get_dtau,get_ddtau function
     do i=1,n
+        tau_test(i) = get_tau(x_test(i))
         dtau_test(i) = get_dtau(x_test(i))
-    end do
-
-    !Compute splined second derivative of optical depth
-    call spline(x_rec,ddtau,yp1,ypn,d4tau)
-    !Test get_ddtau function
-    do i=1,n
         ddtau_test(i) = get_ddtau(x_test(i))
     end do
 
+    
+    !Compute g for values in x_rec
+    do i=1,n
+        g(i) = -dtau(i)*exp(-tau(i))
+    end do
 
 
-    ! Task: Compute splined visibility function
+    !Compute splined visibility function
+    call spline(x_rec,g,yp1,ypn,ddg)
+
+    !Test get_g and get_dg
+    do i=1,n
+        g_test(i)  = get_g(x_test(i))
+        dg_test(i) = get_dg(x_test(i))
+    end do
+
     ! Task: Compute splined second derivative of visibility function
+    call spline(x_rec,ddg,yp1,ypn,d4g)
+
+    !Test second derivative spline
+
+
+
 
 
   end subroutine initialize_rec_mod
@@ -194,10 +210,12 @@ contains
     real(dp) :: Xe
     Xe = X_e(1)
     T_b          = T_0/a_rec(j)
-    n_b          = Omega_b*rho_c/m_H/a_rec(j)**3
+    n_b          = Omega_b*rho_c/(m_H*a_rec(j)**3)
+
     phi2         = 0.448d0*log(epsilon_0/(k_b*T_b))
     alpha2       = 64.d0*pi/sqrt(27.d0*pi)*(alpha/m_e)**2*sqrt(epsilon_0/(k_b*T_b))*phi2 *hbar**2/c
-    beta         = alpha2 *(m_e*k_b*T_b/(2.d0*hbar**2*pi))**1.5d0*exp(-epsilon_0/(k_b*T_b))
+    beta         = alpha2 *((m_e*k_b*T_b)/(2.d0*pi*hbar**2))**1.5d0*exp(-epsilon_0/(k_b*T_b))
+
     !This part is needed since the exponent
     !in beta2 becomes so large that the computer 
     !sets it to infinity. However beta goes to zero before that 
@@ -207,12 +225,11 @@ contains
     else
         beta2    = beta*exp((3.d0*epsilon_0)/(4.d0*k_b*T_b))
     end if
-
     n1s          = (1.d0-Xe)*n_b
     lambda_alpha = H_rec(j)*(3.d0*epsilon_0)**3/((8.d0*pi)**2*n1s) /(c*hbar)**3
 
     C_r          = (lambda_2s1s +lambda_alpha)/(lambda_2s1s+lambda_alpha+beta2)
-    dydx         = C_r/H_rec(j)*(beta*(1.d0-Xe)-n_b*alpha2*Xe**2)
+    dydx         = C_r/H_rec(j)*(beta*(1.d0-Xe)- n_b*alpha2*Xe**2)
 
     !Print values for testing
     !write(*,*) 'j =',j
@@ -285,35 +302,33 @@ contains
     implicit none
 
     real(dp), intent(in) :: x_in
-    !real(dp)             :: get_g
-    real(dp)             :: get_g_tvidle
-    !real(dp)             :: H_p
+    real(dp)             :: get_g
     real(dp)             :: dtau
     real(dp)             :: tau
 
-    !H_p   = get_H_p(x_in)
-    dtau  = get_dtau(x_in)
-    tau   = get_tau(x_in)
-    get_g_tvidle = dtau*exp(tau)
-    !get_g = H_p*dtau*exp(tau)
-  end function get_g_tvidle
+    dtau  =  get_dtau(x_in)
+    tau   =  get_tau(x_in)
+    get_g = -dtau*exp(-tau)
+  end function get_g
 
   ! Task: Complete routine for computing the derivative of the visibility function, g, at arbitray x
-  function get_dg(x)
+  function get_dg(x_in)
     implicit none
 
     real(dp), intent(in) :: x_in
     real(dp)             :: get_dg
+
     get_dg= splint_deriv(x_rec,g,ddg,x_in)
   end function get_dg
 
   ! Task: Complete routine for computing the second derivative of the visibility function, g, at arbitray x
-  function get_ddg(x)
+  function get_ddg(x_in)
     implicit none
 
-    real(dp), intent(in) :: x
+    real(dp), intent(in) :: x_in
     real(dp)             :: get_ddg
-get_ddg=0
+    
+    get_ddg = splint(x_rec,ddg,d4g,x_in)
   end function get_ddg
 
 
