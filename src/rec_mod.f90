@@ -9,7 +9,7 @@ module rec_mod
     integer(i4b)                                 :: n                        ! Number of grid points
     real(dp), allocatable, dimension(:)          :: x_rec,a_rec,z_rec        ! Grid
     real(dp), allocatable, dimension(:)          :: tau, dtau, ddtau         ! Splined tau and derivatives
-    real(dp), allocatable, dimension(:)          :: d4tau,logd4tau
+    real(dp), allocatable, dimension(:)          :: d4tau
     real(dp), allocatable, dimension(:)          :: n_e, n_e2,logn_e,logn_e2 ! Splined (log of) electron density, n_e
     real(dp), allocatable, dimension(:)          :: g, g2, g22               ! Splined visibility function
     real(dp), allocatable, dimension(:)          :: H_rec,X_e  	             ! Variables for H and X_e
@@ -281,21 +281,30 @@ contains
   end function get_ddtau
 
   ! Task: Complete routine for computing the visibility function, g, at arbitray x
-  function get_g(x)
+  function get_g(x_in)
     implicit none
 
-    real(dp), intent(in) :: x
-    real(dp)             :: get_g
-get_g = 0
-  end function get_g
+    real(dp), intent(in) :: x_in
+    !real(dp)             :: get_g
+    real(dp)             :: get_g_tvidle
+    !real(dp)             :: H_p
+    real(dp)             :: dtau
+    real(dp)             :: tau
+
+    !H_p   = get_H_p(x_in)
+    dtau  = get_dtau(x_in)
+    tau   = get_tau(x_in)
+    get_g_tvidle = dtau*exp(tau)
+    !get_g = H_p*dtau*exp(tau)
+  end function get_g_tvidle
 
   ! Task: Complete routine for computing the derivative of the visibility function, g, at arbitray x
   function get_dg(x)
     implicit none
 
-    real(dp), intent(in) :: x
+    real(dp), intent(in) :: x_in
     real(dp)             :: get_dg
-get_dg=0
+    get_dg= splint_deriv(x_rec,g,ddg,x_in)
   end function get_dg
 
   ! Task: Complete routine for computing the second derivative of the visibility function, g, at arbitray x
