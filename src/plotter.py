@@ -42,22 +42,21 @@ plt.ylabel(r'$\Omega_x$')
 plt.figure(1)
 plt.plot(x,eta,label = r'$\eta(x)$')
 plt.plot(x_t,eta_t,label=r'$\eta_2(x)$')
-
 plt.yscale('log')
 plt.xlim([min(x),max(x)])
 plt.xlabel(r'x')
 plt.ylabel(r'$\eta$(x)[Mpc]')
 plt.legend(loc='best')
-
-
+"""
+"""
 plt.figure(2)
 plt.plot(x,H,label = r'H(x)')
 plt.yscale('log')
 plt.xlim([min(x),max(x)])
 plt.xlabel(r'x')
 plt.ylabel(r'H(x)[km s$^{-1}$Mpc$^{-1}$]')
-
-
+"""
+"""
 plt.figure(3)
 plt.plot(z,H,label = r'H(z)')
 plt.yscale('log')
@@ -66,20 +65,20 @@ plt.xlim([z[0],z[-1]])
 plt.xlabel(r'z')
 plt.ylabel(r'H(z)[km s$^{-1}$Mpc$^{-1}$]')
 """
-"""
+
 plt.figure(4)
 plt.plot(z_rec,X_e,label = r'$X_e$')
 plt.yscale('log')
 #plt.xscale('log')
-plt.xlim([z_rec[0],z_rec[-1]])
+plt.xlim([1800,0])
 plt.xlabel(r'z')
 plt.ylabel(r'$X_e$')
 plt.show()
-"""
+
 
 """
 plt.figure(5)
-plt.plot(z_rec ,n_e,'--',label = r'$n_{e}$')
+plt.plot(z_rec ,n_e,'-',label = r'$n_{e}$')
 plt.plot(z_test,n_etest,'-',label = r'Splined')
 plt.yscale('log')
 #plt.xscale('log')
@@ -89,32 +88,31 @@ plt.ylabel(r'$n_e$[m$^{-3}$]')
 plt.legend()
 plt.show()
 """
-"""
+
 plt.figure(6)
-plt.plot(x_rec , tau,            '--',label = r'$\tau(x)$')
-plt.plot(x_test, tau_test,       '-' ,label = r'$\tau_{test}(x)$')
+plt.plot(x_rec , tau,            '-',label = r'$\tau(x)$')
+#plt.plot(x_test, tau_test,       '-' ,label = r'$\tau_{test}(x)$')
 plt.plot(x_rec , abs(dtau),      '--',label = r'$|\tau^\prime(x)|$')
-plt.plot(x_test, abs(dtau_test), '-' ,label = r'$|\tau^{\prime}_{test}(x)|$')
-plt.plot(x_rec , abs(ddtau),     '--',label = r'$|\tau^{\prime\prime}(x)|$')
-plt.plot(x_test, abs(ddtau_test),'-' ,label = r'$|\tau^{\prime\prime}_{test}(x)|$')
+#plt.plot(x_test, abs(dtau_test), '-' ,label = r'$|\tau^{\prime}_{test}(x)|$')
+plt.plot(x_rec , abs(ddtau),     '-.',label = r'$|\tau^{\prime\prime}(x)|$')
+#plt.plot(x_test, abs(ddtau_test),'-' ,label = r'$|\tau^{\prime\prime}_{test}(x)|$')
 plt.yscale('log')
 #plt.xscale('log')
 plt.xlim([x_rec[0],x_rec[-1]])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tau$,$|\tau^\prime|$,$|\tau^{\prime\prime}|$')
 plt.legend()
-plt.show()
-"""
+
 plt.figure(7)
-plt.plot(x_rec , g,            '--',label = r'$\tilde g(x)$')
-plt.plot(x_test, g_test,       '-' ,label = r'$\tilde g_{test}(x)$')
+plt.plot(x_rec , g,            '-',label = r'$\tilde g(x)$')
+#plt.plot(x_test, g_test,       '-' ,label = r'$\tilde g_{test}(x)$')
 plt.plot(x_rec , dg/10.,       '--',label = r'$\tilde g^\prime(x)$')
-plt.plot(x_test, dg_test/10.,  '-' ,label = r'$\tilde g^\prime_{test}(x)$')
-plt.plot(x_rec , ddg/300.,     '--',label = r'$\tilde g^{\prime\prime}(x)$')
-plt.plot(x_test, ddg_test/300.,'-' ,label = r'$\tilde g^{\prime\prime}_{test}(x)$')
+#plt.plot(x_test, dg_test/10.,  '-' ,label = r'$\tilde g^\prime_{test}(x)$')
+plt.plot(x_rec , ddg/300.,     '-.',label = r'$\tilde g^{\prime\prime}(x)$')
+#plt.plot(x_test, ddg_test/300.,'-' ,label = r'$\tilde g^{\prime\prime}_{test}(x)$')
 #plt.yscale('log')
 #plt.xscale('log')
-plt.xlim([x_rec[0],-6])
+plt.xlim([-7.5,-6])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tilde g$,$\tilde g^\prime/10$,$\tilde g^{\prime\prime}/300$')
 plt.legend()

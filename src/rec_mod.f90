@@ -25,15 +25,15 @@ contains
     subroutine initialize_rec_mod
     implicit none
     
-    integer(i4b) :: i,n1,n2
+    integer(i4b) :: i,n1,n2,n3
     real(dp)     :: saha_limit, y, T_b, n_b, dydx, xmin, xmax, dx, f, n_e0, X_e0, &
 		    X_econst, phi2,alpha2,beta,beta2,n1s,lambda_alpha,C_r
-    real(dp)     :: eps,hmin,yp1,ypn,h1,h2
-    real(dp)     :: z_start_rec, z_end_rec, z_0, x_start_rec, x_end_rec
+    real(dp)     :: eps,hmin,yp1,ypn,h1,h2,h3
+    real(dp)     :: z_start_rec, z_end_rec, z_0, x_before_rec,x_start_rec, x_end_rec
     logical(lgt) :: use_saha
 
 
-    x_test_start = -7.2d0
+    x_test_start = -10.0d0
     x_test_end   = -1.0d0
     saha_limit   = 0.99d0       ! Switch from Saha to Peebles when X_e < 0.99
 
@@ -44,14 +44,17 @@ contains
     ypn  = 1.d30
 
     !Grid sizes 
-    n1          = 200                       ! Number of grid points during recombination
-    n2          = 300                       ! Number of grid points after recombination
-    n           = n1 + n2                   ! Total number of grid points
+    n1          = 300                       ! Number of grid points during recombination
+    n2          = 200                       ! Number of grid points after recombination
+    n3          = 300
+    n           = n1 + n2 +n3               ! Total number of grid points
     z_start_rec = 1630.4d0                  ! Redshift of start of recombination
     z_end_rec   = 614.2d0                   ! Redshift of end of recombination
     z_0         = 0.d0                      ! Redshift today
+    x_before_rec= -17.5d0                   ! x at start of array
     x_start_rec = -log(1.d0 + z_start_rec)  ! x of start of recombination
-    x_end_rec   = -log(1.d0 + z_end_rec)    ! x of end o
+    x_end_rec   = -log(1.d0 + z_end_rec)    ! x of end of recombination
+
 
     allocate(x_rec(n))
     allocate(a_rec(n))
@@ -89,11 +92,14 @@ contains
     z_test = 1.d0/exp(x_test) -1.d0
 
     !Fill in x,a,z (rec) grids
-    do i = 1,n1 ! Fill interval during recombination
-        x_rec(i)  = x_start_rec + (i-1)*(x_end_rec-x_start_rec)/(n1-1)
+    do i = 1,n1
+        x_rec(i)       = x_before_rec + (i-1)*(x_start_rec-x_before_rec)/(n1-1)
     end do
-    do i = 1,n2 !Fill from end of recomb to today
-        x_rec(n1+i) = x_end_rec + i*(x_0-x_end_rec)/(n2)
+    do i = 1,n2+1 ! Fill interval during recombination
+        x_rec(n1+i)    = x_start_rec + i*(x_end_rec-x_start_rec)/(n2)
+    end do
+    do i = 1,n3 !Fill from end of recomb to today
+        x_rec(n1+n2+i) = x_end_rec + i*(x_0-x_end_rec)/(n3)
     end do
 
     !write(*,*) x_rec
@@ -103,17 +109,19 @@ contains
     do i = 1,n
         H_rec(i) = get_H(x_rec(i))
     end do
-
-
+        
     h1 = abs(1.d-2*(x_rec(1)-x_rec(2)))     !Defines the steplength to 100th of length between     
-    h2 = abs(1.d-2*(x_rec(n-1)-x_rec(n-2))) !neighbouring x values, for both intervals
+    h2 = abs(1.d-2*(x_rec(n1+1)-x_rec(n1))) !neighbouring x values, for all three intervals
+    h3 = abs(1.d-2*(x_rec(n2+1)-x_rec(n2))) 
 
-    !Since we have two different steplengths in our x array 
-    !we choose the steplength that is smallest of the two parts
+    !Since we have three different steplengths in our x array 
+    !we choose the steplength that is smallest of the three parts
+    if (h3<h2) then
+    h2 = h3
+    end if
     if (h2<h1) then
     h1=h2
     end if
-    !print*,x_rec
 
     !Compute X_e and n_e at all grid times
     use_saha = .true.
@@ -132,9 +140,8 @@ contains
             call odeint(X_e(j:j),x_rec(j-1) ,x_rec(j), eps, h1, hmin, dX_edx, bsstep, output1) 
         end if
 	n_e(j) = X_e(j)*n_b !Calculate electron density
-        print *,use_saha, x_rec(j),X_e(j),n_e(j)
+        !print *,use_saha, x_rec(j),X_e(j),n_e(j)
     end do
-
 
     !Compute splined (log of) electron density function
     logn_e =log(n_e)
@@ -145,8 +152,6 @@ contains
     do i=1,n  
         n_etest(i) = get_n_e(x_test(i))
     end do
-
-
 
     !Compute optical depth,and first deriv at all grid points
     tau(n) = 0.d0 !Optical depth today is 0
@@ -179,22 +184,17 @@ contains
     end do
 
 
-    !Compute splined visibility function
+    !Compute splined visibility function, and second derivative
     call spline(x_rec,g,yp1,ypn,ddg)
-
+    call spline(x_rec,ddg,yp1,ypn,d4g)
     !Test get_g and get_dg
     do i=1,n
-        g_test(i)  = get_g(x_test(i))
-        dg_test(i) = get_dg(x_test(i))
+
+        dg(i)       = get_dg(x_rec(i))
+        g_test(i)   = get_g(x_test(i))
+        dg_test(i)  = get_dg(x_test(i))
+        ddg_test(i) = get_ddg(x_test(i))
     end do
-
-    ! Task: Compute splined second derivative of visibility function
-    call spline(x_rec,ddg,yp1,ypn,d4g)
-
-    !Test second derivative spline
-
-
-
 
 
   end subroutine initialize_rec_mod

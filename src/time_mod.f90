@@ -15,7 +15,7 @@ module time_mod
     real(dp),    allocatable, dimension(:) :: x_eta              ! Grid points for eta
     real(dp),    allocatable, dimension(:) :: a_eta              ! Grid points for eta
     real(dp),    allocatable, dimension(:) :: eta, eta2          ! Eta and eta'' at each grid point
-    real(dp),    allocatable, dimension(:) :: dydx
+    !real(dp),    allocatable, dimension(:) :: dydx
 
     real(dp)                               :: rho_m0             !Matter density today
     real(dp) 				   :: rho_b0             !Baryon density today
@@ -152,7 +152,7 @@ contains
     eta(1) = eta_init !Start value of eta 
 
     h1 = abs(1.d-2*(a_eta(1)-a_eta(2))) !Defines the steplength
-    allocate(dydx(1))
+    !allocate(dydx(1))
 
 
     do i =2,n_eta
@@ -232,8 +232,8 @@ contains
 
       real(dp), intent(in) :: x
       real(dp)             :: get_dH_p
-      get_dH_p = H_0/2.d0*1/sqrt((Omega_m+Omega_b)*exp(-x)+Omega_r*exp(-2.d0*x) &
-                 + Omega_lambda*exp(2.d0*x)) * (-(Omega_m+Omega_b)*exp(-x)-2.d0*Omega_r*exp(-2.d0*x) &
+      get_dH_p = H_0/2.d0/sqrt((Omega_m+Omega_b)*exp(-x)+(Omega_r+Omega_nu)*exp(-2.d0*x) &
+                 + Omega_lambda*exp(2.d0*x)) * (-(Omega_m+Omega_b)*exp(-x)-2.d0*(Omega_r+Omega_nu)*exp(-2.d0*x) &
                  + 2.d0*Omega_lambda*exp(2.d0*x))
   end function get_dH_p
 
