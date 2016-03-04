@@ -20,6 +20,7 @@ x_t,eta_t                = loadtxt("eta_t.dat",unpack=True)
 x_rec,z_rec,X_e          = loadtxt("X_e.dat",unpack=True)
 n_e,tau,dtau             = loadtxt("n_e.dat",unpack=True)
 x_test,z_test,n_etest    = loadtxt("n_etest.dat",unpack=True)
+#ddtau= loadtxt("tau2.dat",unpack=True)
 ddtau,tau_test,dtau_test = loadtxt("tau2.dat",unpack=True)
 ddtau_test,g,g_test      = loadtxt("tau3.dat",unpack=True)
 dg,dg_test,ddg           = loadtxt("g.dat",unpack=True)
@@ -65,7 +66,7 @@ plt.xlim([z[0],z[-1]])
 plt.xlabel(r'z')
 plt.ylabel(r'H(z)[km s$^{-1}$Mpc$^{-1}$]')
 """
-
+"""
 plt.figure(4)
 plt.plot(z_rec,X_e,label = r'$X_e$')
 plt.yscale('log')
@@ -74,7 +75,7 @@ plt.xlim([1800,0])
 plt.xlabel(r'z')
 plt.ylabel(r'$X_e$')
 plt.show()
-
+"""
 
 """
 plt.figure(5)
@@ -102,7 +103,8 @@ plt.xlim([x_rec[0],x_rec[-1]])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tau$,$|\tau^\prime|$,$|\tau^{\prime\prime}|$')
 plt.legend()
-
+plt.show()
+"""
 plt.figure(7)
 plt.plot(x_rec , g,            '-',label = r'$\tilde g(x)$')
 #plt.plot(x_test, g_test,       '-' ,label = r'$\tilde g_{test}(x)$')
@@ -117,4 +119,4 @@ plt.xlabel(r'x')
 plt.ylabel(r'$\tilde g$,$\tilde g^\prime/10$,$\tilde g^{\prime\prime}/300$')
 plt.legend()
 plt.show()
-
+"""

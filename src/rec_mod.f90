@@ -14,18 +14,18 @@ module rec_mod
     real(dp), allocatable, dimension(:)          :: g,dg,ddg,d4g                    ! Splined visibility function
     real(dp), allocatable, dimension(:)          :: g_test,dg_test,ddg_test       ! Splined visibility function
     real(dp), allocatable, dimension(:)          :: H_rec,X_e  	                  ! Variables for H and X_e
-    integer(i4b)                                 :: j,k                           !Used for choosing right indexes
     real(dp), allocatable, dimension(:)          :: x_test,n_etest,z_test,a_test  !Used for testing the splines
     real(dp), allocatable, dimension(:)          :: tau_test,dtau_test,ddtau_test !Used for testing the splines
     real(dp)                                     :: x_0
     real(dp)                                     :: x_test_start
     real(dp)                                     :: x_test_end
+    integer(i4b),private :: i
 contains
 
     subroutine initialize_rec_mod
     implicit none
     
-    integer(i4b) :: i,n1,n2,n3
+    integer(i4b) :: n1,n2,n3
     real(dp)     :: saha_limit, y, T_b, n_b, dydx, xmin, xmax, dx, f, n_e0, X_e0, &
 		    X_econst, phi2,alpha2,beta,beta2,n1s,lambda_alpha,C_r
     real(dp)     :: eps,hmin,yp1,ypn,h1,h2,h3
@@ -51,39 +51,66 @@ contains
     z_start_rec = 1630.4d0                  ! Redshift of start of recombination
     z_end_rec   = 614.2d0                   ! Redshift of end of recombination
     z_0         = 0.d0                      ! Redshift today
-    x_before_rec= -17.5d0                   ! x at start of array
+
+    x_before_rec= -10.5d0                   ! x at start of array
     x_start_rec = -log(1.d0 + z_start_rec)  ! x of start of recombination
     x_end_rec   = -log(1.d0 + z_end_rec)    ! x of end of recombination
 
 
     allocate(x_rec(n))
+    x_rec = 0.d0
     allocate(a_rec(n))
+    a_rec = 0.d0
     allocate(z_rec(n))
+    z_rec = 0.d0
     allocate(H_rec(n))
+    H_rec = 0.d0
     allocate(X_e(n))
+    X_e = 0.d0
     allocate(tau(n))
+    tau = 0.d0
     allocate(dtau(n))
+    dtau = 0.d0
     allocate(ddtau(n))
+    ddtau = 0.d0
     allocate(d4tau(n))
+    d4tau = 0.d0
     allocate(n_e(n))
+    n_e = 0.d0
     allocate(n_e2(n))
+    n_e2 = 0.d0
     allocate(logn_e(n))
+    logn_e = 0.d0
     allocate(logn_e2(n))
+    logn_e2 = 0.d0
     allocate(g(n))
+    g = 0.d0
     allocate(dg(n))
+    dg = 0.d0
     allocate(ddg(n))
+    ddg = 0.d0
     allocate(d4g(n))
-
+    d4g = 0.d0
     allocate(x_test(n))
+    x_test = 0.d0
     allocate(z_test(n))
+    z_test = 0.d0
     allocate(a_test(n))
+    a_test = 0.d0
     allocate(n_etest(n))
+    n_etest = 0.d0
     allocate(tau_test(n))
+    tau_test = 0.d0
     allocate(dtau_test(n))
+    dtau_test = 0.d0
     allocate(ddtau_test(n))
+    ddtau_test = 0.d0
     allocate(g_test(n))
+    g_test = 0.d0
     allocate(dg_test(n))
+    dg_test = 0.d0
     allocate(ddg_test(n))
+    ddg_test = 0.d0
 
     !fill test 
     do i=1,n
@@ -110,10 +137,9 @@ contains
         H_rec(i) = get_H(x_rec(i))
     end do
         
-    h1 = abs(1.d-2*(x_rec(1)-x_rec(2)))     !Defines the steplength to 100th of length between     
-    h2 = abs(1.d-2*(x_rec(n1+1)-x_rec(n1))) !neighbouring x values, for all three intervals
-    h3 = abs(1.d-2*(x_rec(n2+1)-x_rec(n2))) 
-
+    h1 = abs(1.d-3*(x_rec(1)   -x_rec(2)))     !Defines the steplength to 100th of length between     
+    h2 = abs(1.d-3*(x_rec(n1+1)-x_rec(n1))) !neighbouring x values, for all three intervals
+    h3 = abs(1.d-3*(x_rec(n2+1)-x_rec(n2))) 
     !Since we have three different steplengths in our x array 
     !we choose the steplength that is smallest of the three parts
     if (h3<h2) then
@@ -125,22 +151,22 @@ contains
 
     !Compute X_e and n_e at all grid times
     use_saha = .true.
-    do j = 1, n
-        n_b = Omega_b*rho_c/(m_H*a_rec(j)**3)	
+    do i = 1, n
+        n_b = Omega_b*rho_c/(m_H*a_rec(i)**3)	
         if (use_saha) then
             ! Use the Saha equation
-	    T_b = T_0/a_rec(j)
-            X_econst = 1.d0/n_b*((m_e*k_b*T_b)/(2.d0*hbar**2*pi))**1.5d0*exp(-epsilon_0/(k_b*T_b))
-            X_e(j) = (-X_econst + sqrt(X_econst**2 +4.d0*X_econst))/2.d0
+	    T_b = T_0/a_rec(i)
+            X_econst = ((m_e*k_b*T_b)/(2.d0*pi*hbar**2))**1.5d0*exp(-epsilon_0/(k_b*T_b))/n_b
+            X_e(i) = (-X_econst + sqrt(X_econst**2 +4.d0*X_econst))/2.d0
 
-        if (X_e(j) < saha_limit) use_saha = .false.
+        if (X_e(i) < saha_limit) use_saha = .false.
         else
             ! Use the Peebles equation
-            X_e(j) =X_e(j-1)
-            call odeint(X_e(j:j),x_rec(j-1) ,x_rec(j), eps, h1, hmin, dX_edx, bsstep, output1) 
+            X_e(i) =X_e(i-1)
+            call odeint(X_e(i:i),x_rec(i-1) ,x_rec(i), eps, h1, hmin, dX_edx, bsstep, output1) 
         end if
-	n_e(j) = X_e(j)*n_b !Calculate electron density
-        !print *,use_saha, x_rec(j),X_e(j),n_e(j)
+	n_e(i) = X_e(i)*n_b !Calculate electron density
+        write(*,*) use_saha,x_rec(i), X_e(i)
     end do
 
     !Compute splined (log of) electron density function
@@ -155,9 +181,9 @@ contains
 
     !Compute optical depth,and first deriv at all grid points
     tau(n) = 0.d0 !Optical depth today is 0
-    do k=n-1,1,-1
-        tau(k) = tau(k+1)
-        call odeint(tau(k:k),x_rec(k+1),x_rec(k),eps,h1,hmin,dtaudx,bsstep,output1)
+    do i=n-1,1,-1
+        tau(i) = tau(i+1)
+        call odeint(tau(i:i),x_rec(i+1),x_rec(i),eps,h1,hmin,dtaudx,bsstep,output1)
     end do
 
     !Compute splined optical depth,and second derivative
@@ -189,7 +215,6 @@ contains
     call spline(x_rec,ddg,yp1,ypn,d4g)
     !Test get_g and get_dg
     do i=1,n
-
         dg(i)       = get_dg(x_rec(i))
         g_test(i)   = get_g(x_test(i))
         dg_test(i)  = get_dg(x_test(i))
@@ -200,21 +225,28 @@ contains
   end subroutine initialize_rec_mod
 
   !Begin Stuff needed to make odeint work
-  subroutine dX_edx(x_rec, X_e, dydx) 
+  subroutine dX_edx(x, X_e, dydx) 
     use healpix_types
     implicit none
-    real(dp),               intent(in)  :: x_rec
+    real(dp),               intent(in)  :: x
     real(dp), dimension(:), intent(in)  :: X_e
     real(dp), dimension(:), intent(out) :: dydx
     real(dp) :: T_b,n_b,phi2,alpha2,beta,beta2,n1s,lambda_alpha,C_r
     real(dp) :: Xe
+    real(dp) :: a
+    real(dp) :: H 
     Xe = X_e(1)
-    T_b          = T_0/a_rec(j)
-    n_b          = Omega_b*rho_c/(m_H*a_rec(j)**3)
+    a  = exp(x)
+    H  = get_H(x)
+    T_b          = T_0/a
+    n_b          = Omega_b*rho_c/(m_H*a**3)
+
+    n1s          = (1.d0-Xe)*n_b
+    lambda_alpha = H*(3.d0*epsilon_0)**3/((8.d0*pi)**2*n1s) /(c*hbar)**3
 
     phi2         = 0.448d0*log(epsilon_0/(k_b*T_b))
     alpha2       = 64.d0*pi/sqrt(27.d0*pi)*(alpha/m_e)**2*sqrt(epsilon_0/(k_b*T_b))*phi2 *hbar**2/c
-    beta         = alpha2 *((m_e*k_b*T_b)/(2.d0*pi*hbar**2))**1.5d0*exp(-epsilon_0/(k_b*T_b))
+    beta         = alpha2 *((m_e*k_b*T_b)/(2.d0*pi*hbar**2))**1.5*exp(-epsilon_0/(k_b*T_b))
 
     !This part is needed since the exponent
     !in beta2 becomes so large that the computer 
@@ -225,14 +257,11 @@ contains
     else
         beta2    = beta*exp((3.d0*epsilon_0)/(4.d0*k_b*T_b))
     end if
-    n1s          = (1.d0-Xe)*n_b
-    lambda_alpha = H_rec(j)*(3.d0*epsilon_0)**3/((8.d0*pi)**2*n1s) /(c*hbar)**3
-
     C_r          = (lambda_2s1s +lambda_alpha)/(lambda_2s1s+lambda_alpha+beta2)
-    dydx         = C_r/H_rec(j)*(beta*(1.d0-Xe)- n_b*alpha2*Xe**2)
+    dydx         = C_r/H*(beta*(1.d0-Xe)- n_b*alpha2*Xe**2)
 
     !Print values for testing
-    !write(*,*) 'j =',j
+    !write(*,*) 'i =',i
     !write(*,*) T_b,n_b,X_econst
     !write(*,*) phi2,alpha2,beta
     !write(*,*) beta2,n1s,lambda_alpha
@@ -240,13 +269,17 @@ contains
     !write(*,*) beta,beta2,C_r
   end subroutine dX_edx
 
-  subroutine dtaudx(x_rec,tau, dydx) 
+  subroutine dtaudx(x,tau, dydx) 
     use healpix_types
     implicit none
-    real(dp),               intent(in)  :: x_rec
+    real(dp),               intent(in)  :: x
     real(dp), dimension(:), intent(in)  :: tau
     real(dp), dimension(:), intent(out) :: dydx
-    dydx         = -n_e(k)*sigma_T/H_rec(k)*c
+    real(dp)                            :: n_e
+    real(dp)                            :: H
+    n_e  = get_n_e(x)
+    H    = get_H(x)
+    dydx = -n_e*sigma_T/H*c
   end subroutine dtaudx
 
   subroutine output1(x, y)
@@ -269,7 +302,7 @@ contains
     get_n_e = exp(get_n_e)
   end function get_n_e
 
-  ! Task: Complete routine for computing tau at arbitrary x, using precomputed information
+  !Routine for computing tau at arbitrary x, using precomputed information
   function get_tau(x_in)
     implicit none
 
@@ -278,7 +311,7 @@ contains
     get_tau  = splint(x_rec,tau,ddtau,x_in)
   end function get_tau
 
-  ! Task: Complete routine for computing the derivative of tau at arbitrary x, using precomputed information
+  !Routine for computing the derivative of tau at arbitrary x, using precomputed information
   function get_dtau(x_in)
     implicit none
 
@@ -287,8 +320,8 @@ contains
     get_dtau = splint_deriv(x_rec,tau,ddtau,x_in)
   end function get_dtau
 
-  ! Task: Complete routine for computing the second derivative of tau at arbitrary x, 
-  ! using precomputed information
+  !Routine for computing the second derivative of tau at arbitrary x, 
+  !using precomputed information
   function get_ddtau(x_in)
     implicit none
 
@@ -297,7 +330,7 @@ contains
     get_ddtau = splint(x_rec,ddtau,d4tau,x_in)
   end function get_ddtau
 
-  ! Task: Complete routine for computing the visibility function, g, at arbitray x
+  !Routine for computing the visibility function, g, at arbitray x
   function get_g(x_in)
     implicit none
 
@@ -311,7 +344,7 @@ contains
     get_g = -dtau*exp(-tau)
   end function get_g
 
-  ! Task: Complete routine for computing the derivative of the visibility function, g, at arbitray x
+  !Routine for computing the derivative of the visibility function, g, at arbitray x
   function get_dg(x_in)
     implicit none
 
@@ -321,7 +354,7 @@ contains
     get_dg= splint_deriv(x_rec,g,ddg,x_in)
   end function get_dg
 
-  ! Task: Complete routine for computing the second derivative of the visibility function, g, at arbitray x
+  !Routine for computing the second derivative of the visibility function, g, at arbitray x
   function get_ddg(x_in)
     implicit none
 
@@ -330,6 +363,5 @@ contains
     
     get_ddg = splint(x_rec,ddg,d4g,x_in)
   end function get_ddg
-
 
 end module rec_mod
