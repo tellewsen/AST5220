@@ -88,7 +88,7 @@
 \vspace*{4ex}
 
 \begin{center}
-  {\Large \bf The background evolution of the universe}\\[4ex]
+  {\Large \bf The recombination history of the universe}\\[4ex]
   {\large \bf Andreas Ellewsen$^1$}\\[4ex]
   \begin{minipage}[t]{15cm}
         $^1$ Institute of Theoretical Astrophysics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway\\
@@ -159,87 +159,50 @@ We define
 \end{equation}
 Note here that we assume that the number density of baryons is equal to the number density of hydrogen. And thus we have ignored all elements above hydrogen. We also ignore the small difference in mass between neutral hydrogen and free protons. Thus we have
 \begin{equation}
- n_H = n_b \simeq \frac{\rho_b}{m_H} = \frac{\Omega_b \rho_c}{m_H a^3} ,~~~~~~~~ \rho_c  = \frac{3H_0^2}{8\pi G}
+ n_H = n_b \simeq \frac{\rho_b}{m_H} = \frac{\Omega_b \rho_c}{m_H a^3}
 \end{equation}
+
+The only thing left to find now is $X_e$. There are two equations to choose from when calculating this.
+One is the Saha equation, which is valid for $X_e \approx 1$. And the other is Peeble's equation which is valid for all values of $X_e$. 
+
+Saha's equation is
+\begin{equation}
+ \frac{X_e^2}{1-X_e} = \frac{1}{n_b}\bigg(\frac{m_e k_b T_b}{2\pi \hbar^2}\bigg)^{3/2}e^{-\epsilon_0/k_b T_b},
+\end{equation}
+where $m_e$ is the electron mass, $k_b$ the Boltzmann constant, $T_b$ the baryon temperature, $\hbar$ the reduced Planck constant, and $\epsilon_0$ the ionization energy of hydrogen. This is a regular quadratic equation which can be solved using the regular method.
+
+Peeble's equation is 
+\begin{equation}
+\frac{dX_e}{dx} = \frac{C_r(T_b)}{H} \left[\beta(T_b)(1-X_e) - n_H
+  \alpha^{(2)}(T_b)X_e^2\right],
+\end{equation}
+where
+\begin{align}
+C_r(T_b) &= \frac{\Lambda_{2s\rightarrow1s} +	
+  \Lambda_{\alpha}}{\Lambda_{2s\rightarrow1s} + \Lambda_{\alpha} +
+  \beta^{(2)}(T_b)}, \\  
+\Lambda_{2s\rightarrow1s} &= 8.227 \textrm{s}^{-1}\\
+\Lambda_{\alpha} &= H\frac{(3\epsilon_0 c/\hbar)^3}{(8\pi)^2 n_{1s}}\\
+n_{1s} &= (1-X_e)n_H \\
+\beta^{(2)}(T_b) &= \beta(T_b) e^{3\epsilon_0/4k_b T_b} \\
+\beta(T_b) &= \alpha^{(2)}(T_b) \left(\frac{m_e k_b T_b}{2\pi\hbar^2}
+\right)^{3/2} e^{-\epsilon_0/k_b T_b} \\
+\alpha^{(2)}(T_b) &= \frac{64\pi}{\sqrt{27\pi}}
+\frac{\hbar^2 \alpha^2}{c m_e^2}\sqrt{\frac{\epsilon_0}{k_b T_b}}\phi_2(T_b)\\
+\phi_2(T_b) &= 0.448\ln(\epsilon_0/k_B T_b).
+\end{align}
+Here $\alpha$ is the fine structure constant.
+
+At early times $X_e$ should be very close to 1, so we will start with Saha's equation. We define the point where we swithc from Saha to Peeble's equation at $X_e = 0.99$. There is not a lot of thought 
+
+
+
 CONTINUE FROM HERE
 CONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERE
 
 
 
 
-
-
-
-For the background cosmology I use the standard Friedmann-Lemaître-Robertson-Walker(FLRW) metric for flat space.
-This gives the line element.
-\begin{equation}\label{FLRW}
-\begin{aligned}
-ds^2 &= -dt^2 +a^2(t)(r^2(d\theta^2+sin^2\theta d\phi^2)\\
-     &=a^2(\eta)(-d\eta^2 +r^2(d\theta^2+sin^2\theta d\phi^2))
-\end{aligned}
-\end{equation}
-where $a(t)$ is the scale factor, and $\eta$ conformal time.
-I also introduce a parameter $x$ defined as 
-\begin{equation}\label{xeq}
- x = ln(a)
-\end{equation}
-The redshift is defined as
-\begin{equation}
- 1+ z =\frac{a_0}{a}
-\end{equation}
-
-We assume that the universe consist of cold dark matter (CDM, m), baryons (b), radiation(r), neutrinos($\nu$), and a cosmological constant ($\Lambda$). 
-With these components, the Hubble parameter $H$ becomes
-\begin{equation}
- H = \frac{1}{a}\frac{da}{dt} = H_0\sqrt{(\Omega_m+\Omega_b)a^{-3}+(\Omega_r+\Omega_\nu)a^{-4}+\Omega_\Lambda}.
-\end{equation}
-I also introduce a scaled $H$, namely
-\begin{equation}
-\begin{aligned}
-\pazocal{H} &= \frac{1}{a}\frac{da}{d\eta} \equiv \frac{\dot{a}}{a} = aH\\
-&=H_0\sqrt{(\Omega_m+\Omega_b)a^{-1}+(\Omega_r+\Omega_\nu)a^{-2}+\Omega_\Lambda a^2}.
-\end{aligned}
-\end{equation}
-Note that the dot means derivative with respect to conformal time. Why this is useful will become apparent later.
-We also want the derivative of this with respect to $x$.
-
-\begin{equation}
- \frac{d\pazocal{H}}{dx} = H_0\frac{-(\Omega_m+\Omega_b)e^{-x}-2(\Omega_r+\Omega_\nu)e^{-2x}+2\Omega_\Lambda e^{2x}}{\sqrt{(\Omega_m+\Omega_b)e^{-x}+(\Omega_r+\Omega_\nu)e^{-2x}+\Omega_\Lambda e^{2x}}}.
-\end{equation}
-
-$\Omega_x$ is the relative density of component x compared to the critical density $\rho_c$ needed for the universe to be flat.
-\begin{equation}
- \Omega_x = \frac{\rho_x}{\rho_c}
-\end{equation}
-\begin{equation}
- \rho_c = \frac{3H^2}{8\pi G}
-\end{equation}
-We want to keep track of the densities of each component.
-\begin{equation}
- \rho_m = \rho_{m,0}a^{-3}
-\end{equation}
-\begin{equation}
- \rho_b = \rho_{b,0}a^{-3}
-\end{equation}
-\begin{equation}
- \rho_r = \rho_{r,0}a^{-4}
-\end{equation}
-\begin{equation}
- \rho_\nu = \rho_{\nu,0}a^{-4}
-\end{equation}
-\begin{equation}
- \rho_\Lambda = \rho_{\Lambda,0}
-\end{equation}
-
-We will also need to know the distance to the particle horizon at different times. This can be found by noting that
-\begin{equation*}
- \frac{d\eta}{dt} = \frac{c}{a}
-\end{equation*}
-which can be rewritten such that
-\begin{equation}\label{eta}
- \frac{d\eta}{da} = \frac{c}{a \pazocal{H}}
-\end{equation}
-There are two ways to solve this differential equation numerically. One can either intergrate directly, or one can use an ordinary differential equation solver(ODE solver). Since the skeleton code contains an ODE solver I have chosen the latter. (See section \ref{sec:Imp} for more information).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
@@ -265,43 +228,35 @@ This can be found by considering that $a\pazocal{H} \rightarrow  H_0\sqrt{\Omega
 \end{equation}
 for small $a$. And thus one has an initial value.
 
-Plugging this into the ODE solver returns $\eta(x)$ for all values in the $x$ array. Thus completing all calculations needed for the first part of the project. The ODE solver uses the Bulirsch–Stoer algorithm. The steplength is set to be one hundredth the length between two neighbouring $x$ values.
+Plugging this into the ODE solver returns $\eta(x)$ for all values in the $x$ array. Thus completing all calculations needed for the first part of the project. The ODE solver uses the Bulirsch–Stoer algorithm. The steplength is set to be one hundredth the length between two neighboring $x$ values.
 
 As preparation for the next part I also spline the resulting $\eta(x)$ values. These are then integrated and evaluated for a new set of $x$ values not equal to but inside the $x$ values used to make the spline. I have overplotted this in the plot for $\eta(x)$ and the functions overlap. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec:simulate_analytic}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- The $\Omega_x$ values indicate the relative density of a given component compared to the critical density of the universe. 
- The critical density being that which corresponds to the universe begin flat.
- Looking at the figure we see radiation dominating from the start together with neutrinos.
- This continues for some time until the dark matter component starts to rise.
- We see that this starts before the baryon component. This is good since that makes it possible for dark matter to form structures that baryons can later fall into. The radiation and neutrinos die out, and at a later point dark energy shoots up. At the end we end up with approximately 70\% dark energy?, 25\% dark matter, and 5\% baryons. This is exactly as it should be since that is what they were set to be at the present. See figure \ref{figure0}.
-%  \begin{figure}[ht]
-%   \includegraphics[width=.49\textwidth]{figure_0.png}
-%   \caption{The figure shows the evolution of the relative densities. As described they behave as they should.}
-%  \label{figure0}
-%  \end{figure}
+
+$X_e$
+
+  \begin{figure}[ht]
+   \includegraphics[width=.49\textwidth]{X_e.png}
+   \caption{}
+  \label{figure0}
+  \end{figure}
+
  
- Conformal time, denoted $\eta(x)$ measures the distance to the particle horizon for a given $x$ value. A nice test of this is to insert the $x$ value of today.
- The answer should then be the radius of the observable universe. At the present this is measured to be approximately 14 billion parsecs (14Gpc)[2]
- The graph hits this value fairly well, indicating that everything is working properly so far. 
- Note also that there are in fact two graphs in this figure, one which is calculated from the differential equation for $\eta$. 
- And another one made by splining the first one and finding $\eta$ values at arbitrary values between those of the first function.
+   \begin{figure}[ht]
+   \includegraphics[width=.49\textwidth]{tau.png}
+   \caption{}
+  \label{figure1}
+  \end{figure}
  
-%   \begin{figure}[ht]
-%   \includegraphics[width=.49\textwidth]{figure_1.png}
-%   \caption{The conformal time hits the value of today fairly accurately. The splined function hits the computed values so well that they overlap. Here $\eta(x)$ is the computed function, while $\eta_2(x)$ is the splined one.}
-%  \label{figure1}
-%  \end{figure}
  
- The Hubble parameter $H$ is depicted both as a function of $x$, and $z$. Whether this is good or not is hard to say for the first part. We can at least put some faith in its precision by the fact that it ends at $H_0 \approx 70$km s$^{-1}$Mpc$^{-1}$, which is what $H_0$ was set to be. 
- 
-%   \begin{figure}[ht]
-%   \includegraphics[width=.49\textwidth]{figure_2.png}
-%   \caption{The figure depicts the Hubble parameter as a function of $x$.}
-%  \label{figure2}
-%  \end{figure}
+   \begin{figure}[ht]
+   \includegraphics[width=.49\textwidth]{g.png}
+   \caption{}
+  \label{figure2}
+  \end{figure}
 %  
 %  \begin{figure}[ht]
 %   \includegraphics[width=.49\textwidth]{figure_3.png}
@@ -330,10 +285,11 @@ As preparation for the next part I also spline the resulting $\eta(x)$ values. T
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions} \label{sec:conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The background cosmology of the universe is done and everything has worked the way it was expected to.
-There are some values that I do not have an intuition for what should be. Namely the Hubble parameter at times before today. However, I expect these to be correct since everything else has given results generally considered to be correct, and the Hubble parameter is computed directly from these values.
-With this, the code is ready for the introduction of perturbations in part two. 
-
+In this project I have found the electron fraction for time before, during, and after recombination.
+This was used to find the optical depth at the same times, which was then used to find the visibility function.
+We saw that the electron density declined steeply during recombination, causing the optical depth to pass from values much larger than 1 to values much lower than 1. 
+From this one can say that the universe was opaque before, and very nearly transparent for times later than recombination.
+This resulted in a sharp peek in the visibility function at this time. Since the visibility function works as a probability function of when a photon was last scattered, this sharp peak indicates that the majority of the photons that existed were scattered in this time period. Because of this this is referred to as the last scattering surface. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{References}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

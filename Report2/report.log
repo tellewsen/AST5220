@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.2.3)  22 FEB 2016 15:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.2.3)  5 MAR 2016 13:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -855,62 +855,79 @@ LaTeX Font Info:    Try loading font information for OMS+zplm on input line 111
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omszplm.fd
 File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
-)
-Underfull \hbox (badness 7221) in paragraph at lines 173--175
-[]\T1/txr/m/n/10 For the back-ground cos-mol-ogy I use the stan-dard
- []
-
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
 ]
 
-LaTeX Warning: Reference `figure0' on page 2 undefined on input line 279.
+LaTeX Warning: Reference `eta' on page 2 undefined on input line 219.
 
-[2]
-LaTeX Font Info:    Try loading font information for T1+txtt on input line 357.
+<X_e.png, id=16, 578.16pt x 433.62pt>
+File: X_e.png Graphic file (type png)
+ <use X_e.png>
+Package pdftex.def Info: X_e.png used on input line 242.
+(pdftex.def)             Requested size: 256.53291pt x 192.39458pt.
+
+<tau.png, id=18, 578.16pt x 433.62pt>
+File: tau.png Graphic file (type png)
+ <use tau.png>
+Package pdftex.def Info: tau.png used on input line 249.
+(pdftex.def)             Requested size: 256.53291pt x 192.39458pt.
+
+<g.png, id=19, 578.16pt x 433.62pt>
+File: g.png Graphic file (type png)
+ <use g.png>
+Package pdftex.def Info: g.png used on input line 256.
+(pdftex.def)             Requested size: 256.53291pt x 192.39458pt.
+ [2 <./X_e.png> <./tau.png>]
+[3
+
+ <./g.png>]
+LaTeX Font Info:    Try loading font information for T1+txtt on input line 313.
 
  (/usr/share/texlive/texmf-dist/tex/latex/txfonts/t1txtt.fd
 File: t1txtt.fd 2000/12/15 v3.1
-) [3
+)
+[4
 
 ]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [4]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [5]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [6]
-[7] (./report.aux)
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [7]
+[8] (./report.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 6380 strings out of 495000
- 83762 string characters out of 6181170
- 163597 words of memory out of 5000000
- 9417 multiletter control sequences out of 15000+600000
- 57842 words of font info for 118 fonts, out of 8000000 for 9000
+ 6401 strings out of 495000
+ 83971 string characters out of 6181170
+ 163594 words of memory out of 5000000
+ 9431 multiletter control sequences out of 15000+600000
+ 63922 words of font info for 124 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 41i,13n,45p,481b,260s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,12n,45p,481b,260s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive/texmf-dist/font
 s/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
 ic/txfonts/t1xtt.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/
 txex.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/txsy.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/ur
-w/times/utmri8a.pfb>
-Output written on report.pdf (7 pages, 90070 bytes).
+sr/share/texlive/texmf-dist/fonts/type1/public/txfonts/txsyb.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utm
+ri8a.pfb>
+Output written on report.pdf (8 pages, 165417 bytes).
 PDF statistics:
- 69 PDF objects out of 1000 (max. 8388607)
- 49 compressed objects within 1 object stream
+ 83 PDF objects out of 1000 (max. 8388607)
+ 55 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
