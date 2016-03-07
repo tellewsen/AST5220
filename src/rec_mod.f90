@@ -166,7 +166,7 @@ contains
             call odeint(X_e(i:i),x_rec(i-1) ,x_rec(i), eps, h1, hmin, dX_edx, bsstep, output1) 
         end if
 	n_e(i) = X_e(i)*n_b !Calculate electron density
-        write(*,*) use_saha,x_rec(i), X_e(i)
+        !write(*,*) use_saha,x_rec(i), X_e(i)
     end do
 
     !Compute splined (log of) electron density function
@@ -241,9 +241,6 @@ contains
     T_b          = T_0/a
     n_b          = Omega_b*rho_c/(m_H*a**3)
 
-    n1s          = (1.d0-Xe)*n_b
-    lambda_alpha = H*(3.d0*epsilon_0)**3/((8.d0*pi)**2*n1s) /(c*hbar)**3
-
     phi2         = 0.448d0*log(epsilon_0/(k_b*T_b))
     alpha2       = 64.d0*pi/sqrt(27.d0*pi)*(alpha/m_e)**2*sqrt(epsilon_0/(k_b*T_b))*phi2 *hbar**2/c
     beta         = alpha2 *((m_e*k_b*T_b)/(2.d0*pi*hbar**2))**1.5*exp(-epsilon_0/(k_b*T_b))
@@ -257,6 +254,12 @@ contains
     else
         beta2    = beta*exp((3.d0*epsilon_0)/(4.d0*k_b*T_b))
     end if
+
+    n1s          = (1.d0-Xe)*n_b
+    lambda_alpha = H*(3.d0*epsilon_0)**3/((8.d0*pi)**2*n1s) /(c*hbar)**3
+
+
+
     C_r          = (lambda_2s1s +lambda_alpha)/(lambda_2s1s+lambda_alpha+beta2)
     dydx         = C_r/H*(beta*(1.d0-Xe)- n_b*alpha2*Xe**2)
 

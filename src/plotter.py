@@ -66,7 +66,7 @@ plt.xlim([z[0],z[-1]])
 plt.xlabel(r'z')
 plt.ylabel(r'H(z)[km s$^{-1}$Mpc$^{-1}$]')
 """
-"""
+
 plt.figure(4)
 plt.plot(z_rec,X_e,label = r'$X_e$')
 plt.yscale('log')
@@ -74,8 +74,7 @@ plt.yscale('log')
 plt.xlim([1800,0])
 plt.xlabel(r'z')
 plt.ylabel(r'$X_e$')
-plt.show()
-"""
+
 
 """
 plt.figure(5)
@@ -87,7 +86,6 @@ plt.xlim([z_rec[0],z_rec[-1]])
 plt.xlabel(r'z')
 plt.ylabel(r'$n_e$[m$^{-3}$]')
 plt.legend()
-plt.show()
 """
 
 plt.figure(6)
@@ -103,8 +101,7 @@ plt.xlim([x_rec[0],x_rec[-1]])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tau$,$|\tau^\prime|$,$|\tau^{\prime\prime}|$')
 plt.legend()
-plt.show()
-"""
+
 plt.figure(7)
 plt.plot(x_rec , g,            '-',label = r'$\tilde g(x)$')
 #plt.plot(x_test, g_test,       '-' ,label = r'$\tilde g_{test}(x)$')
@@ -119,4 +116,4 @@ plt.xlabel(r'x')
 plt.ylabel(r'$\tilde g$,$\tilde g^\prime/10$,$\tilde g^{\prime\prime}/300$')
 plt.legend()
 plt.show()
-"""
+
