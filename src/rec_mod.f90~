@@ -324,10 +324,12 @@ contains
 
   !Routine for computing the second derivative of the visibility function, g, at arbitray x
   function get_ddg(x_in)
-      implicit none
-      real(dp), intent(in) :: x_in
-      real(dp)             :: get_ddg
-      get_ddg = splint(x_rec,ddg,d4g,x_in)
+    implicit none
+
+    real(dp), intent(in) :: x_in
+    real(dp)             :: get_ddg
+    
+    get_ddg = splint(x_rec,ddg,d4g,x_in)
   end function get_ddg
 
 end module rec_mod
