@@ -193,23 +193,23 @@ n_{1s} &= (1-X_e)n_H \\
 \end{align}
 Here $\alpha$ is the fine structure constant.
 
-At early times $X_e$ should be very close to 1, so we will start with Saha's equation. We define the point where we swithc from Saha to Peeble's equation at $X_e = 0.99$. There is not a lot of thought 
+At early times $X_e$ should be very close to 1, so we will start with Saha's equation. We define the point where we switch from Saha to Peeble's equation at $X_e = 0.99$. 
 
-
-
-CONTINUE FROM HERE
-CONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERECONTINUE FROM HERE
-
-
-
-
+With this it should be possible to calculate the electron density, optical depth, and the visibility function.
+How this is done is explained in the next section.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The programming language of choice is Fortran90. This is chosen because of its speed, and because the skeleton code provided was written in it. 
+As in part one of the project we will continue using Fortran90.
+We will also be using most of the variables we defined in that part again.
+The only thing I want to change is the length of my $x$ array. 
+Since the evolution of the optical depth should change fairly little except for around recombination, I set it up with three intervals with different step lengths. The first part goes from $x = -10.5$ to the x value corresponding to redshift $z= 1630.4$ with 300 points. The next goes from the end of the first to $z = 614.2$ with 300 points. And the last one goes from there until today at $z = 0$ with 300 points. This ensures that we have a much better resolution around recombination than the rest.
 
-The first step is to set up arrays for $a$, $x$, $\eta$, all five $\Omega_x$, and $\rho_x$. We will also need arrays for $\rho_c$, $H$, and $z$.
+The next step is to calculate the electron density. The first part of this is easy. One writes in the equations and solves the Saha equation with simple algebra. When the switch to Peebles occurs we make use of the ODE solver used in part one of the project. 
+
+
+CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE CONTINUE FROM HERE 
 
 We then set the first $x$ value to correspond to $a= 10^{-10}$, and the last to $a=0$ (today). 
 I've chosen to use 1000 points for these arrays and make the steps equal in the $x$ array. After that one computes the $a$, and $z$ values for each of the points in this $x$ array. Because of this we now have linear steps in $x$.
@@ -228,9 +228,9 @@ This can be found by considering that $a\pazocal{H} \rightarrow  H_0\sqrt{\Omega
 \end{equation}
 for small $a$. And thus one has an initial value.
 
-Plugging this into the ODE solver returns $\eta(x)$ for all values in the $x$ array. Thus completing all calculations needed for the first part of the project. The ODE solver uses the Bulirsch–Stoer algorithm. The steplength is set to be one hundredth the length between two neighboring $x$ values.
+Plugging this into the ODE solver returns $\eta(x)$ for all values in the $x$ array. Thus completing all calculations needed for the first part of the project. The ODE solver uses the Bulirsch–Stoer algorithm. The step length is set to be one hundredth the length between two neighboring $x$ values.
 
-As preparation for the next part I also spline the resulting $\eta(x)$ values. These are then integrated and evaluated for a new set of $x$ values not equal to but inside the $x$ values used to make the spline. I have overplotted this in the plot for $\eta(x)$ and the functions overlap. 
+As preparation for the next part I also spline the resulting $\eta(x)$ values. These are then integrated and evaluated for a new set of $x$ values not equal to but inside the $x$ values used to make the spline. I have over plotted this in the plot for $\eta(x)$ and the functions overlap. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec:simulate_analytic}
