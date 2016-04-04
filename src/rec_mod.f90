@@ -40,6 +40,7 @@ contains
     !ODE int variables
     eps  = 1.d-10
     hmin = 0.d0
+    !Spline variables
     yp1  = 1.d30
     ypn  = 1.d30
 

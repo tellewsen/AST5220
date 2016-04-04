@@ -33,6 +33,8 @@ module evolution_mod
   real(dp),     private :: k_current
   integer(i4b), private :: npar = 6+lmax_int
 
+  !With or without polarization
+  logical(lgt) :: polarize = False
 contains
 
 
@@ -86,19 +88,24 @@ contains
     allocate(dTheta(0:n_t, 0:lmax_int, n_k))
 
     ! Task: Set up initial conditions for the Boltzmann and Einstein equations
-    Phi(0,:)     = 
-    delta(0,:)   = 
-    delta_b(0,:) = 
+    Phi(0,:)     = 1.d0
+    delta(0,:)   = 1.5d0*Phi(0,:)
+    delta_b(0,:) = delta(0,:)
        
     do i = 1, n_k
-       v(0,i)       = 
-       v_b(0,i)     = 
-       Theta(0,0,i) = 
-       Theta(0,1,i) = 
-       Theta(0,2,i) = 
-       do l = 3, lmax_int
-          Theta(0,l,i) = 
-       end do
+        v(0,i)       = c*ks(i)/(2.d0*get_H_p(x_rec(i))*Phi(0,:)
+        v_b(0,i)     = v(0,i)
+        Theta(0,0,i) = 0.5d0*Phi(0,:)
+        Theta(0,1,i) = -c*ks(i)/(6.d0*get_H_p(x_rec(i)))*Phi(0,:)
+
+        if(polarize==True)
+            Theta(0,2,i) = -8.d0*c*ks(i)/(15.d0*get_H_p(x_rec(i))*get_dtau(x_rec(i)))*Theta(0,1,i) !with polarization
+        else
+            Theta(0,2,i) = -20.d0*c*ks(i)/(45.d0*get_H_p(x_rec(i))*get_dtau(x_rec(i)))*Theta(0,1,i) !without polarization
+        end if
+        do l = 3, lmax_int
+            Theta(0,l,i) = -l/(2.d0*l+1.d0)*c*ks(i)/(get_H_p(x_rec(i))*get_dtau(x_rec(i)))*Theta(0,l-1,i)
+        end do
     end do
 
   end subroutine initialize_perturbation_eqns
@@ -142,7 +149,15 @@ contains
        ! Task: Integrate from x_init until the end of tight coupling, using
        !       the tight coupling equations
 
+       q = (-((1.d0-2.d0*R)*get-dtau(x_t(i)) + (1+R)*get_ddtau(x_t(i)))*(3.d0*theta(i,1,k_current)) &
+           +v_b(i,k_current)) -c*k_current/get_H_p(x_t(i))*Psi(i,k) +(1.d0-get_dH_p(x_t(i)) &
+           /get_H_p(x_t(i)))*c*k_current/get_H_p(x_t(i))*(-Theta(i,0,k)+2.d0*Theta(i,2,k))-c*k_current &
+           /get_H_p(x_t(i))*dTheta(i,0,k))/((1.d0+R)*get_dtau(x_t(i))+get_dH_p(x_t(i))/get_H_p(x_t(i)) -1.d0)
 
+       dv_b(i,k) = 1.d0/(1.d0+R)*(-v_b(i,k)-c*k_current/get_H_p(x_t(i))*Psi(i,k) &
+                   +R*(q+c*k_current/get_H_p(x_t(i))*(-Theta(i,0,k)+2.d0*Theta(i,2,k)) &
+                   -c*k_current/get_H_p(x_t(i))*Psi(i,k)))
+       d_Theta(i,1,k) = 1.d0/3.d0*(q-dv_b(i,k))
        ! Task: Set up variables for integration from the end of tight coupling 
        ! until today
        y(1:7) = 
@@ -164,11 +179,13 @@ contains
           do l = 0, lmax_int
              Theta(i,l,k) = 
           end do
-          Psi(i,k)     = 
+          Psi(i,k)     =  - Phi(i,k) - 12.d0*H_0**2/(c*k_current*a_t(i))**2*Omega_r*Theta(i,2,k)
 
           ! Task: Store derivatives that are required for C_l estimation
-          dPhi(i,k)     = 
-          dv_b(i,k)     = 
+          dPhi(i,k)     = Psi(i,k) -c**2*k_current**2/(3.d0*get_H_p(x_t(i))**2)*Phi(i,k) +H_0**2/(2.d0*get_H_p(x_t(i))) &
+                          *(Omega_m/a_t(i)*delta(i,k) +Omega_b/a_t(i)*delta_b(i,k_current) + 4.d0*Omega_r/a_t(i)**2 &
+                          *Theta(i,0,k_current) )
+          dv_b(i,k)     = -v_b(i,k) -c*k_current/get_H_p(x_t(i))*Psi(i,k) +get_dtau(x_t(i))*R*(3.d0*Theta(i,1,k)+ v_b(i,k))
           dTheta(i,:,k) = 
           dPsi(i,k)     = 
        end do
