@@ -165,7 +165,7 @@ contains
        do l = 3, lmax_int
           y(6+l) = 
        end do
-!
+
        
        do i = 1, n_t
           ! Task: Integrate equations from tight coupling to today

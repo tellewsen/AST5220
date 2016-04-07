@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.3.14)  14 MAR 2016 10:56
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  5 APR 2016 11:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **report.tex
 (./report.tex
 LaTeX2e <2011/06/27>
-Babel <3.9h> and hyphenation patterns for 2 languages loaded.
+Babel <3.9h> and hyphenation patterns for 4 languages loaded.
 (./aa.cls
 Document Class: aa 2012/05/22{} v8.2{} Class for AA journal
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -448,8 +448,6 @@ File: babel.def 2013/12/03 3.9h Babel common definitions
 \babel@savecnt=\count113
 \U@D=\dimen125
 )
-\l@british = a dialect from \language\l@english 
-\l@UKenglish = a dialect from \language\l@english 
 \l@canadian = a dialect from \language\l@american 
 \l@australian = a dialect from \language\l@british 
 \l@newzealand = a dialect from \language\l@british 
@@ -909,12 +907,12 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
  [7]
 [8] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 6356 strings out of 495028
- 83328 string characters out of 6181497
- 161981 words of memory out of 5000000
- 9366 multiletter control sequences out of 15000+600000
+ 6354 strings out of 494985
+ 83308 string characters out of 6180357
+ 162131 words of memory out of 5000000
+ 9371 multiletter control sequences out of 15000+600000
  59218 words of font info for 120 fonts, out of 8000000 for 9000
- 14 hyphenation exceptions out of 8191
+ 36 hyphenation exceptions out of 8191
  41i,12n,45p,530b,260s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/
