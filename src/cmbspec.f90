@@ -3,7 +3,8 @@ program cmbspec
     use params
     use rec_mod
     use time_mod
-  
+    use evolution_mod
+
     implicit none
 
     integer, parameter :: out_unit1=10
@@ -23,6 +24,7 @@ program cmbspec
     !Initialize time and rec
     call initialize_time_mod
     call initialize_rec_mod
+    call evolution_mod
 
     !Output to file desired quantities here
 

@@ -39,15 +39,15 @@ contains
 
 
   ! NB!!! New routine for 4th milestone only; disregard until then!!!
-  subroutine get_hires_source_function(k, x, S)
-    implicit none
+  !subroutine get_hires_source_function(k, x, S)
+  !  implicit none
 
-    real(dp), pointer, dimension(:),   intent(out) :: k, x
-    real(dp), pointer, dimension(:,:), intent(out) :: S
+  !  real(dp), pointer, dimension(:),   intent(out) :: k, x
+  !  real(dp), pointer, dimension(:,:), intent(out) :: S
 
-    integer(i4b) :: i, j
-    real(dp)     :: g, dg, ddg, tau, dt, ddt, H_p, dH_p, ddHH_p, Pi, dPi, ddPi
-    real(dp), allocatable, dimension(:,:) :: S_lores
+ !   integer(i4b) :: i, j
+ !  real(dp)     :: g, dg, ddg, tau, dt, ddt, H_p, dH_p, ddHH_p, Pi, dPi, ddPi
+  !  real(dp), allocatable, dimension(:,:) :: S_lores
 
     ! Task: Output a pre-computed 2D array (over k and x) for the 
     !       source function, S(k,x). Remember to set up (and allocate) output 
@@ -61,7 +61,7 @@ contains
     !      5000 x 5000 grid and return this, together with corresponding
     !      high-resolution k and x arrays
 
-  end subroutine get_hires_source_function
+ ! end subroutine get_hires_source_function
 
 
 
@@ -71,10 +71,16 @@ contains
     implicit none
 
     integer(i4b) :: l, i
+    real(dp) :: k_min = 0.1d0*H_0
+    real(dp) :: k_max = 1.0d3*H_0
 
-    ! Task: Initialize k-grid, ks; quadratic between k_min and k_max
+    !Initialize k-grid, ks; quadratic between k_min and k_max
+    allocate(ks(n_k))
+    do i=1,n_k
+        ks(i) = k_min +(k_max -k_min)*(i/1.0d2)**2
+    end do
 
-    ! Allocate arrays for perturbation quantities
+    !Allocate arrays for perturbation quantities
     allocate(Theta(0:n_t, 0:lmax_int, n_k))
     allocate(delta(0:n_t, n_k))
     allocate(delta_b(0:n_t, n_k))
@@ -93,19 +99,21 @@ contains
     delta_b(0,:) = delta(0,:)
        
     do i = 1, n_k
-        v(0,i)       = c*ks(i)/(2.d0*get_H_p(x_rec(i))*Phi(0,:)
+        v(0,i)       = c*ks(i)/(2.d0*get_H_p(x_t(i))*Phi(0,:)
         v_b(0,i)     = v(0,i)
         Theta(0,0,i) = 0.5d0*Phi(0,:)
-        Theta(0,1,i) = -c*ks(i)/(6.d0*get_H_p(x_rec(i)))*Phi(0,:)
+        Theta(0,1,i) = -c*ks(i)/(6.d0*get_H_p(x_t(i)))*Phi(0,:)
 
-        if(polarize==True)
-            Theta(0,2,i) = -8.d0*c*ks(i)/(15.d0*get_H_p(x_rec(i))*get_dtau(x_rec(i)))*Theta(0,1,i) !with polarization
-        else
-            Theta(0,2,i) = -20.d0*c*ks(i)/(45.d0*get_H_p(x_rec(i))*get_dtau(x_rec(i)))*Theta(0,1,i) !without polarization
-        end if
+        !if(polarize==True)
+        !    Theta(0,2,i) = -8.d0*c*ks(i)/(15.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,1,i) !with polarization
+        !else
+        Theta(0,2,i) = -20.d0*c*ks(i)/(45.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,1,i) !without polarization
+        !end if
+
         do l = 3, lmax_int
-            Theta(0,l,i) = -l/(2.d0*l+1.d0)*c*ks(i)/(get_H_p(x_rec(i))*get_dtau(x_rec(i)))*Theta(0,l-1,i)
+            Theta(0,l,i) = -l/(2.d0*l+1.d0)*c*ks(i)/(get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,l-1,i)
         end do
+
     end do
 
   end subroutine initialize_perturbation_eqns
@@ -148,7 +156,7 @@ contains
 
        ! Task: Integrate from x_init until the end of tight coupling, using
        !       the tight coupling equations
-
+       do i=1,n_t
        q = (-((1.d0-2.d0*R)*get-dtau(x_t(i)) + (1+R)*get_ddtau(x_t(i)))*(3.d0*theta(i,1,k_current)) &
            +v_b(i,k_current)) -c*k_current/get_H_p(x_t(i))*Psi(i,k) +(1.d0-get_dH_p(x_t(i)) &
            /get_H_p(x_t(i)))*c*k_current/get_H_p(x_t(i))*(-Theta(i,0,k)+2.d0*Theta(i,2,k))-c*k_current &
@@ -158,6 +166,12 @@ contains
                    +R*(q+c*k_current/get_H_p(x_t(i))*(-Theta(i,0,k)+2.d0*Theta(i,2,k)) &
                    -c*k_current/get_H_p(x_t(i))*Psi(i,k)))
        d_Theta(i,1,k) = 1.d0/3.d0*(q-dv_b(i,k))
+
+
+
+       end do
+
+
        ! Task: Set up variables for integration from the end of tight coupling 
        ! until today
        y(1:7) = 
@@ -165,7 +179,7 @@ contains
        do l = 3, lmax_int
           y(6+l) = 
        end do
-!
+
        
        do i = 1, n_t
           ! Task: Integrate equations from tight coupling to today
@@ -186,8 +200,13 @@ contains
                           *(Omega_m/a_t(i)*delta(i,k) +Omega_b/a_t(i)*delta_b(i,k_current) + 4.d0*Omega_r/a_t(i)**2 &
                           *Theta(i,0,k_current) )
           dv_b(i,k)     = -v_b(i,k) -c*k_current/get_H_p(x_t(i))*Psi(i,k) +get_dtau(x_t(i))*R*(3.d0*Theta(i,1,k)+ v_b(i,k))
-          dTheta(i,:,k) = 
-          dPsi(i,k)     = 
+          dTheta(i,0,k) = -c*ks(k)/get_H_p(x_t(i))*Theta(i,1,k) -dPhi(i,k)
+          dTheta(i,1,k) = c*ks(k)/(3.d0*get_H_p(x_t(i)))*Theta(i,0,k) - 2.d0*c*ks(k)/(3.d0*get_H_p(x_t(i)))*Theta(i,2,k) +c*ks(k)/3.d0*get_H_p(x_t(i)))*Psi(i,k) &
+                        + get_dtau(x_t(i))*(Theta(i,1,k)+ 1.d0/3.d0*v_b(i,k))
+          do l=3,lmax_int 
+              dTheta(i,l,k) = 
+          end do
+          !dPsi(i,k)     = 
        end do
 
     end do
@@ -207,7 +226,14 @@ contains
 
     real(dp), intent(in)  :: k
     real(dp)              :: get_tight_coupling_time
-
+    do i=0,n_t
+        if(x_t > x_rec_start) 
+        or (abs(k/(get_H_p(x_t(i)*get_dtau(x_t(i)))))>0.1d0) 
+        or (abs(get_dtau(x_t(i)) < 10.d0))
+            get_tight_coupling_time = x_t(i)
+            exit
+        end if
+    end do
   end function get_tight_coupling_time
 
 end module evolution_mod
