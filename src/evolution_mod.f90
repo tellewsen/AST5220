@@ -138,7 +138,7 @@ contains
 
     ! Propagate each k-mode independently
     do k = 1, n_k
-
+       write(*,*) 'Current k', k
        k_current = ks(k)  ! Store k_current as a global module variable
        h1        = 1.d-5
 
@@ -158,7 +158,8 @@ contains
     write(*,*) 'under x_tc'
        ! Task: Integrate from x_init until the end of tight coupling, using
        !       the tight coupling equations
-       do i=1,n_t
+       write(*,*) 'Start of tight coupling'
+       do i=2,n_t
            if (x_t(i)< x_tc) then 
            !Solve next step
            call odeint(y_tight_coupling,x_t(i-1) ,x_t(i), eps, h1, hmin, derivs_tc, bsstep, output3)
@@ -175,7 +176,7 @@ contains
                exit
            end if
        end do
-
+       write(*,*) 'End of tight coupling'
 
        ! Task: Set up variables for integration from the end of tight coupling 
        ! until today
@@ -186,10 +187,13 @@ contains
        end do
 
 
-       !Continue after tight coupling       
+       !Continue after tight coupling
+       write(*,*) 'start of rec'       
        do i = i_tc, n_t
+
           ! Task: Integrate equations from tight coupling to today
-           call odeint(y, x_t(i-1) ,x_t(i), eps, h1, hmin, derivs, bsstep, output3)
+          write(*,*) 'running odeint with i =', i
+          call odeint(y, x_t(i-1) ,x_t(i), eps, h1, hmin, derivs, bsstep, output3)
 
           ! Task: Store variables at time step i in global variables
           delta(i,k)   = y(1)
@@ -229,7 +233,7 @@ contains
                                  Theta(i,l,k) + get_dtau(x_t(i))*Theta(i,l,k)
           !dPsi(i,k)     = 
        end do
-
+       write(*,*) 'today'
     end do
     deallocate(y_tight_coupling)
     deallocate(y)
@@ -264,16 +268,19 @@ contains
       Phi     = y(5)
       Theta_0 = y(6)
       Theta_1 = y(7)
+      Theta_2 = y(8)
+
+      R         = 4.d0*Omega_R/(3.d0*Omega_b*a)
 
       Psi       =  - Phi - 12.d0*H_0**2/(c*k_current*a)**2*Omega_r*Theta_2
-
+      d_Phi     = Psi -c**2*k_current**2/(3.d0*get_H_p(x)**2)*Phi +H_0**2/(2.d0*get_H_p(x)) &
+                *(Omega_m/a*delta +Omega_b/a*delta_b + 4.d0*Omega_r/a**2 &
+                *Theta_0)
       d_delta   = c*k_current/get_H_p(x)*v-3d0*d_Phi
       d_delta_b = c*k_current/get_H_p(x)*v_b-3d0*d_Phi
       d_v       = -v -c*k_current/get_H_p(x)*Psi
       d_v_b     = -v_b -c*k_current/get_H_p(x)*Psi + get_dtau(x)*R*(3.d0*Theta_1+v_b)
-      d_Phi     = Psi -c**2*k_current**2/(3.d0*get_H_p(x)**2)*Phi +H_0**2/(2.d0*get_H_p(x)) &
-                *(Omega_m/a*delta +Omega_b/a*delta_b + 4.d0*Omega_r/a**2 &
-                *Theta_0)
+
 
       d_Theta_0 = -c*k_current/get_H_p(x)*Theta_1 -d_Phi
       d_Theta_1 = c*k_current/(3.d0*get_H_p(x))*Theta_0 - &
@@ -368,10 +375,12 @@ contains
     real(dp), intent(in)  :: k
     real(dp)              :: get_tight_coupling_time
     integer(i4b)          :: i
-    real(dp)              :: x
-    do i=1,n_t
-        x = x_t(i)
-        if (x < x_start_rec .and. abs(k/(get_H_p(x)*get_dtau(x))) <= 0.1d0 .and. abs(get_dtau(x_t(i))) > 10.d0) then 
+    real(dp)              :: x,a
+    do i=1,10000
+        a = a_init - i*a_init/10000
+        x = log(a)
+        !write(*,*) a,x,x_start_rec
+        if (x < x_start_rec .and. abs(c*k/(get_H_p(x)*get_dtau(x))) <= 0.1d0 .and. abs(get_dtau(x)) > 10.d0) then 
             get_tight_coupling_time = x
         end if
     end do
