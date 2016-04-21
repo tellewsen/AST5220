@@ -34,7 +34,7 @@ module time_mod
     real(dp),    allocatable, dimension(:) :: Omega_rx 
     real(dp),    allocatable, dimension(:) :: Omega_nux 
     real(dp),    allocatable, dimension(:) :: Omega_lambdax 
-
+    real(dp)				   :: x_start_rec, x_end_rec
     real(dp),    allocatable, dimension(:) :: H !Huble constant as func of x
 
 
@@ -43,7 +43,7 @@ contains
     implicit none
 
     integer(i4b) :: i, n, n1, n2
-    real(dp)     :: z_start_rec, z_end_rec, z_0, x_start_rec, x_end_rec, x_0
+    real(dp)     :: z_start_rec, z_end_rec, z_0, x_0
     real(dp)     :: dx, x_eta1, x_eta2, a_init,h1,eta_init,a_end,rho_crit0,rho_crit
     real(dp)     :: eps,hmin,yp1,ypn
 

@@ -24,7 +24,8 @@ program cmbspec
     !Initialize time and rec
     call initialize_time_mod
     call initialize_rec_mod
-    call evolution_mod
+    call initialize_perturbation_eqns
+    call integrate_perturbation_eqns
 
     !Output to file desired quantities here
 
