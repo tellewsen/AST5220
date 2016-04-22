@@ -18,7 +18,7 @@ module rec_mod
     real(dp), allocatable, dimension(:)   :: tau_test,dtau_test,ddtau_test !Used for testing the splines
     real(dp)                              :: x_0
     real(dp)                              :: x_test_start
-    real(dp)                              :: x_test_end
+    real(dp)                              :: x_test_end,a_init
     integer(i4b),private :: i
 contains
 
@@ -45,15 +45,17 @@ contains
     ypn  = 1.d30
 
     !Grid sizes 
-    n1          = 300                       ! Number of grid points during recombination
+    n1          = 250                       ! Number of grid points during recombination
     n2          = 200                       ! Number of grid points after recombination
     n3          = 300
     n           = n1 + n2 +n3               ! Total number of grid points
     z_start_rec = 1630.4d0                  ! Redshift of start of recombination
     z_end_rec   = 614.2d0                   ! Redshift of end of recombination
     z_0         = 0.d0                      ! Redshift today
+    a_init      = 1.d-10                    ! Scale factor at start
 
-    x_before_rec= -10.5d0                   ! x at start of array
+    x_init      = log(a_init)!-10.5d0      ! x at start of array
+    !write(*,*) x_init
     x_start_rec = -log(1.d0 + z_start_rec)  ! x of start of recombination
     x_end_rec   = -log(1.d0 + z_end_rec)    ! x of end of recombination
 
@@ -86,15 +88,16 @@ contains
     allocate(dg_test(n))
     allocate(ddg_test(n))
 
+    !x_rec = x_t
     !fill test 
-    do i=1,n
-        x_test(i) = x_test_start + i*(x_test_end-x_test_start)/n
-    end do
-    z_test = 1.d0/exp(x_test) -1.d0
+    !do i=1,n
+    !    x_test(i) = x_test_start + i*(x_test_end-x_test_start)/n
+    !end do
+    !z_test = 1.d0/exp(x_test) -1.d0
 
     !Fill in x,a,z (rec) grids
     do i = 1,n1
-        x_rec(i)       = x_before_rec + (i-1)*(x_start_rec-x_before_rec)/(n1-1)
+        x_rec(i)       = x_init + (i-1)*(x_start_rec-x_init)/(n1-1)
     end do
     do i = 1,n2+1 ! Fill interval during recombination
         x_rec(n1+i)    = x_start_rec + i*(x_end_rec-x_start_rec)/(n2)

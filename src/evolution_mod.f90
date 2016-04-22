@@ -7,7 +7,7 @@ module evolution_mod
   implicit none
 
   ! Accuracy parameters
-  real(dp),     parameter, private :: a_init   = 1.d-8
+  !real(dp),     parameter, private :: a_init   = 1.d-8
   real(dp),     parameter, private :: k_min    = 0.1d0 * H_0 / c
   real(dp),     parameter, private :: k_max    = 1.d3  * H_0 / c
   integer(i4b), parameter          :: n_k      = 100
@@ -70,7 +70,7 @@ contains
   subroutine initialize_perturbation_eqns
     implicit none
 
-    integer(i4b) :: l, i
+    integer(i4b) :: i,l, k
     real(dp) :: k_min = 0.1d0*H_0
     real(dp) :: k_max = 1.0d3*H_0
 
@@ -98,24 +98,23 @@ contains
     delta(0,:)   = 1.5d0*Phi(0,:)
     delta_b(0,:) = delta(0,:)
        
-    do i = 1, n_k
-        v(0,i)       = c*ks(i)/(2.d0*get_H_p(x_t(i)))*Phi(0,1)
-        v_b(0,i)     = v(0,i)
-        Theta(0,0,i) = 0.5d0*Phi(0,1)
-        Theta(0,1,i) = -c*ks(i)/(6.d0*get_H_p(x_t(i)))*Phi(0,1)
+    do k = 1, n_k
+        v(0,k)       = c*ks(k)/(2.d0*get_H_p(x_t(1)))*Phi(0,1)
+        v_b(0,k)     = v(0,k)
+        Theta(0,0,k) = 0.5d0*Phi(0,1)
+        Theta(0,1,k) = -c*ks(k)/(6.d0*get_H_p(x_t(1)))*Phi(0,1)
 
         !if(polarize==True)
         !    Theta(0,2,i) = -8.d0*c*ks(i)/(15.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,1,i) !with polarization
         !else
-        Theta(0,2,i) = -20.d0*c*ks(i)/(45.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,1,i) !without polarization
+        Theta(0,2,k) = -20.d0*c*ks(k)/(45.d0*get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(0,1,k) !without polarization
         !end if
 
         do l = 3, lmax_int
-            Theta(0,l,i) = -l/(2.d0*l+1.d0)*c*ks(i)/(get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,l-1,i)
+            Theta(0,l,k) = -l/(2.d0*l+1.d0)*c*ks(k)/(get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(0,l-1,k	)
         end do
 
     end do
-
   end subroutine initialize_perturbation_eqns
 
   subroutine integrate_perturbation_eqns
@@ -128,7 +127,6 @@ contains
 
     real(dp), allocatable, dimension(:) :: y, y_tight_coupling, dydx
 
-    x_init = log(a_init)
     eps    = 1.d-8
     hmin   = 0.d0
 
@@ -153,17 +151,19 @@ contains
        
        ! Find the time to which tight coupling is assumed, 
        ! and integrate equations to that time
-    write(*,*) 'over x_tc'
+       write(*,*) 'over x_tc'
        x_tc = get_tight_coupling_time(k_current)
-    write(*,*) 'under x_tc'
+       write(*,*) 'x_tc =',x_tc
+       write(*,*) 'under x_tc'
        ! Task: Integrate from x_init until the end of tight coupling, using
        !       the tight coupling equations
        write(*,*) 'Start of tight coupling'
        do i=2,n_t
+           write(*,*) 'i=',i
            if (x_t(i)< x_tc) then 
            !Solve next step
-           call odeint(y_tight_coupling,x_t(i-1) ,x_t(i), eps, h1, hmin, derivs_tc, bsstep, output3)
-           !save variables
+           call odeint(y_tight_coupling,x_t(i-1),x_t(i),eps,h1,hmin,derivs_tc, bsstep, output3)
+           !Save variables
            delta(i,k)   = y_tight_coupling(1)
            delta_b(i,k) = y_tight_coupling(2)
            v(i,k)       = y_tight_coupling(3)
@@ -171,6 +171,11 @@ contains
            Phi(i,k)     = y_tight_coupling(5)
            Theta(i,0,k) = y_tight_coupling(6)
            Theta(i,1,k) = y_tight_coupling(7)
+           Theta(0,2,k) = -20.d0*c*k_current/(45.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(i,1,k) !without polarization
+           do l = 3, lmax_int
+              Theta(i,l,k) = -l/(2.d0*l+1.d0)*c*k_current/(get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,l-1,k)
+           end do
+
            else
                i_tc = i
                exit
@@ -183,7 +188,7 @@ contains
        y(1:7) = y_tight_coupling(1:7)
        y(8)   = Theta(0,2,k)
        do l = 3, lmax_int
-          y(6+l) = -l/(2.d0*l+1.d0)*c*k_current/(get_H_p(x_tc)*get_dtau(x_tc))*Theta(0,l-1,k)
+          y(6+l) = Theta(0,l,k)
        end do
 
 
@@ -241,15 +246,78 @@ contains
 
   end subroutine integrate_perturbation_eqns
 
+  subroutine derivs_tc(x,y, dydx)
+      use healpix_types
+      implicit none
+      real(dp),               intent(in)  :: x
+      real(dp), dimension(:), intent(in)  :: y
+      real(dp), dimension(:), intent(out) :: dydx
+
+      real(dp) :: a,H_p,dtau,dH_p
+      real(dp) :: delta,d_delta
+      real(dp) :: delta_b,d_delta_b
+      real(dp) :: v,d_v
+      real(dp) :: v_b,d_v_b
+      real(dp) :: Phi,d_Phi
+      real(dp) :: Theta_0,d_Theta_0
+      real(dp) :: Theta_1,d_Theta_1
+      real(dp) :: Theta_2
+      real(dp) :: Psi,q,R
+
+      H_p     = get_H_p(x)
+      dH_p    = get_dH_p(x)
+      dtau    = get_dtau(x)
+      a       = exp(x)
+      delta   = y(1)
+      delta_b = y(2)
+      v       = y(3)
+      v_b     = y(4)
+      Phi     = y(5)
+      Theta_0 = y(6)
+      Theta_1 = y(7)
+
+      Theta_2   = -20.d0*c*k_current/(45.d0*H_p*dtau)*Theta_1
+      R         = 4.d0*Omega_r/(3.d0*Omega_b*a)
+      Psi       = -Phi - 12.d0*H_0**2/(c*k_current*a)**2*Omega_r*Theta_2
+
+      d_Phi     = Psi -c**2*k_current**2/(3.d0*H_p**2)*Phi +H_0**2/(2.d0*H_p) &
+                  *(Omega_m/a*delta +Omega_b/a*delta_b + 4.d0*Omega_r/a**2 &
+                  *Theta_0)
+
+      d_Theta_0 = -c*k_current/H_p*Theta_1 -d_Phi
+
+      d_delta   = c*k_current/H_p*v  -3d0*d_Phi
+      d_delta_b = c*k_current/H_p*v_b-3d0*d_Phi
+      d_v       = -v -c*k_current/H_p*Psi
+
+      q         = (-((1.d0-2.d0*R)*dtau + (1.d0+R)*get_ddtau(x))* &
+                  (3.d0*Theta_1 +v_b) -c*k_current/H_p* &
+                  Psi +(1.d0-dH_p /H_p)*c*k_current/ &
+                  H_p*(-Theta_0+2.d0*Theta_2)-c*k_current / &
+                  H_p*d_Theta_0)/((1.d0+R)*dtau+ &
+                  dH_p/H_p -1.d0)
+      d_v_b     = 1.d0/(1.d0+R)*(-v_b-c*k_current/H_p*Psi &
+                  +R*(q+c*k_current/H_p*(-Theta_0+2.d0*Theta_2) &
+                  -c*k_current/H_p*Psi))
+      d_Theta_1 = 1.d0/3.d0*(q-d_v_b)
+      dydx(1) = d_delta
+      dydx(2) = d_delta_b
+      dydx(3) = d_v
+      dydx(4) = d_v_b
+      dydx(5) = d_Phi
+      dydx(6) = d_Theta_0
+      dydx(7) = d_Theta_1      
+  end subroutine derivs_tc
+
   subroutine derivs(x,y, dydx) 
       use healpix_types
       implicit none
-      real(dp), dimension(:), intent(in)  :: y
       real(dp),               intent(in)  :: x
+      real(dp), dimension(:), intent(in)  :: y
       real(dp), dimension(:), intent(out) :: dydx
 
-      real(dp) :: a
-      real(dp) :: Psi
+      real(dp) :: a,H_p,dH_p
+      real(dp) :: Psi,dtau
       real(dp) :: Phi,d_Phi
       real(dp) :: delta,d_delta
       real(dp) :: delta_b,d_delta_b
@@ -260,6 +328,10 @@ contains
       real(dp) :: Theta_2
       real(dp) :: R,q
 
+
+      H_p     = get_H_p(x)
+      dH_p    = get_dH_p(x)
+      dtau    = get_dtau(x)
       a       = exp(x)
       delta   = y(1)
       delta_b = y(2)
@@ -272,21 +344,21 @@ contains
 
       R         = 4.d0*Omega_R/(3.d0*Omega_b*a)
 
-      Psi       =  - Phi - 12.d0*H_0**2/(c*k_current*a)**2*Omega_r*Theta_2
-      d_Phi     = Psi -c**2*k_current**2/(3.d0*get_H_p(x)**2)*Phi +H_0**2/(2.d0*get_H_p(x)) &
-                *(Omega_m/a*delta +Omega_b/a*delta_b + 4.d0*Omega_r/a**2 &
-                *Theta_0)
-      d_delta   = c*k_current/get_H_p(x)*v-3d0*d_Phi
-      d_delta_b = c*k_current/get_H_p(x)*v_b-3d0*d_Phi
-      d_v       = -v -c*k_current/get_H_p(x)*Psi
-      d_v_b     = -v_b -c*k_current/get_H_p(x)*Psi + get_dtau(x)*R*(3.d0*Theta_1+v_b)
+      Psi       = -Phi - 12.d0*H_0**2/(c*k_current*a)**2*Omega_r*Theta_2
+      d_Phi     = Psi -c**2*k_current**2/(3.d0*H_p**2)*Phi +H_0**2/(2.d0*H_p) &
+                  *(Omega_m/a*delta +Omega_b/a*delta_b + 4.d0*Omega_r/a**2 &
+                  *Theta_0)
+      d_delta   = c*k_current/H_p*v-3d0*d_Phi
+      d_delta_b = c*k_current/H_p*v_b-3d0*d_Phi
+      d_v       = -v -c*k_current/H_p*Psi
+      d_v_b     = -v_b -c*k_current/H_p*Psi + dtau*R*(3.d0*Theta_1+v_b)
 
 
-      d_Theta_0 = -c*k_current/get_H_p(x)*Theta_1 -d_Phi
-      d_Theta_1 = c*k_current/(3.d0*get_H_p(x))*Theta_0 - &
-                2.d0*c*k_current/(3.d0*get_H_p(x))*Theta_2+&
-                c*k_current/(3.d0*get_H_p(x))*Psi + &
-                get_dtau(x)*(Theta_1+ 1.d0/3.d0*v_b)
+      d_Theta_0 = -    c*k_current/H_p*Theta_1 -d_Phi
+      d_Theta_1 =      c*k_current/(3.d0*H_p)*Theta_0 - &
+                  2.d0*c*k_current/(3.d0*H_p)*Theta_2+&
+                       c*k_current/(3.d0*H_p)*Psi + &
+                  dtau*(Theta_1+ 1.d0/3.d0*v_b)
 
       dydx(1) = d_delta
       dydx(2) = d_delta_b
@@ -296,66 +368,6 @@ contains
       dydx(6) = d_Theta_0
       dydx(7) = d_Theta_1
   end subroutine derivs
-
-  subroutine derivs_tc(x,y, dydx) 
-      use healpix_types
-      implicit none
-      real(dp), dimension(:), intent(in)  :: y
-      real(dp),               intent(in)  :: x
-      real(dp), dimension(:), intent(out) :: dydx
-      real(dp) :: a
-      real(dp) :: delta,d_delta
-      real(dp) :: delta_b,d_delta_b
-      real(dp) :: v,d_v
-      real(dp) :: v_b,d_v_b
-      real(dp) :: Phi,d_Phi
-      real(dp) :: Theta_0,d_Theta_0
-      real(dp) :: Theta_1,d_Theta_1
-      real(dp) :: Theta_2
-      real(dp) :: Psi,q,R
-
-      a       = exp(x)
-      delta   = y(1)
-      delta_b = y(2)
-      v       = y(3)
-      v_b     = y(4)
-      Phi     = y(5)
-      Theta_0 = y(6)
-      Theta_1 = y(7)
-      Theta_2 = -20.d0*c*k_current/(45.d0*get_H_p(x)*get_dtau(x))*Theta_1
-
-      Psi       =  - Phi - 12.d0*H_0**2/(c*k_current*a)**2*Omega_r*Theta_2
-      d_Phi     = Psi -c**2*k_current**2/(3.d0*get_H_p(x)**2)*Phi +H_0**2/(2.d0*get_H_p(x)) &
-                *(Omega_m/a*delta +Omega_b/a*delta_b + 4.d0*Omega_r/a**2 &
-                *Theta_0)
-
-      d_Theta_0 = -c*k_current/get_H_p(x)*Theta_1 -d_Phi
-
-      d_delta   = c*k_current/get_H_p(x)*v  -3d0*d_Phi
-      d_delta_b = c*k_current/get_H_p(x)*v_b-3d0*d_Phi
-      d_v       = -v -c*k_current/get_H_p(x)*Psi
-
-      q         = (-((1.d0-2.d0*R)*get_dtau(x) + (1.d0+R)*get_ddtau(x))* &
-                  (3.d0*Theta_1 +v_b) -c*k_current/get_H_p(x)* &
-                  Psi +(1.d0-get_dH_p(x) /get_H_p(x))*c*k_current/ &
-                  get_H_p(x)*(-Theta_0+2.d0*Theta_2)-c*k_current / &
-                  get_H_p(x)*d_Theta_0)/((1.d0+R)*get_dtau(x)+ &
-                  get_dH_p(x)/get_H_p(x) -1.d0)
-
-       d_v_b     = 1.d0/(1.d0+R)*(-v_b-c*k_current/get_H_p(x)*Psi &
-                  +R*(q+c*k_current/get_H_p(x)*(-Theta_0+2.d0*Theta_2) &
-                  -c*k_current/get_H_p(x)*Psi))
-       d_Theta_1 = 1.d0/3.d0*(q-d_v_b)
-
-      dydx(1) = d_delta
-      dydx(2) = d_delta_b
-      dydx(3) = d_v
-      dydx(4) = d_v_b
-      dydx(5) = d_Phi
-      dydx(6) = d_Theta_0
-      dydx(7) = d_Theta_1
-  end subroutine derivs_tc
-
 
   subroutine output3(x, y)
       use healpix_types
@@ -374,12 +386,12 @@ contains
 
     real(dp), intent(in)  :: k
     real(dp)              :: get_tight_coupling_time
-    integer(i4b)          :: i
+    integer(i4b)          :: i,n
     real(dp)              :: x,a
-    do i=1,10000
-        a = a_init - i*a_init/10000
-        x = log(a)
-        !write(*,*) a,x,x_start_rec
+    n =1d6
+    do i=0,n
+        x = x_init +i*(0.d0-x_init)/n
+        !write(*,*) x,x_start_rec
         if (x < x_start_rec .and. abs(c*k/(get_H_p(x)*get_dtau(x))) <= 0.1d0 .and. abs(get_dtau(x)) > 10.d0) then 
             get_tight_coupling_time = x
         end if

@@ -34,7 +34,7 @@ module time_mod
     real(dp),    allocatable, dimension(:) :: Omega_rx 
     real(dp),    allocatable, dimension(:) :: Omega_nux 
     real(dp),    allocatable, dimension(:) :: Omega_lambdax 
-    real(dp)				   :: x_start_rec, x_end_rec
+    real(dp)				   :: x_init,x_start_rec, x_end_rec
     real(dp),    allocatable, dimension(:) :: H !Huble constant as func of x
 
 
@@ -42,29 +42,32 @@ contains
   subroutine initialize_time_mod
     implicit none
 
-    integer(i4b) :: i, n, n1, n2
+    integer(i4b) :: i, n, n1, n2,n3
     real(dp)     :: z_start_rec, z_end_rec, z_0, x_0
     real(dp)     :: dx, x_eta1, x_eta2, a_init,h1,eta_init,a_end,rho_crit0,rho_crit
     real(dp)     :: eps,hmin,yp1,ypn
 
     ! Define two epochs, 1) during and 2) after recombination.
-    n1          = 200                       ! Number of grid points during recombination
-    n2          = 300                       ! Number of grid points after recombination
-    n_t         = n1 + n2                   ! Total number of grid points
+    n1          = 250                       !Number of grid points before recombination
+    n2          = 200                       !Number of grid points during recombination
+    n3          = 300                       !Number of grid points after recombination
+    n_t         = n1 + n2 +n3               !Total number of grid points
 
     z_start_rec = 1630.4d0                  ! Redshift of start of recombination
     z_end_rec   = 614.2d0                   ! Redshift of end of recombination
     z_0         = 0.d0                      ! Redshift today
+
+    a_init      = 1.d-10                    ! Start value of a for eta evaluation
+    a_end       = 1.d0
 
     x_start_rec = -log(1.d0 + z_start_rec)  ! x of start of recombination
     x_end_rec   = -log(1.d0 + z_end_rec)    ! x of end of recombination
     x_0         = 0.d0                      ! x today
     
     n_eta       = 1000                      ! Number of eta grid points (for spline)
-    a_init      = 1.d-10                    ! Start value of a for eta evaluation
-    a_end       = 1.d0
-    x_eta1      = log(a_init)               ! Start value of x for eta evaluation
-    x_eta2      = 0.d0                      ! End value of x for eta evaluation
+
+    x_init      = log(a_init)               ! Start value of x for eta evaluation
+    x_0         = 0.d0                      ! End value of x for eta evaluation
     eta_init    = a_init/(H_0*sqrt(Omega_r+Omega_nu))
 
     eps = 1.d-10
@@ -72,21 +75,21 @@ contains
 
     ! Task: Fill in x and a grids ( These will be used in later milestones)
     allocate(x_t(n_t))
+    allocate(a_t(n_t))
 
-    do i = 0,n1-1 ! Fill interval during recombination
-        x_t(i+1)= x_start_rec + i*(x_end_rec-x_start_rec)/(n1-1)
+    !Fill in x,a,z (rec) grids
+    do i = 1,n1
+        x_t(i)       = x_init + (i-1)*(x_start_rec-x_init)/(n1-1)
     end do
-
-    do i = 1,n2 !Fill from end of recomb to today
-        x_t(n1+i) = x_end_rec + i*(x_0-x_end_rec)/(n2)
+    do i = 1,n2+1 ! Fill interval during recombination
+        x_t(n1+i)    = x_start_rec + i*(x_end_rec-x_start_rec)/(n2)
     end do
-
+    do i = 1,n3 !Fill from end of recomb to today
+        x_t(n1+n2+i) = x_end_rec + i*(x_0-x_end_rec)/(n3)
+    end do
     !write(*,*) x_t !print x_t to terminal
 
-
-    allocate(a_t(n_t))
     a_t = exp(x_t) !fill the a grid using the x grid
-
     !write(*,*) a_t !print a_t to terminal
 
 
@@ -95,9 +98,9 @@ contains
     allocate(x_eta(n_eta))
     allocate(z_eta(n_eta))
 
-    x_eta(1) = x_eta1
+    x_eta(1) = x_init
     do i = 1,(n_eta-1)
-        x_eta(i+1) = x_eta1 + i*(x_eta2-x_eta1)/(n_eta-1)
+        x_eta(i+1) = x_init + i*(x_0-x_init)/(n_eta-1)
     end do
     a_eta = exp(x_eta)
     z_eta = 1.d0/a_eta -1.d0
