@@ -151,8 +151,10 @@ contains
        ! Task: Integrate from x_init until the end of tight coupling, using
        !       the tight coupling equations
        write(*,*) 'Start of tight coupling'
+   write (*,'(*(2X, ES14.6))') Psi(1,k) ,Phi(1,k) ,delta(1,k),delta_b(1,k),v(1,k),v_b(1,k) ,Theta(1,0,k) ,Theta(1,1,k)
+   !write (*,'(*(2X, ES14.6))') dPsi(1,k),dPhi(1,k),dv_b(1,k),dTheta(1,0,k),dTheta(1,1,k)
        do i=2,n_t
-           write(*,*) 'i=',i
+           !write(*,*) 'i=',i
            if (x_t(i)< x_tc) then 
                !Solve next step
                call odeint(y_tight_coupling,x_t(i-1),x_t(i),eps,h1,hmin,derivs_tc, bsstep, output3)
@@ -162,12 +164,44 @@ contains
                v(i,k)       = y_tight_coupling(3)
                v_b(i,k)     = y_tight_coupling(4)
                Phi(i,k)     = y_tight_coupling(5)
+               Psi(i,k)     = -Phi(i,k) - 12.d0*H_0**2/(c*k_current*a_t(i))**2*Omega_r*Theta(i,2,k)
                Theta(i,0,k) = y_tight_coupling(6)
                Theta(i,1,k) = y_tight_coupling(7)
                Theta(i,2,k) = -(20.d0*c*k_current)/(45.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(i,1,k)
                do l = 3, lmax_int
                   Theta(i,l,k) = -l/(2.d0*l+1.d0)*c*k_current/(get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(i,l-1,k)
                end do
+
+               ! Task: Store derivatives that are required for C_l estimation
+
+               R             = 4.d0*Omega_r/(3.d0*Omega_b*a_t(i))
+               dPhi(i,k)     = Psi(i,k) -c**2*k_current**2/(3.d0*get_H_p(x_t(i))**2)*&
+                               Phi(i,k) +H_0**2/(2.d0*get_H_p(x_t(i)**2)) &
+                               *(Omega_m/a_t(i)*delta(i,k) +Omega_b/a_t(i)*&
+                               delta_b(i,k) + 4.d0*Omega_r/a_t(i)**2 &
+                               *Theta(i,0,k))
+
+               dTheta(i,0,k) = -c*k_current/get_H_p(x_t(i))*Theta(i,1,k) -dPhi(i,k)
+
+               q         = (-((1.d0-2.d0*R)*get_dtau(x_t(i)) + &
+                  (1.d0+R)*get_ddtau(x_t(i)))*(3.d0*Theta(i,1,k)+v_b(i,k)) - &
+                  c*k_current/get_H_p(x_t(i))*Psi(i,k) +(1.d0-get_dH_p(x_t(i))/ &
+                  get_H_p(x_t(i)))*c*k_current/get_H_p(x_t(i))*(-Theta(i,0,k)+ &
+                  2.d0*Theta(i,2,k))-c*k_current/get_H_p(x_t(i))*dTheta(i,0,k))/& 
+                  ((1.d0+R)*get_dtau(x_t(i))+get_dH_p(x_t(i))/get_H_p(x_t(i)) -1.d0)
+
+               dv_b(i,k)     = 1.d0/(1.d0+R)*(-v_b(i,k)-c*k_current/get_H_p(x_t(i))*Psi(i,k)+&
+                  R*(q+c*k_current/get_H_p(x_t(i))*(-Theta(i,0,k)+2.d0*Theta(i,2,k)-&
+                  c*k_current/get_H_p(x_t(i))*Psi(i,k))))
+
+               dTheta(i,1,k) = 1.d0/3.d0*(q-dv_b(i,k))
+
+
+               Psi(i,k)     = -Phi(i,k) - 12.d0*H_0**2/(c*k_current*a_t(i))**2*Omega_r*Theta(i,2,k)
+               dPsi(i,k)    = -dPhi(i,k) -12.d0*H_0**2/(c*k*a_t(i))**2*Omega_r*(-2.d0*Theta(i,2,k)+dTheta(i,2,k))
+
+   write (*,'(*(2X, ES14.6))') Psi(i,k) ,Phi(i,k) ,delta(i,k),delta_b(i,k),v(i,k),v_b(i,k) ,Theta(i,0,k) ,Theta(i,1,k)
+   !write (*,'(*(2X, ES14.6))') dPsi(i,k),dPhi(i,k),dv_b(i,k),dTheta(i,0,k),dTheta(i,1,k)
            else
                i_tc = i
                exit
