@@ -6,7 +6,6 @@ module rec_mod
     use spline_1D_mod
     implicit none
 
-    integer(i4b)                          :: n                             !Number of grid points
     real(dp), allocatable, dimension(:)   :: x_rec,a_rec,z_rec             !Grid
     real(dp), allocatable, dimension(:)   :: tau, dtau, ddtau              !Splined tau and derivatives
     real(dp), allocatable, dimension(:)   :: d4tau
@@ -18,21 +17,21 @@ module rec_mod
     real(dp), allocatable, dimension(:)   :: tau_test,dtau_test,ddtau_test !Used for testing the splines
     real(dp)                              :: x_0
     real(dp)                              :: x_test_start
-    real(dp)                              :: x_test_end,a_init
+    real(dp)                              :: x_test_end
     integer(i4b),private :: i
+    integer(i4b) :: n
 contains
 
   subroutine initialize_rec_mod
     implicit none
-    
-    integer(i4b) :: n1,n2,n3
+
     real(dp)     :: saha_limit, y, T_b, n_b, dydx, xmin, xmax, dx, f, n_e0, X_e0, &
 		    X_econst, phi2,alpha2,beta,beta2,n1s,lambda_alpha,C_r
     real(dp)     :: eps,hmin,yp1,ypn,h1,h2,h3
     real(dp)     :: z_start_rec, z_end_rec, z_0, x_before_rec,x_start_rec, x_end_rec
     logical(lgt) :: use_saha
 
-
+    n = n1+n2+n3
     x_test_start = -10.0d0
     x_test_end   = -1.0d0
     saha_limit   = 0.99d0       ! Switch from Saha to Peebles when X_e < 0.99
@@ -45,14 +44,10 @@ contains
     ypn  = 1.d30
 
     !Grid sizes 
-    n1          = 250                       ! Number of grid points during recombination
-    n2          = 200                       ! Number of grid points after recombination
-    n3          = 300
-    n           = n1 + n2 +n3               ! Total number of grid points
+
     z_start_rec = 1630.4d0                  ! Redshift of start of recombination
     z_end_rec   = 614.2d0                   ! Redshift of end of recombination
     z_0         = 0.d0                      ! Redshift today
-    a_init      = 1.d-10                    ! Scale factor at start
 
     x_init      = log(a_init)!-10.5d0      ! x at start of array
     !write(*,*) x_init
@@ -60,33 +55,12 @@ contains
     x_end_rec   = -log(1.d0 + z_end_rec)    ! x of end of recombination
 
     !Allocate all the arrays which will be used
-    allocate(x_rec(n))
-    allocate(a_rec(n))
-    allocate(z_rec(n))
-    allocate(H_rec(n))
-    allocate(X_e(n))
-    allocate(tau(n))
-    allocate(dtau(n))
-    allocate(ddtau(n))
-    allocate(d4tau(n))
-    allocate(n_e(n))
-    allocate(n_e2(n))
-    allocate(logn_e(n))
-    allocate(logn_e2(n))
-    allocate(g(n))
-    allocate(dg(n))
-    allocate(ddg(n))
-    allocate(d4g(n))
-    allocate(x_test(n))
-    allocate(z_test(n))
-    allocate(a_test(n))
-    allocate(n_etest(n))
-    allocate(tau_test(n))
-    allocate(dtau_test(n))
-    allocate(ddtau_test(n))
-    allocate(g_test(n))
-    allocate(dg_test(n))
-    allocate(ddg_test(n))
+    allocate(x_rec(n),a_rec(n),z_rec(n),H_rec(n),X_e(n) &
+            ,tau(n),dtau(n),ddtau(n),d4tau(n),n_e(n) &
+            ,n_e2(n),logn_e(n),logn_e2(n),g(n),dg(n) &
+            ,ddg(n),d4g(n),x_test(n),z_test(n),a_test(n) &
+            ,n_etest(n),tau_test(n),dtau_test(n)   &
+            ,ddtau_test(n),g_test(n),dg_test(n),ddg_test(n))
 
     !x_rec = x_t
     !fill test 

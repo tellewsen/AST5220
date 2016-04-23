@@ -36,19 +36,19 @@ module time_mod
     real(dp),    allocatable, dimension(:) :: Omega_lambdax 
     real(dp)				   :: x_init,x_start_rec, x_end_rec
     real(dp),    allocatable, dimension(:) :: H !Huble constant as func of x
-
-
+    integer(i4b) :: n1, n2,n3
+    real(dp)                               :: a_init,a_end
 contains
   subroutine initialize_time_mod
     implicit none
 
-    integer(i4b) :: i, n, n1, n2,n3
+    integer(i4b) :: i
     real(dp)     :: z_start_rec, z_end_rec, z_0, x_0
-    real(dp)     :: dx, x_eta1, x_eta2, a_init,h1,eta_init,a_end,rho_crit0,rho_crit
+    real(dp)     :: dx, x_eta1, x_eta2,h1,eta_init,rho_crit0,rho_crit
     real(dp)     :: eps,hmin,yp1,ypn
 
     ! Define two epochs, 1) during and 2) after recombination.
-    n1          = 250                       !Number of grid points before recombination
+    n1          = 100                       !Number of grid points before recombination
     n2          = 200                       !Number of grid points during recombination
     n3          = 300                       !Number of grid points after recombination
     n_t         = n1 + n2 +n3               !Total number of grid points
@@ -191,11 +191,9 @@ contains
         real(dp),               intent(in)  :: a
         real(dp), dimension(:), intent(in)  :: eta
         real(dp), dimension(:), intent(out) :: dydx
-	real(dp)                            :: H_p
 	real(dp)                            :: x
         x = log(a)
-	H_p = get_H_p(x)
-        dydx = c/(a*H_p)
+        dydx = c/(a*get_H_p(x))
   end subroutine eta_derivs
 
   subroutine output(x, y)
@@ -235,9 +233,12 @@ contains
 
       real(dp), intent(in) :: x
       real(dp)             :: get_dH_p
-      get_dH_p = H_0/2.d0/sqrt((Omega_m+Omega_b)*exp(-x)+(Omega_r+Omega_nu)*exp(-2.d0*x) &
-                 + Omega_lambda*exp(2.d0*x)) * (-(Omega_m+Omega_b)*exp(-x)-2.d0*(Omega_r+Omega_nu)*exp(-2.d0*x) &
-                 + 2.d0*Omega_lambda*exp(2.d0*x))
+      real(dp)             :: exp2x,expx
+      exp2x  = exp(2.d0*x)
+      expx   = exp(x)
+      get_dH_p = H_0/2.d0/sqrt((Omega_m+Omega_b)/expx+(Omega_r+Omega_nu)/exp2x &
+                 + Omega_lambda*exp2x) * (-(Omega_m+Omega_b)/expx-2.d0*(Omega_r+Omega_nu)/exp2x &
+                 + 2.d0*Omega_lambda*exp2x)
   end function get_dH_p
 
   ! Task: Write a function that computes eta(x), using the previously precomputed splined function

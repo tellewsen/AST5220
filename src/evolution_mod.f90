@@ -7,10 +7,9 @@ module evolution_mod
   implicit none
 
   ! Accuracy parameters
-  !real(dp),     parameter, private :: a_init   = 1.d-8
   real(dp),     parameter, private :: k_min    = 0.1d0 * H_0 / c
   real(dp),     parameter, private :: k_max    = 1.d3  * H_0 / c
-  integer(i4b), parameter          :: n_k      = 100
+  integer(i4b), parameter          :: n_k      = 1!00
   integer(i4b), parameter, private :: lmax_int = 6
 
   ! Perturbation quantities
@@ -77,41 +76,36 @@ contains
     !Initialize k-grid, ks; quadratic between k_min and k_max
     allocate(ks(n_k))
     do i=1,n_k
-        ks(i) = k_min +(k_max -k_min)*(i/1.0d2)**2
+        ks(i) = k_min +(k_max -k_min)*(i/100.d0)**2
     end do
 
     !Allocate arrays for perturbation quantities
-    allocate(Theta(0:n_t, 0:lmax_int, n_k))
-    allocate(delta(0:n_t, n_k))
-    allocate(delta_b(0:n_t, n_k))
-    allocate(v(0:n_t, n_k))
-    allocate(v_b(0:n_t, n_k))
-    allocate(Phi(0:n_t, n_k))
-    allocate(Psi(0:n_t, n_k))
-    allocate(dPhi(0:n_t, n_k))
-    allocate(dPsi(0:n_t, n_k))
-    allocate(dv_b(0:n_t, n_k))
-    allocate(dTheta(0:n_t, 0:lmax_int, n_k))
+    allocate(Theta(1:n_t, 0:lmax_int, n_k))
+    allocate(delta(1:n_t, n_k))
+    allocate(delta_b(1:n_t, n_k))
+    allocate(v(1:n_t, n_k))
+    allocate(v_b(1:n_t, n_k))
+    allocate(Phi(1:n_t, n_k))
+    allocate(Psi(1:n_t, n_k))
+    allocate(dPhi(1:n_t, n_k))
+    allocate(dPsi(1:n_t, n_k))
+    allocate(dv_b(1:n_t, n_k))
+    allocate(dTheta(1:n_t, 0:lmax_int, n_k))
 
     ! Task: Set up initial conditions for the Boltzmann and Einstein equations
-    Phi(0,:)     = 1.d0
-    delta(0,:)   = 1.5d0*Phi(0,:)
-    delta_b(0,:) = delta(0,:)
-       
-    do k = 1, n_k
-        v(0,k)       = c*ks(k)/(2.d0*get_H_p(x_t(1)))*Phi(0,1)
-        v_b(0,k)     = v(0,k)
-        Theta(0,0,k) = 0.5d0*Phi(0,1)
-        Theta(0,1,k) = -c*ks(k)/(6.d0*get_H_p(x_t(1)))*Phi(0,1)
+    Phi(1,:)     = 1.d0
+    delta(1,:)   = 1.5d0*Phi(1,:)
+    delta_b(1,:) = delta(1,:)
 
-        !if(polarize==True)
-        !    Theta(0,2,i) = -8.d0*c*ks(i)/(15.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,1,i) !with polarization
-        !else
-        Theta(0,2,k) = -20.d0*c*ks(k)/(45.d0*get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(0,1,k) !without polarization
-        !end if
+    do k = 1, n_k
+        v(1,k)       = c*ks(k)/(2.d0*get_H_p(x_t(1)))*Phi(1,k)
+        v_b(1,k)     = v(1,k)
+        Theta(1,0,k) = 0.5d0*Phi(1,k)
+        Theta(1,1,k) = -c*ks(k)/(6.d0*get_H_p(x_t(1)))*Phi(1,k)
+        Theta(1,2,k) = -20.d0*c*ks(k)/(45.d0*get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(1,1,k) !without polarization
 
         do l = 3, lmax_int
-            Theta(0,l,k) = -l/(2.d0*l+1.d0)*c*ks(k)/(get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(0,l-1,k	)
+            Theta(1,l,k) = -l/(2.d0*l+1.d0)*c*ks(k)/(get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(1,l-1,k)
         end do
 
     end do
@@ -129,7 +123,7 @@ contains
 
     eps    = 1.d-8
     hmin   = 0.d0
-
+    h1     = 1.d-5
     allocate(y(npar))
     allocate(dydx(npar))
     allocate(y_tight_coupling(7))
@@ -138,107 +132,105 @@ contains
     do k = 1, n_k
        write(*,*) 'Current k', k
        k_current = ks(k)  ! Store k_current as a global module variable
-       h1        = 1.d-5
 
        ! Initialize equation set for tight coupling
-       y_tight_coupling(1) = delta(0,k)
-       y_tight_coupling(2) = delta_b(0,k)
-       y_tight_coupling(3) = v(0,k)
-       y_tight_coupling(4) = v_b(0,k)
-       y_tight_coupling(5) = Phi(0,k)
-       y_tight_coupling(6) = Theta(0,0,k)
-       y_tight_coupling(7) = Theta(0,1,k)
+       y_tight_coupling(1) = delta(1,k)
+       y_tight_coupling(2) = delta_b(1,k)
+       y_tight_coupling(3) = v(1,k)
+       y_tight_coupling(4) = v_b(1,k)
+       y_tight_coupling(5) = Phi(1,k)
+       y_tight_coupling(6) = Theta(1,0,k)
+       y_tight_coupling(7) = Theta(1,1,k)
        
        ! Find the time to which tight coupling is assumed, 
        ! and integrate equations to that time
-       write(*,*) 'over x_tc'
        x_tc = get_tight_coupling_time(k_current)
        write(*,*) 'x_tc =',x_tc
        write(*,*) 'under x_tc'
+
        ! Task: Integrate from x_init until the end of tight coupling, using
        !       the tight coupling equations
        write(*,*) 'Start of tight coupling'
        do i=2,n_t
            write(*,*) 'i=',i
            if (x_t(i)< x_tc) then 
-           !Solve next step
-           call odeint(y_tight_coupling,x_t(i-1),x_t(i),eps,h1,hmin,derivs_tc, bsstep, output3)
-           !Save variables
-           delta(i,k)   = y_tight_coupling(1)
-           delta_b(i,k) = y_tight_coupling(2)
-           v(i,k)       = y_tight_coupling(3)
-           v_b(i,k)     = y_tight_coupling(4)
-           Phi(i,k)     = y_tight_coupling(5)
-           Theta(i,0,k) = y_tight_coupling(6)
-           Theta(i,1,k) = y_tight_coupling(7)
-           Theta(0,2,k) = -20.d0*c*k_current/(45.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(i,1,k) !without polarization
-           do l = 3, lmax_int
-              Theta(i,l,k) = -l/(2.d0*l+1.d0)*c*k_current/(get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(0,l-1,k)
-           end do
-
+               !Solve next step
+               call odeint(y_tight_coupling,x_t(i-1),x_t(i),eps,h1,hmin,derivs_tc, bsstep, output3)
+               !Save variables
+               delta(i,k)   = y_tight_coupling(1)
+               delta_b(i,k) = y_tight_coupling(2)
+               v(i,k)       = y_tight_coupling(3)
+               v_b(i,k)     = y_tight_coupling(4)
+               Phi(i,k)     = y_tight_coupling(5)
+               Theta(i,0,k) = y_tight_coupling(6)
+               Theta(i,1,k) = y_tight_coupling(7)
+               Theta(i,2,k) = -(20.d0*c*k_current)/(45.d0*get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(i,1,k)
+               do l = 3, lmax_int
+                  Theta(i,l,k) = -l/(2.d0*l+1.d0)*c*k_current/(get_H_p(x_t(i))*get_dtau(x_t(i)))*Theta(i,l-1,k)
+               end do
            else
                i_tc = i
                exit
            end if
        end do
-       write(*,*) 'End of tight coupling'
+       !write(*,*) 'End of tight coupling'
 
        ! Task: Set up variables for integration from the end of tight coupling 
        ! until today
-       y(1:7) = y_tight_coupling(1:7)
-       y(8)   = Theta(0,2,k)
-       do l = 3, lmax_int
-          y(6+l) = Theta(0,l,k)
-       end do
+       !y(1:7) = y_tight_coupling(1:7)
+       !y(8)   = Theta(0,2,k)
+       !do l = 3, lmax_int
+       !   y(6+l) = Theta(0,l,k)
+       !end do
 
 
        !Continue after tight coupling
-       write(*,*) 'start of rec'       
-       do i = i_tc, n_t
+       !write(*,*) 'start of rec'       
+       !do i = i_tc, n_t
 
           ! Task: Integrate equations from tight coupling to today
-          write(*,*) 'running odeint with i =', i
-          call odeint(y, x_t(i-1) ,x_t(i), eps, h1, hmin, derivs, bsstep, output3)
+!          write(*,*) 'running odeint with i =', i
+ !         call odeint(y, x_t(i-1) ,x_t(i), eps, h1, hmin, derivs, bsstep, output3)
 
           ! Task: Store variables at time step i in global variables
-          delta(i,k)   = y(1)
-          delta_b(i,k) = y(2)
-          v(i,k)       = y(3)
-          v_b(i,k)     = y(4)
-          Phi(i,k)     = y(5)
+!          delta(i,k)   = y(1)
+ !         delta_b(i,k) = y(2)
+  !        v(i,k)       = y(3)
+   !       v_b(i,k)     = y(4)
+    !      Phi(i,k)     = y(5)
           
-          do l = 0, lmax_int
-             Theta(i,l,k) = y(6+l)
-          end do
-          Psi(i,k)     =  - Phi(i,k) - 12.d0*H_0**2/(c*k_current*a_t(i))**2*Omega_r*Theta(i,2,k)
+!          do l = 0, lmax_int
+ !            Theta(i,l,k) = y(6+l)
+  !        end do
+   !       Psi(i,k)     =  - Phi(i,k) - 12.d0*H_0**2/(c*k_current*a_t(i))**2*Omega_r*Theta(i,2,k)
 
           ! Task: Store derivatives that are required for C_l estimation
-          dPhi(i,k)     = Psi(i,k) -c**2*k_current**2/(3.d0*get_H_p(x_t(i))**2)*Phi(i,k) +H_0**2/(2.d0*get_H_p(x_t(i))) &
-                          *(Omega_m/a_t(i)*delta(i,k) +Omega_b/a_t(i)*delta_b(i,k_current) + 4.d0*Omega_r/a_t(i)**2 &
-                          *Theta(i,0,k_current))
+!          dPhi(i,k)     = Psi(i,k) -c**2*k_current**2/(3.d0*get_H_p(x_t(i))**2)*Phi(i,k) +H_0**2/(2.d0*get_H_p(x_t(i))) &
+ !                         *(Omega_m/a_t(i)*delta(i,k) +Omega_b/a_t(i)*delta_b(i,k_current) + 4.d0*Omega_r/a_t(i)**2 &
+  !                        *Theta(i,0,k_current))
 
-          dv_b(i,k)     = -v_b(i,k) -c*k_current/get_H_p(x_t(i))*Psi(i,k) +get_dtau(x_t(i))*R*(3.d0*Theta(i,1,k)+ v_b(i,k))
+ !         dv_b(i,k)     = -v_b(i,k) -c*k_current/get_H_p(x_t(i))*Psi(i,k) +get_dtau(x_t(i))*R*(3.d0*Theta(i,1,k)+ v_b(i,k))
 
 
-          dTheta(i,0,k) = -c*k_current/get_H_p(x_t(i))*Theta(i,1,k) -dPhi(i,k)
-          dTheta(i,1,k) = c*k_current/(3.d0*get_H_p(x_t(i)))*Theta(i,0,k) - &
-                          2.d0*c*k_current/(3.d0*get_H_p(x_t(i)))*Theta(i,2,k)+&
-                          c*k_current/(3.d0*get_H_p(x_t(i)))*Psi(i,k) + &
-                          get_dtau(x_t(i))*(Theta(i,1,k)+ 1.d0/3.d0*v_b(i,k))
-          dTheta(i,2,k) = l*c*k_current/((2.d0*l+1.d0)*get_H_p(x_t(i)))*Theta(i,l-1,k) -&
-                          (l+1.d0)*c*k_current/((2.d0*l+1.d0)*get_H_p(x_t(i)))*Theta(i,l+1,k)+&
-                          get_dtau(x_t(i))*(Theta(i,l,k) - 1.d0/10.d0*Theta(i,l,k))
-          do l=3,lmax_int-1
-              dTheta(i,l,k) = l*c*k_current/((2.d0*l+1.d0)*get_H_p(x_t(i)))*Theta(i,l-1,k) -&
-                              (l+1.d0)*c*k_current/((2.d0*l+1.d0)*get_H_p(x_t(i)))*Theta(i,l+1,k)+&
-                              get_dtau(x_t(i))*Theta(i,l,k)
-          end do
-          dTheta(i,lmax_int,k) = c*k_current/get_H_p(x_t(i))*Theta(i,l-1,k) -&
-                                 c*(l+1.d0)/(get_H_p(x_t(i))*get_eta(x_t(i)))*&
-                                 Theta(i,l,k) + get_dtau(x_t(i))*Theta(i,l,k)
+!          dTheta(i,0,k) = -c*k_current/get_H_p(x_t(i))*Theta(i,1,k) -dPhi(i,k)
+ !         dTheta(i,1,k) = c*k_current/(3.d0*get_H_p(x_t(i)))*Theta(i,0,k) - &
+  !                        2.d0*c*k_current/(3.d0*get_H_p(x_t(i)))*Theta(i,2,k)+&
+   !                       c*k_current/(3.d0*get_H_p(x_t(i)))*Psi(i,k) + &
+    !                      get_dtau(x_t(i))*(Theta(i,1,k)+ 1.d0/3.d0*v_b(i,k))
+     !     dTheta(i,2,k) = l*c*k_current/((2.d0*l+1.d0)*get_H_p(x_t(i)))*Theta(i,l-1,k) -&
+      !                    (l+1.d0)*c*k_current/((2.d0*l+1.d0)*get_H_p(x_t(i)))*Theta(i,l+1,k)+&
+       !                   get_dtau(x_t(i))*(Theta(i,l,k) - 1.d0/10.d0*Theta(i,l,k))
+!          do l=3,lmax_int-1
+ !             dTheta(i,l,k) = l*c*k_current/((2.d0*l+1.d0)*get_H_p(x_t(i)))*Theta(i,l-1,k) -&
+  !                            (l+1.d0)*c*k_current/((2.d0*l+1.d0)*get_H_p(x_t(i)))*Theta(i,l+1,k)+&
+   !                           get_dtau(x_t(i))*Theta(i,l,k)
+    !      end do
+     !     dTheta(i,lmax_int,k) = c*k_current/get_H_p(x_t(i))*Theta(i,l-1,k) -&
+      !                           c*(l+1.d0)/(get_H_p(x_t(i))*get_eta(x_t(i)))*&
+       !                          Theta(i,l,k) + get_dtau(x_t(i))*Theta(i,l,k)
           !dPsi(i,k)     = 
-       end do
-       write(*,*) 'today'
+!       end do
+ !      write(*,*) 'today'
     end do
     deallocate(y_tight_coupling)
     deallocate(y)
@@ -246,11 +238,11 @@ contains
 
   end subroutine integrate_perturbation_eqns
 
-  subroutine derivs_tc(x,y, dydx)
+  subroutine derivs_tc(x,y_tc, dydx)
       use healpix_types
       implicit none
       real(dp),               intent(in)  :: x
-      real(dp), dimension(:), intent(in)  :: y
+      real(dp), dimension(:), intent(in)  :: y_tc
       real(dp), dimension(:), intent(out) :: dydx
 
       real(dp) :: a,H_p,dtau,dH_p
@@ -268,38 +260,42 @@ contains
       dH_p    = get_dH_p(x)
       dtau    = get_dtau(x)
       a       = exp(x)
-      delta   = y(1)
-      delta_b = y(2)
-      v       = y(3)
-      v_b     = y(4)
-      Phi     = y(5)
-      Theta_0 = y(6)
-      Theta_1 = y(7)
+      delta   = y_tc(1)
+      delta_b = y_tc(2)
+      v       = y_tc(3)
+      v_b     = y_tc(4)
+      Phi     = y_tc(5)
+      Theta_0 = y_tc(6)
+      Theta_1 = y_tc(7)
 
       Theta_2   = -20.d0*c*k_current/(45.d0*H_p*dtau)*Theta_1
+
+
       R         = 4.d0*Omega_r/(3.d0*Omega_b*a)
       Psi       = -Phi - 12.d0*H_0**2/(c*k_current*a)**2*Omega_r*Theta_2
 
-      d_Phi     = Psi -c**2*k_current**2/(3.d0*H_p**2)*Phi +H_0**2/(2.d0*H_p) &
+      d_Phi     = Psi -(c*k_current)**2/(3.d0*H_p**2)*Phi +H_0**2/(2.d0*H_p**2) &
                   *(Omega_m/a*delta +Omega_b/a*delta_b + 4.d0*Omega_r/a**2 &
                   *Theta_0)
 
       d_Theta_0 = -c*k_current/H_p*Theta_1 -d_Phi
 
-      d_delta   = c*k_current/H_p*v  -3d0*d_Phi
-      d_delta_b = c*k_current/H_p*v_b-3d0*d_Phi
+      d_delta   = c*k_current/H_p*v   - 3.d0*d_Phi
+      d_delta_b = c*k_current/H_p*v_b - 3.d0*d_Phi
       d_v       = -v -c*k_current/H_p*Psi
 
-      q         = (-((1.d0-2.d0*R)*dtau + (1.d0+R)*get_ddtau(x))* &
-                  (3.d0*Theta_1 +v_b) -c*k_current/H_p* &
-                  Psi +(1.d0-dH_p /H_p)*c*k_current/ &
-                  H_p*(-Theta_0+2.d0*Theta_2)-c*k_current / &
-                  H_p*d_Theta_0)/((1.d0+R)*dtau+ &
-                  dH_p/H_p -1.d0)
-      d_v_b     = 1.d0/(1.d0+R)*(-v_b-c*k_current/H_p*Psi &
-                  +R*(q+c*k_current/H_p*(-Theta_0+2.d0*Theta_2) &
-                  -c*k_current/H_p*Psi))
+      q         = (-((1.d0-2.d0*R)*dtau + &
+                  (1.d0+R)*get_ddtau(x))*(3.d0*Theta_1+v_b) - &
+                  c*k_current/H_p*Psi +&
+                  (1.d0-dH_p/H_p)*c*k_current/H_p*(-Theta_0+2.d0*Theta_2)-&
+                  c*k_current/H_p*d_Theta_0)/((1.d0+R)*dtau+dH_p/H_p -1.d0)
+
+      d_v_b     = 1.d0/(1.d0+R)*(-v_b-c*k_current/H_p*Psi+&
+                  R*(q+c*k_current/H_p*(-Theta_0+2.d0*Theta_2)-&
+                  c*k_current/H_p*Psi))
+
       d_Theta_1 = 1.d0/3.d0*(q-d_v_b)
+
       dydx(1) = d_delta
       dydx(2) = d_delta_b
       dydx(3) = d_v
@@ -388,7 +384,7 @@ contains
     real(dp)              :: get_tight_coupling_time
     integer(i4b)          :: i,n
     real(dp)              :: x,a
-    n =1d6
+    n =1d4
     do i=0,n
         x = x_init +i*(0.d0-x_init)/n
         !write(*,*) x,x_start_rec

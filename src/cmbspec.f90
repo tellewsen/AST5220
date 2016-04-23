@@ -19,7 +19,9 @@ program cmbspec
     integer, parameter :: out_unit10=100
     integer, parameter :: out_unit11=110
     integer, parameter :: out_unit12=120
-    integer :: i
+    integer, parameter :: out_unit13=130
+    integer, parameter :: out_unit14=140
+    integer :: i,k
 
     !Initialize time_mod and save to file
     write(*,*) 'initialize_time_mod'
@@ -83,7 +85,6 @@ program cmbspec
     close (out_unit11)
     close (out_unit12)
 
-
     !Intialize and save to file for evolution_mod
     write(*,*) 'initialize_perturbation_eqns'
     call initialize_perturbation_eqns
@@ -91,6 +92,18 @@ program cmbspec
     call integrate_perturbation_eqns
 
 
+    open (unit=out_unit13,file="evolution.dat",action="write",status="replace")
+    open (unit=out_unit14,file="theta.dat",action="write",status="replace")
+    do k=1,n_k
+        do i=1,n_t            
+            write (out_unit13,'(*(2X, ES14.6))') k, delta(i,k),delta_b(i,k),v(i,k),v_b(i,k),Phi(i,k)
+            write (out_unit14,'(*(2X, ES14.6))') Theta(i,0,k),Theta(i,1,k),Theta(i,2,k)
+        end do    
+    end do
+
+    close (out_unit13)
+    close (out_unit14)
 
 end program cmbspec
+
 
