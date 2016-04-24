@@ -7,7 +7,7 @@ module rec_mod
     implicit none
 
     real(dp), allocatable, dimension(:)   :: x_rec,a_rec,z_rec             !Grid
-    real(dp), allocatable, dimension(:)   :: tau, dtau, ddtau              !Splined tau and derivatives
+    real(dp), allocatable, dimension(:)   :: tau_rec, dtau_rec, ddtau_rec  !Splined tau and derivatives
     real(dp), allocatable, dimension(:)   :: d4tau
     real(dp), allocatable, dimension(:)   :: n_e, n_e2,logn_e,logn_e2      !Splined (log of) n_e
     real(dp), allocatable, dimension(:)   :: g,dg,ddg,d4g                  !Splined visibility function
@@ -56,7 +56,7 @@ contains
 
     !Allocate all the arrays which will be used
     allocate(x_rec(n),a_rec(n),z_rec(n),H_rec(n),X_e(n) &
-            ,tau(n),dtau(n),ddtau(n),d4tau(n),n_e(n) &
+            ,tau_rec(n),dtau_rec(n),ddtau_rec(n),d4tau(n),n_e(n) &
             ,n_e2(n),logn_e(n),logn_e2(n),g(n),dg(n) &
             ,ddg(n),d4g(n),x_test(n),z_test(n),a_test(n) &
             ,n_etest(n),tau_test(n),dtau_test(n)   &
@@ -131,20 +131,20 @@ contains
     end do
 
     !Compute optical depth,and first deriv at all grid points
-    tau(n) = 0.d0 !Optical depth today is 0
+    tau_rec(n) = 0.d0 !Optical depth today is 0
     do i=n-1,1,-1
-        tau(i) = tau(i+1)
-        call odeint(tau(i:i),x_rec(i+1),x_rec(i),eps,h1,hmin,dtaudx,bsstep,output1)
+        tau_rec(i) = tau_rec(i+1)
+        call odeint(tau_rec(i:i),x_rec(i+1),x_rec(i),eps,h1,hmin,dtaudx,bsstep,output1)
     end do
 
     !Compute splined optical depth,and second derivative
-    call spline(x_rec, tau, yp1, ypn,ddtau)
-    call spline(x_rec,ddtau,yp1,ypn,d4tau)
-    !write(*,*) ddtau
+    call spline(x_rec, tau_rec, yp1, ypn,ddtau_rec)
+    call spline(x_rec,ddtau_rec,yp1,ypn,d4tau)
+    !write(*,*) ddtau_rec
  
     !Compute first derivative of optical depth
     do i=1,n
-        dtau(i) = -n_e(i)*sigma_T*c/H_rec(i)
+        dtau_rec(i) = -n_e(i)*sigma_T*c/H_rec(i)
     end do
    
     !Test the get_tau,get_dtau,get_ddtau function
@@ -157,7 +157,7 @@ contains
     
     !Compute g for values in x_rec
     do i=1,n
-        g(i) = -dtau(i)*exp(-tau(i))
+        g(i) = -dtau_rec(i)*exp(-tau_rec(i))
     end do
 
 
@@ -260,7 +260,7 @@ contains
       implicit none
       real(dp), intent(in) :: x_in
       real(dp)             :: get_tau
-      get_tau  = splint(x_rec,tau,ddtau,x_in)
+      get_tau  = splint(x_rec,tau_rec,ddtau_rec,x_in)
   end function get_tau
 
   !Routine for computing the derivative of tau at arbitrary x, using precomputed information
@@ -268,7 +268,7 @@ contains
       implicit none
       real(dp), intent(in) :: x_in
       real(dp)             :: get_dtau
-      get_dtau = splint_deriv(x_rec,tau,ddtau,x_in)
+      get_dtau = splint_deriv(x_rec,tau_rec,ddtau_rec,x_in)
   end function get_dtau
 
   !Routine for computing the second derivative of tau at arbitrary x, 
@@ -277,7 +277,7 @@ contains
       implicit none
       real(dp), intent(in) :: x_in
       real(dp)             :: get_ddtau
-      get_ddtau = splint(x_rec,ddtau,d4tau,x_in)
+      get_ddtau = splint(x_rec,ddtau_rec,d4tau,x_in)
   end function get_ddtau
 
   !Routine for computing the visibility function, g, at arbitray x
