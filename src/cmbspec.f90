@@ -21,7 +21,7 @@ program cmbspec
     integer, parameter :: out_unit12=120
     integer, parameter :: out_unit13=130
     integer, parameter :: out_unit14=140
-    integer :: i,m
+    integer :: i
 
     !Initialize time_mod and save to file
     write(*,*) 'initialize_time_mod'
@@ -94,10 +94,10 @@ program cmbspec
 
     open (unit=out_unit13,file="evolution.dat",action="write",status="replace")
     open (unit=out_unit14,file="theta.dat",action="write",status="replace")
-    do m=1,n_k
+    do k=1,n_k
         do i=1,n_t            
-            write (out_unit13,'(*(2X, ES14.6))') k, delta(i,m),delta_b(i,m),v(i,m),v_b(i,m),Phi(i,m)
-            write (out_unit14,'(*(2X, ES14.6))') Theta(i,0,m),Theta(i,1,m),Theta(i,2,m)
+            write (out_unit13,'(*(2X, ES14.6))') real(k),delta(i,k),delta_b(i,k),v(i,k),v_b(i,k),Phi(i,k)
+            write (out_unit14,'(*(2X, ES14.6))') Theta(i,0,k),Theta(i,1,k),Theta(i,2,k)
         end do    
     end do
 

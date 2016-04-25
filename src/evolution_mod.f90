@@ -146,13 +146,13 @@ contains
        k_current = ks(k)  ! Store k_current as a global module variable
 
        ! Initialize equation set for tight coupling
-       y_tight_coupling(1) = delta(1,k)
-       y_tight_coupling(2) = delta_b(1,k)
-       y_tight_coupling(3) = v(1,k)
-       y_tight_coupling(4) = v_b(1,k)
-       y_tight_coupling(5) = Phi(1,k)
-       y_tight_coupling(6) = Theta(1,0,k)
-       y_tight_coupling(7) = Theta(1,1,k)
+       !y_tight_coupling(1) = delta(1,k)
+       !y_tight_coupling(2) = delta_b(1,k)
+       !y_tight_coupling(3) = v(1,k)
+       !y_tight_coupling(4) = v_b(1,k)
+       !y_tight_coupling(5) = Phi(1,k)
+       !y_tight_coupling(6) = Theta(1,0,k)
+       !y_tight_coupling(7) = Theta(1,1,k)
        
        ! Find the time to which tight coupling is assumed, 
        ! and integrate equations to that time
@@ -167,7 +167,6 @@ contains
        !write (*,'(*(2X, ES14.6))') dPsi(1,k),dPhi(1,k),dv_b(1,k),dTheta(1,0,k),dTheta(1,1,k)
 
        do j=2,n_t
-           !write(*,*) 'i=',i
            if (x_t(j)< x_tc) then 
                !Solve next step
                call odeint(y_tight_coupling,x_t(j-1),x_t(j),eps,h1,hmin,derivs_tc, bsstep, output3)
@@ -183,6 +182,8 @@ contains
                do l = 3, lmax_int
                   Theta(j,l,k) = -l/(2.d0*l+1.d0)*c*k_current/(get_H_p(x_t(j))*get_dtau(x_t(j)))*Theta(j,l-1,k)
                end do	
+
+               Psi(j,k)  = -Phi(j,k) - 12.d0*H_0**2/(c*k_current*a_t(j))**2*Omega_r*Theta(j,2,k)
 
                ! Task: Store derivatives that are required for C_l estimation
                dPsi(j,k)    = -dPhi(j,k) - 12.d0*H_0**2/(c*k_current*a_t(j))**2*Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))
@@ -271,13 +272,13 @@ contains
       real(dp) :: d_v
       real(dp) :: q,R
 
-      delta(j,k)   = y_tc(1)
-      delta_b(j,k) = y_tc(2)
-      v(j,k)       = y_tc(3)
-      v_b(j,k)     = y_tc(4)
-      Phi(j,k)     = y_tc(5)
-      Theta(j,0,k) = y_tc(6)
-      Theta(j,1,k) = y_tc(7)
+      !delta(j,k)   = y_tc(1)
+      !delta_b(j,k) = y_tc(2)
+      !v(j,k)       = y_tc(3)
+      !v_b(j,k)     = y_tc(4)
+      !Phi(j,k)     = y_tc(5)
+      !Theta(j,0,k) = y_tc(6)
+      !Theta(j,1,k) = y_tc(7)
       Theta(j,2,k) = -20.d0*c*k_current/(45.d0*H_p(j)*dtau(j))*Theta(j,1,k)
 
       do l=3,lmax_int
@@ -319,6 +320,7 @@ contains
       dydx(5) = dPhi(j,k)
       dydx(6) = dTheta(j,0,k)
       dydx(7) = dTheta(j,1,k)      
+
 
   end subroutine derivs_tc
 
