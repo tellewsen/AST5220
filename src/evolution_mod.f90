@@ -115,16 +115,15 @@ contains
     delta_b(1,:) = delta(1,:)
 
     do k = 1, n_k
-        v(1,k)       = c*ks(k)/(2.d0*get_H_p(x_t(1)))*Phi(1,k)
+        v(1,k)       = c*ks(k)/(2.d0*H_p(1))*Phi(1,k)
         v_b(1,k)     = v(1,k)
         Theta(1,0,k) = 0.5d0*Phi(1,k)
-        Theta(1,1,k) = -c*ks(k)/(6.d0*get_H_p(x_t(1)))*Phi(1,k)
-        Theta(1,2,k) = -20.d0*c*ks(k)/(45.d0*get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(1,1,k) !without polarization
-
+        Theta(1,1,k) = -c*ks(k)/(6.d0*H_p(1))*Phi(1,k)
+        Theta(1,2,k) = -20.d0*c*ks(k)/(45.d0*H_p(1)*dtau(1))*Theta(1,1,k) !without polarization
         do l = 3, lmax_int
-            Theta(1,l,k) = -l/(2.d0*l+1.d0)*c*ks(k)/(get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(1,l-1,k)
+            Theta(1,l,k) = -l/(2.d0*l+1.d0)*c*ks(k)/(H_p(1)*dtau(1))*Theta(1,l-1,k)
         end do
-
+        Psi(1,k)     = -Phi(1,k) - 12.d0*H_0**2/(ks(k)/c/a_t(1))**2*Omega_r*Theta(1,2,k)
     end do
   end subroutine initialize_perturbation_eqns
 
@@ -178,19 +177,18 @@ contains
                v(j,k)       = y_tight_coupling(3)
                v_b(j,k)     = y_tight_coupling(4)
                Phi(j,k)     = y_tight_coupling(5)
-               Psi(j,k)     = -Phi(j,k) - 12.d0*H_0**2/(c*k_current*a_t(j))**2*Omega_r*Theta(j,2,k)
                Theta(j,0,k) = y_tight_coupling(6)
                Theta(j,1,k) = y_tight_coupling(7)
                Theta(j,2,k) = -(20.d0*c*k_current)/(45.d0*H_p(j)*dtau(j))*Theta(j,1,k)
                do l = 3, lmax_int
                   Theta(j,l,k) = -l/(2.d0*l+1.d0)*c*k_current/(get_H_p(x_t(j))*get_dtau(x_t(j)))*Theta(j,l-1,k)
-               end do
+               end do	
 
                ! Task: Store derivatives that are required for C_l estimation
                dPsi(j,k)    = -dPhi(j,k) - 12.d0*H_0**2/(c*k_current*a_t(j))**2*Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))
 
-               !write (*,'(*(2X, ES14.6))') Psi(j,k) ,Phi(j,k) ,delta(j,k),delta_b(j,k),v(j,k),v_b(j,k) ,Theta(j,0,k) ,Theta(j,1,k)
-               write (*,'(*(2X, ES14.6))') dPsi(j,k),dPhi(j,k),dv_b(j,k),dTheta(j,0,k),dTheta(j,1,k),dTheta(j,2,k)
+               write (*,'(*(2X, ES14.6))') Psi(j,k) ,Phi(j,k) ,delta(j,k),delta_b(j,k),v(j,k),v_b(j,k) ,Theta(j,0,k) ,Theta(j,1,k)
+               !write (*,'(*(2X, ES14.6))') dPsi(j,k),dPhi(j,k),dv_b(j,k),dTheta(j,0,k),dTheta(j,1,k),dTheta(j,2,k)
            else
                j_tc = j
                exit
@@ -290,8 +288,8 @@ contains
 
       Psi(j,k)  = -Phi(j,k) - 12.d0*H_0**2/(c*k_current*a_t(j))**2*Omega_r*Theta(j,2,k)
 
-      dPhi(j,k) = Psi(j,k) -(c*k_current)**2/(3.d0*H_p(j)**2)*Phi(j,k) +H_0**2/(2.d0*H_p(j)**2) &
-                  *(Omega_m/a_t(j)*delta(j,k) +Omega_b/a_t(j)*delta_b(j,k) + 4.d0*Omega_r/a_t(j)**2 &
+      dPhi(j,k) = Psi(j,k) - (c*k_current)**2/(3.d0*H_p(j)**2)*Phi(j,k) + H_0**2/(2.d0*H_p(j)**2) &
+                  *(Omega_m/a_t(j)*delta(j,k) + Omega_b/a_t(j)*delta_b(j,k) + 4.d0*Omega_r/a_t(j)**2 &
                   *Theta(j,0,k))
 
       dTheta(j,0,k) = -c*k_current/H_p(j)*Theta(j,1,k) - dPhi(j,k)
