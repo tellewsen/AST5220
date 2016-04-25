@@ -12,7 +12,7 @@ module evolution_mod
   ! Accuracy parameters
   real(dp),     parameter, private :: k_min    = 0.1d0 * H_0 / c
   real(dp),     parameter, private :: k_max    = 1.d3  * H_0 / c
-  integer(i4b), parameter          :: n_k      = 1!00
+  integer(i4b), parameter          :: n_k      = 100
   integer(i4b), parameter, private :: lmax_int = 6
 
   ! Perturbation quantities
@@ -146,24 +146,24 @@ contains
        k_current = ks(k)  ! Store k_current as a global module variable
 
        ! Initialize equation set for tight coupling
-       !y_tight_coupling(1) = delta(1,k)
-       !y_tight_coupling(2) = delta_b(1,k)
-       !y_tight_coupling(3) = v(1,k)
-       !y_tight_coupling(4) = v_b(1,k)
-       !y_tight_coupling(5) = Phi(1,k)
-       !y_tight_coupling(6) = Theta(1,0,k)
-       !y_tight_coupling(7) = Theta(1,1,k)
+       y_tight_coupling(1) = delta(1,k)
+       y_tight_coupling(2) = delta_b(1,k)
+       y_tight_coupling(3) = v(1,k)
+       y_tight_coupling(4) = v_b(1,k)
+       y_tight_coupling(5) = Phi(1,k)
+       y_tight_coupling(6) = Theta(1,0,k)
+       y_tight_coupling(7) = Theta(1,1,k)
        
        ! Find the time to which tight coupling is assumed, 
        ! and integrate equations to that time
        x_tc = get_tight_coupling_time(k_current)
        write(*,*) 'x_tc =',x_tc
-       write(*,*) 'under x_tc'
+       !write(*,*) 'under x_tc'
 
        ! Task: Integrate from x_init until the end of tight coupling, using
        !       the tight coupling equations
        write(*,*) 'Start of tight coupling'
-       write (*,'(*(2X, ES14.6))') Psi(1,k) ,Phi(1,k) ,delta(1,k),delta_b(1,k),v(1,k),v_b(1,k) ,Theta(1,0,k) ,Theta(1,1,k)
+       !write (*,'(*(2X, ES14.6))') Psi(1,k) ,Phi(1,k) ,delta(1,k),delta_b(1,k),v(1,k),v_b(1,k) ,Theta(1,0,k) ,Theta(1,1,k)
        !write (*,'(*(2X, ES14.6))') dPsi(1,k),dPhi(1,k),dv_b(1,k),dTheta(1,0,k),dTheta(1,1,k)
 
        do j=2,n_t
@@ -188,7 +188,7 @@ contains
                ! Task: Store derivatives that are required for C_l estimation
                dPsi(j,k)    = -dPhi(j,k) - 12.d0*H_0**2/(c*k_current*a_t(j))**2*Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))
 
-               write (*,'(*(2X, ES14.6))') Psi(j,k) ,Phi(j,k) ,delta(j,k),delta_b(j,k),v(j,k),v_b(j,k) ,Theta(j,0,k) ,Theta(j,1,k)
+               !write (*,'(*(2X, ES14.6))') Psi(j,k), Phi(j,k), delta(j,k), delta_b(j,k), v(j,k), v_b(j,k), Theta(j,0,k), Theta(j,1,k)
                !write (*,'(*(2X, ES14.6))') dPsi(j,k),dPhi(j,k),dv_b(j,k),dTheta(j,0,k),dTheta(j,1,k),dTheta(j,2,k)
            else
                j_tc = j
@@ -320,8 +320,6 @@ contains
       dydx(5) = dPhi(j,k)
       dydx(6) = dTheta(j,0,k)
       dydx(7) = dTheta(j,1,k)      
-
-
   end subroutine derivs_tc
 
   subroutine derivs(x,y, dydx) 
