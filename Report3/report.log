@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  5 APR 2016 11:12
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  26 APR 2016 22:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -840,95 +840,31 @@ LaTeX Font Info:    Font shape `T1/txss/m/n' will be
 (Font)              scaled to size 10.40245pt on input line 105.
 LaTeX Font Info:    Font shape `T1/txss/bx/n' will be
 (Font)              scaled to size 10.40245pt on input line 105.
-LaTeX Font Info:    Try loading font information for OMS+zplm on input line 111
-.
-
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omszplm.fd
-File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
-) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+ [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
-] [2]
-LaTeX Font Info:    Try loading font information for T1+txtt on input line 304.
 
+] [2
 
-(/usr/share/texlive/texmf-dist/tex/latex/txfonts/t1txtt.fd
-File: t1txtt.fd 2000/12/15 v3.1
-)
-Overfull \hbox (17.21773pt too wide) in paragraph at lines 315--315
-[]    \T1/txtt/m/n/10 real(dp), allocatable, dimension(:)   :: tau, dtau, ddtau
-              !Splined tau and derivatives[] 
- []
-
-
-Overfull \hbox (17.21773pt too wide) in paragraph at lines 318--318
-[]    \T1/txtt/m/n/10 real(dp), allocatable, dimension(:)   :: g,dg,ddg,d4g    
-              !Splined visibility function[] 
- []
-
-
-Overfull \hbox (17.21773pt too wide) in paragraph at lines 319--319
-[]    \T1/txtt/m/n/10 real(dp), allocatable, dimension(:)   :: g_test,dg_test,d
-dg_test       !Splined visibility function[] 
- []
-
-
-Overfull \hbox (22.46771pt too wide) in paragraph at lines 321--321
-[]    \T1/txtt/m/n/10 real(dp), allocatable, dimension(:)   :: x_test,n_etest,z
-_test,a_test  !Used for testing the splines[] 
- []
-
-
-Overfull \hbox (22.46771pt too wide) in paragraph at lines 322--322
-[]    \T1/txtt/m/n/10 real(dp), allocatable, dimension(:)   :: tau_test,dtau_te
-st,ddtau_test !Used for testing the splines[] 
- []
-
-[3
-
-]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [4]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [5]
-Overfull \hbox (6.71776pt too wide) in paragraph at lines 522--522
-[]      \T1/txtt/m/n/10 alpha2       = 64.d0*pi/sqrt(27.d0*pi)*(alpha/m_e)**2*s
-qrt(epsilon_0/(k_b*T_b))*phi2 *hbar**2/c[] 
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [6]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [7]
-[8] (./report.aux) ) 
+] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 6354 strings out of 494985
- 83308 string characters out of 6180357
- 162131 words of memory out of 5000000
- 9371 multiletter control sequences out of 15000+600000
- 59218 words of font info for 120 fonts, out of 8000000 for 9000
+ 6292 strings out of 494985
+ 82412 string characters out of 6180357
+ 152115 words of memory out of 5000000
+ 9327 multiletter control sequences out of 15000+600000
+ 49430 words of font info for 105 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 41i,12n,45p,530b,260s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/txfonts/t1xtt.pfb></usr/share/texlive/texmf-dist/fonts/typ
-e1/public/txfonts/txex.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/tx
-fonts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/txsyb.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/urw/times/utmri8a.pfb>
-Output written on report.pdf (8 pages, 90698 bytes).
+ 41i,7n,45p,354b,238s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</
+usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utm
+ri8a.pfb>
+Output written on report.pdf (2 pages, 40158 bytes).
 PDF statistics:
- 76 PDF objects out of 1000 (max. 8388607)
- 54 compressed objects within 1 object stream
+ 32 PDF objects out of 1000 (max. 8388607)
+ 22 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

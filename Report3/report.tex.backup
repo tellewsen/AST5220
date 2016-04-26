@@ -92,7 +92,7 @@
         $^1$ Institute of Theoretical Astrophysics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway\\
              
         
-    {\bf Abstract.} I compute the density perturbations, and velocities of dark matter and baryons. As well as the gravitational potentials $\Phi$ and $\Psi$. More importantly I also find $\Theta_0$.
+    {\bf Abstract.} I compute the electron fraction, electron density, optical depth and visibility function for times around and during recombination. 
     
   \vspace*{2ex}
   \end{minipage}
@@ -107,7 +107,7 @@ This is part three of four for this project.
 
 In the first part I set up the background cosmology of the universe, and made a function that could find the conformal time as a function of $x$. In the second part I computed the electron fraction, electron density, optical depth and visibility function for times around and during recombination. 
 
-In this part I will use some of these functions along with the CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE CONTINUE WRITING HERE 
+In this part I will use some of these functions along with the 
 
 As prevously done I will continue building on the skeleton code provided.
 
