@@ -57,7 +57,7 @@ contains
     z_end_rec   = 614.2d0                   ! Redshift of end of recombination
     z_0         = 0.d0                      ! Redshift today
 
-    a_init      = 1.d-10                    ! Start value of a for eta evaluation
+    a_init      = 1.d-8                    ! Start value of a for eta evaluation
     a_end       = 1.d0
 
     x_start_rec = -log(1.d0 + z_start_rec)  ! x of start of recombination

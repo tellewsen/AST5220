@@ -97,7 +97,7 @@ program cmbspec
     write(*,*) 'integrate_perturbation_eqns'
     call integrate_perturbation_eqns
 
-
+    write(*,*) 'Saving variables to file'
     open (unit=out_unit13,file="delta.dat",action="write",status="replace")
     open (unit=out_unit14,file="delta_b.dat",action="write",status="replace")
     open (unit=out_unit15,file="v.dat",action="write",status="replace")
