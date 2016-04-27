@@ -67,9 +67,9 @@ This is part three of four for this project.
 
 In the first part I set up the background cosmology of the universe, and made a function that could find the conformal time as a function of $x$. In the second part I computed the electron fraction, electron density, optical depth and visibility function for times around and during recombination. 
 
-In this part I will use some of these functions along with the Einstein-Boltzmann equations without polarization and neutrinos to compute the density perturbations, and velocities of dark matter and baryons. As well as the temperature multipoles $\Theta_l$.
+In this part I will use some of these functions along with the Einstein-Boltzmann equations without polarization and neutrinos to compute the density perturbations, and velocities of dark matter and baryons. As well as the temperature multi poles $\Theta_l$.
 
-As prevously done I will continue building on the skeleton code provided.
+As previously done I will continue building on the skeleton code provided.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Equations}\label{sec:Equations}
@@ -99,7 +99,8 @@ v_b^\prime &= \frac{1}{1+R}\bigg[ -v_b - \frac{ck}{\pazocal{H}}\Psi + R(q + \fra
 
 So far I have not stated what tight coupling means. Basically because of the mathematical operations we have done, like expanding in powers of $1/tau^\prime$, we end up with some conditions on when these equations above can be used. The conditions are $|ck/(\pazocal{H}\tau^\prime)| < 1/10$, $|\tau^\prime|>10$, and that the time is before recombination.
  
-
+All of these equations refer to their respective quantities in Fourier space. This means that the $k$'s everywhere refer to Fourier modes. This is done to separate the quantities into the different scales at which they take place, with low $k$'s referring to large scales, and high $k$'s to small scales.
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,21 +108,20 @@ The way to solve all these equations is to first make a function that finds the 
 Note that this function clearly depends on which k mode we are working on.
 
 For each k we insert the initial conditions, and then run through every value of x from some start value early in the universe. In this case I have chosen to use the $x$ value corresponding to $a_{init} = 10^{-8}$.
-At some point through this the x value becomes larger than the x value indicating the end of tight coupling. There we change the equations for the relevant quantities, and continue on until we reach today.
+At some point through this the $x$ value becomes larger than the $x$ at the end of tight coupling. At that point we change the equations for the relevant quantities, and continue on until we reach today.
 This has to be done for all k values. I have chosen to set the limit at $k=100$ so far. With this low k value the program completes in less than five minutes.
 
-It should also be said that we limit our number of $l$'s to six. This can be done because we are using line of sight integration. Historically people used to include thousands of variables to trace multipoles. If we had to use this the program would use days or weeks instead of minutes.
+It should also be said that we limit our number of $l$'s to six. This can be done because we are using line of sight integration. Historically people used to include thousands of variables to trace multi poles. If we had to use this the program would use days or weeks instead of minutes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec:results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 To get a good distribution of k modes we use a quadratic distribution in k such that
 \begin{equation}
- k_i = k_{max} +(k_{max}-k_{min})(i/100)^2,
+ k_i = k_{min} +(k_{max}-k_{min})(i/100)^2,
 \end{equation}
 where $k_{max} = 1000H_0/c$, and $k_{min} = 0.1H_0/c$.
-
-The results show the various quantities for six differnent k values. These k values are $k_1,k_5,k_{10},k_{40},k_{60},k_{100}$. 
+The results show the various quantities for six different k values. These k values are $k_1,k_5,k_{10},k_{40},k_{60},k_{100}$. 
 
 \begin{figure}
 \begin{subfigure}{.5\textwidth}
@@ -134,7 +134,7 @@ The results show the various quantities for six differnent k values. These k val
  \caption{The plot for $\Psi$ for six different k's.}
  \label{fig:Psi}
 \end{subfigure}
-\caption{We note that the plots seem to be the inverse of each other.}
+\caption{The first thing to note is that the plots seem to be the inverse of each other. Also all the modes of $\Phi$ start at 1, and decrease as they leave tight coupling. The higher the mode, the closer to 0 they stabilize after recombination. The higher modes oscillate a bit before stabilizing around recombination. This is not seen in the lower modes. The smallest modes do not show this oscillating behavior at all, instead they slowly decrease after tight coupling before doing a nose dive near the end. The behavior of $\Psi$ is the complete inverse of this.}
 \end{figure}
 
 \begin{figure}
@@ -162,13 +162,13 @@ The results show the various quantities for six differnent k values. These k val
  \caption{The plot for $v_b$ for six different k's.}
  \label{fig:vb}
 \end{subfigure}
-\caption{}
+\caption{As before there is a clear difference between the velocities of the two components. The highest modes start growing first, and since they are larger when approaching recombination they slow down more. Note the yellow and purple curves in the $v$ plot. The lower modes don't slow down, but they don't increase as fast, while the smallest modes don't notice anything special happening. The velocity of the baryons is very different. As the dark matter, the highest modes start growing first, but as they exit tight coupling they start to oscillate, expanding and contracting, until after recombination where they speed up again to catch up with the dark matter. Note that the lowest modes don't notice anything special happening here either. In fact, they are fairly equal for dark matter and baryons.}
 \end{figure}
 
 \begin{figure}
  \includegraphics[width=\textwidth]{Theta0.png}
- \caption{The plot for $\Theta_0$ for six different k's.}
- \label{fig:Phi}
+ \caption{The plot shows $\Theta_0$ for six different k's. The low modes stay constant until the time at which their corresponding baryon perturbations start growing. This is as expected since $\Theta_0$ measures the mean temperature, and this should increases as baryons clump together because of gravity. The high modes oscillate like their corresponding perturbation modes do. However, they do not grow after recombination, instead they stabilize around values fairly close to zero. The intermediate modes like $k_10$ oscillate around some value between 0.5 and 1.}
+ \label{fig:Theta0}
 \end{figure}
 
 

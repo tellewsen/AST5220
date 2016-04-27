@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  27 APR 2016 13:01
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  27 APR 2016 15:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -262,17 +262,14 @@ Package: natbib 2010/09/13 8.31b (PWD, AO)
 \bibsep=\skip48
 LaTeX Info: Redefining \cite on input line 694.
 \c@NAT@ctr=\count108
-) (./report.aux
-
-LaTeX Warning: Label `fig:Phi' multiply defined.
-
-)
+) (./report.aux)
 \openout1 = `report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/txmi/m/it on input line 43.
 LaTeX Font Info:    Try loading font information for OML+txmi on input line 43.
 
- (/usr/share/texlive/texmf-dist/tex/latex/txfonts/omltxmi.fd
+
+(/usr/share/texlive/texmf-dist/tex/latex/txfonts/omltxmi.fd
 File: omltxmi.fd 2000/12/15 v3.1
 )
 LaTeX Font Info:    ... okay on input line 43.
@@ -441,12 +438,6 @@ File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 ) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
-Overfull \hbox (21.82962pt too wide) in paragraph at lines 124--125
-[]\OT1/txr/m/n/10 The re-sults show the var-i-ous quan-ti-ties for six dif-fer-
-nent k val-ues. These k val-ues are $\OML/txmi/m/it/10 k[]; k[]; k[]; k[]; k[];
- k[]$\OT1/txr/m/n/10 . 
- []
-
 <Phi.png, id=17, 586.8324pt x 442.2924pt>
 File: Phi.png Graphic file (type png)
  <use Phi.png>
@@ -501,33 +492,29 @@ File: Theta0.png Graphic file (type png)
 Package pdftex.def Info: Theta0.png used on input line 169.
 (pdftex.def)             Requested size: 418.25368pt x 315.24458pt.
  [3 <./Phi.png> <./Psi.png>] [4 <./delta.png> <./deltab.png> <./v.png> <./vb.pn
-g>] [5 <./Theta0.png>] [6
+g>] [5 <./Theta0.png>] [6] [7
 
-] (./report.aux)
-
-LaTeX Warning: There were multiply-defined labels.
-
- ) 
+] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 5249 strings out of 494985
- 75216 string characters out of 6180357
- 143001 words of memory out of 5000000
- 8349 multiletter control sequences out of 15000+600000
+ 5250 strings out of 494985
+ 75228 string characters out of 6180357
+ 142971 words of memory out of 5000000
+ 8350 multiletter control sequences out of 15000+600000
  49014 words of font info for 128 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 42i,12n,40p,663b,470s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive/texmf-dist/font
-s/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
-ic/txfonts/txex.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t
-xsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report.pdf (6 pages, 367627 bytes).
+ 42i,12n,40p,917b,470s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/txfonts/txex.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/txfonts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/ut
+mb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on report.pdf (7 pages, 369629 bytes).
 PDF statistics:
- 71 PDF objects out of 1000 (max. 8388607)
- 40 compressed objects within 1 object stream
+ 76 PDF objects out of 1000 (max. 8388607)
+ 44 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  36 words of extra memory for PDF output out of 10000 (max. 10000000)
 
