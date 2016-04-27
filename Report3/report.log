@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  27 APR 2016 15:11
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  27 APR 2016 19:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -313,14 +313,14 @@ File: ot1txr.fd 2000/12/15 v3.1
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(89.62709pt, 418.25368pt, 89.6271pt)
+* h-part:(L,W,R)=(56.9055pt, 483.69687pt, 56.9055pt)
 * v-part:(T,H,B)=(101.40665pt, 591.5302pt, 152.11pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
-* \textwidth=418.25368pt
+* \textwidth=483.69687pt
 * \textheight=591.5302pt
-* \oddsidemargin=17.3571pt
-* \evensidemargin=17.3571pt
+* \oddsidemargin=-15.36449pt
+* \evensidemargin=-15.36449pt
 * \topmargin=-7.86334pt
 * \headheight=12.0pt
 * \headsep=25.0pt
@@ -426,11 +426,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 52--53
 
  []
 
-
-Overfull \hbox (8.53766pt too wide) in paragraph at lines 51--59
- [][] 
- []
-
 LaTeX Font Info:    Try loading font information for OMS+zplm on input line 89.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omszplm.fd
@@ -442,15 +437,15 @@ File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 File: Phi.png Graphic file (type png)
  <use Phi.png>
 Package pdftex.def Info: Phi.png used on input line 128.
-(pdftex.def)             Requested size: 209.12683pt x 157.61217pt.
+(pdftex.def)             Requested size: 241.84843pt x 182.27914pt.
 
 <Psi.png, id=19, 586.8324pt x 442.2924pt>
 File: Psi.png Graphic file (type png)
  <use Psi.png>
 Package pdftex.def Info: Psi.png used on input line 133.
-(pdftex.def)             Requested size: 209.12683pt x 157.61217pt.
+(pdftex.def)             Requested size: 241.84843pt x 182.27914pt.
 
-Overfull \hbox (1.9pt too wide) in paragraph at lines 127--137
+Overfull \hbox (1.90001pt too wide) in paragraph at lines 127--137
 []$[]$ $[]$ 
  []
 
@@ -458,15 +453,15 @@ Overfull \hbox (1.9pt too wide) in paragraph at lines 127--137
 File: delta.png Graphic file (type png)
  <use delta.png>
 Package pdftex.def Info: delta.png used on input line 142.
-(pdftex.def)             Requested size: 209.12683pt x 157.61217pt.
+(pdftex.def)             Requested size: 241.84843pt x 182.27914pt.
 
 <deltab.png, id=21, 586.8324pt x 442.2924pt>
 File: deltab.png Graphic file (type png)
  <use deltab.png>
 Package pdftex.def Info: deltab.png used on input line 147.
-(pdftex.def)             Requested size: 209.12683pt x 157.61217pt.
+(pdftex.def)             Requested size: 241.84843pt x 182.27914pt.
 
-Overfull \hbox (1.9pt too wide) in paragraph at lines 141--151
+Overfull \hbox (1.90001pt too wide) in paragraph at lines 141--151
 []$[]$ $[]$ 
  []
 
@@ -474,15 +469,15 @@ Overfull \hbox (1.9pt too wide) in paragraph at lines 141--151
 File: v.png Graphic file (type png)
  <use v.png>
 Package pdftex.def Info: v.png used on input line 156.
-(pdftex.def)             Requested size: 209.12683pt x 157.61217pt.
+(pdftex.def)             Requested size: 241.84843pt x 182.27914pt.
 
 <vb.png, id=23, 586.8324pt x 442.2924pt>
 File: vb.png Graphic file (type png)
  <use vb.png>
 Package pdftex.def Info: vb.png used on input line 161.
-(pdftex.def)             Requested size: 209.12683pt x 157.61217pt.
+(pdftex.def)             Requested size: 241.84843pt x 182.27914pt.
 
-Overfull \hbox (1.9pt too wide) in paragraph at lines 155--165
+Overfull \hbox (1.90001pt too wide) in paragraph at lines 155--165
 []$[]$ $[]$ 
  []
 
@@ -490,31 +485,173 @@ Overfull \hbox (1.9pt too wide) in paragraph at lines 155--165
 File: Theta0.png Graphic file (type png)
  <use Theta0.png>
 Package pdftex.def Info: Theta0.png used on input line 169.
-(pdftex.def)             Requested size: 418.25368pt x 315.24458pt.
+(pdftex.def)             Requested size: 483.69687pt x 364.56503pt.
  [3 <./Phi.png> <./Psi.png>] [4 <./delta.png> <./deltab.png> <./v.png> <./vb.pn
-g>] [5 <./Theta0.png>] [6] [7
+g>] [5 <./Theta0.png>] [6]
+LaTeX Font Info:    Try loading font information for OT1+txtt on input line 195
+.
+ (/usr/share/texlive/texmf-dist/tex/latex/txfonts/ot1txtt.fd
+File: ot1txtt.fd 2000/12/15 v3.1
+) [7
 
-] (./report.aux) ) 
+]
+[8]
+Overfull \hbox (15.05168pt too wide) in paragraph at lines 644--644
+[]        \OT1/txtt/m/n/10 Theta(1,2,k) = -20.d0*c*ks(k)/(45.d0*H_p(1)*dtau(1))
+*Theta(1,1,k) !without polarization[] 
+ []
+
+[9]
+Overfull \hbox (172.55122pt too wide) in paragraph at lines 644--644
+[]       \OT1/txtt/m/n/10 !write (*,'(*(2X, ES14.6))') delta(1,k), delta_b(1,k)
+, v(1,k), v_b(1,k), Phi(1,k), Theta(1,0,k), Theta(1,1,k),Psi(1,k)[] 
+ []
+
+
+Overfull \hbox (114.80139pt too wide) in paragraph at lines 644--644
+[]       \OT1/txtt/m/n/10 !write (*,'(*(2X, ES14.6))') x_t(1),dv_b(1,k),dPsi(1,
+k),dPhi(1,k),dTheta(1,0,k),dTheta(1,1,k),dTheta(1,2,k)[] 
+ []
+
+
+Overfull \hbox (36.05162pt too wide) in paragraph at lines 644--644
+[]               \OT1/txtt/m/n/10 call odeint(y_tight_coupling,x_t(j-1),x_t(j),
+eps,h1,hmin,derivs_tc, bsstep, output3)[] 
+ []
+
+[10]
+Overfull \hbox (36.05162pt too wide) in paragraph at lines 644--644
+[]               \OT1/txtt/m/n/10 Psi(j,k)      = -Phi(j,k) - 12.d0*H_0**2/(ck_
+current*a_t(j))**2*Omega_r*Theta(j,2,k)[] 
+ []
+
+
+Overfull \hbox (9.8017pt too wide) in paragraph at lines 644--644
+[]               \OT1/txtt/m/n/10 dPhi(j,k)     = Psi(j,k) - (ckH_p)**2/3.d0*Ph
+i(j,k) + (H_0**2/H_p(j))**2/2.d0 &[] 
+ []
+
+
+Overfull \hbox (156.80127pt too wide) in paragraph at lines 644--644
+[]               \OT1/txtt/m/n/10 dPsi(j,k)     = -dPhi(j,k) - 12.d0*H_0**2/(ck
+_current*a_t(j))**2*Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))[] 
+ []
+
+
+Overfull \hbox (15.05168pt too wide) in paragraph at lines 644--644
+[]                              \OT1/txtt/m/n/10 (1.d0-dH_p(j)/H_p(j))*ckH_p*(-
+Theta(j,0,k) + 2.d0*Theta(j,2,k))-&[] 
+ []
+
+
+Overfull \hbox (219.80109pt too wide) in paragraph at lines 644--644
+[]               \OT1/txtt/m/n/10 !write (*,'(*(2X, ES14.6))') delta(j,k), delt
+a_b(j,k), v(j,k), v_b(j,k), Phi(j,k),  Theta(j,0,k), Theta(j,1,k),Psi(j,k)[] 
+ []
+
+
+Overfull \hbox (156.80127pt too wide) in paragraph at lines 644--644
+[]               \OT1/txtt/m/n/10 !write (*,'(*(2X, ES14.6))') x_t(j),dPsi(j,k)
+,dPhi(j,k),dv_b(j,k),dTheta(j,0,k),dTheta(j,1,k),dTheta(j,2,k)[] 
+ []
+
+[11]
+Overfull \hbox (15.05168pt too wide) in paragraph at lines 644--644
+[]          \OT1/txtt/m/n/10 Psi(j,k)     =  - Phi(j,k) - 12.d0*H_0**2/(ck_curr
+ent*a_t(j))**2*Omega_r*Theta(j,2,k)[] 
+ []
+
+
+Overfull \hbox (57.05156pt too wide) in paragraph at lines 644--644
+[]          \OT1/txtt/m/n/10 dPhi(j,k)     = Psi(j,k) -c**2*k_current**2/(3.d0*
+H_p(j)**2)*Phi(j,k) +H_0**2/(2.d0*H_p(j)) &[] 
+ []
+
+
+Overfull \hbox (88.55147pt too wide) in paragraph at lines 644--644
+[]                          \OT1/txtt/m/n/10 *(Omega_m/a_t(j)*delta(j,k) +Omega
+_b/a_t(j)*delta_b(j,k) + 4.d0*Omega_r/a_t(j)**2 &[] 
+ []
+
+
+Overfull \hbox (130.55135pt too wide) in paragraph at lines 644--644
+[]          \OT1/txtt/m/n/10 dPsi(j,k)     = -dPhi(j,k) - 12.d0*H_0**2/(ck_curr
+ent*a_t(j))**2*Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))[] 
+ []
+
+[12]
+Overfull \hbox (272.30093pt too wide) in paragraph at lines 644--644
+[]      \OT1/txtt/m/n/10 dPhi      = Psi - ckH_p**2/3.d0*Phi + (H_0/H_p(j))**2/
+2.d0*(Omega_m/a_t(j)*delta + Omega_b/a_t(j)*delta_b + 4.d0*Omega_r/a_t(j)**2*Th
+eta0)[] 
+ []
+
+
+Overfull \hbox (603.04997pt too wide) in paragraph at lines 644--644
+[]      \OT1/txtt/m/n/10 q         = ( -((1.d0-2.d0*R)*dtau(j) + (1.d0+R)*ddtau
+(j)) *(3.d0*Theta1+v_b) - ckH_p*Psi +(1.d0-dH_p(j)/H_p(j))*ckH_p*(-Theta0 + 2.d
+0*Theta2) - ckH_p*dTheta0) / ((1.d0+R)*dtau(j)+dH_p(j)/H_p(j) -1.d0)[] 
+ []
+
+
+Overfull \hbox (46.55159pt too wide) in paragraph at lines 644--644
+[]      \OT1/txtt/m/n/10 dv_b      = (1.d0/(1.d0+R)) *(-v_b - ckH_p*Psi + R*(q+
+ckH_p*(-Theta0 + 2.d0*Theta2)-ckH_p*Psi))[] 
+ []
+
+[13]
+Overfull \hbox (272.30093pt too wide) in paragraph at lines 644--644
+[]      \OT1/txtt/m/n/10 dPhi      = Psi - ckH_p**2/3.d0*Phi + (H_0/H_p(j))**2/
+2.d0*(Omega_m/a_t(j)*delta + Omega_b/a_t(j)*delta_b + 4.d0*Omega_r/a_t(j)**2*Th
+eta0)[] 
+ []
+
+[14]
+Overfull \hbox (51.80157pt too wide) in paragraph at lines 644--644
+[]      \OT1/txtt/m/n/10 dTheta1   = ckH_p/3.d0*Theta0 -2.d0/3.d0*ckH_p*Theta2 
++ckH_p/3.d0*Psi +dtau(j)*(Theta1+v_b/3.d0)[] 
+ []
+
+
+Overfull \hbox (51.80157pt too wide) in paragraph at lines 644--644
+[]      \OT1/txtt/m/n/10 dTheta2   = l/(2.d0*l+1)*ckH_p*Theta1 - (l+1.d0)/(2.d0
+*l+1.d0)*ckH_p*Theta3+dtau(j)*0.9d0*Theta2[] 
+ []
+
+
+Overfull \hbox (46.55159pt too wide) in paragraph at lines 644--644
+[]          \OT1/txtt/m/n/10 dydx(6+i) = l/(2.d0*l+1)*ckH_p*y(5+i) - (l+1.d0)/(
+2.d0*l+1.d0)*ckH_p*y(7+i) +dtau(j)*y(6+i)[] 
+ []
+
+[15]
+Overfull \hbox (109.5514pt too wide) in paragraph at lines 644--644
+[]        \OT1/txtt/m/n/10 if (x < x_start_rec .and. abs(c*k/(get_H_p(x)*get_dt
+au(x))) <= 0.1d0 .and. abs(get_dtau(x)) > 10.d0) then[] 
+ []
+
+[16] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 5250 strings out of 494985
- 75228 string characters out of 6180357
- 142971 words of memory out of 5000000
- 8350 multiletter control sequences out of 15000+600000
- 49014 words of font info for 128 fonts, out of 8000000 for 9000
+ 5281 strings out of 494985
+ 75693 string characters out of 6180357
+ 142953 words of memory out of 5000000
+ 8376 multiletter control sequences out of 15000+600000
+ 49290 words of font info for 129 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  42i,12n,40p,917b,470s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/txfonts/txex.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/txfonts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/ut
-mb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report.pdf (7 pages, 369629 bytes).
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc
+}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/txfonts/txex.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/txfonts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/tx
+fonts/txtt.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on report.pdf (16 pages, 387468 bytes).
 PDF statistics:
- 76 PDF objects out of 1000 (max. 8388607)
- 44 compressed objects within 1 object stream
+ 108 PDF objects out of 1000 (max. 8388607)
+ 66 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  36 words of extra memory for PDF output out of 10000 (max. 10000000)
 
