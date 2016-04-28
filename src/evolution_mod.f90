@@ -28,11 +28,12 @@ module evolution_mod
   real(dp), allocatable, dimension(:,:)   :: dv_b
   real(dp), allocatable, dimension(:,:,:) :: dTheta
 
+  !Precomputing variables
   real(dp), allocatable, dimension(:) :: dtau
   real(dp), allocatable, dimension(:) :: ddtau
   real(dp), allocatable, dimension(:) :: H_p
   real(dp), allocatable, dimension(:) :: dH_p
-  real(dp), allocatable, dimension(:),private :: eta_precomp
+  real(dp), allocatable, dimension(:) :: eta_precomp
 
   ! Fourier mode list
   real(dp), allocatable, dimension(:) :: ks
@@ -41,8 +42,8 @@ module evolution_mod
   real(dp),     private :: k_current,ck_current,ckH_p
   integer(i4b), private :: npar = 6+lmax_int
 
-  !With or without polarization
-  !logical(lgt) :: polarize = False
+ 
+
 contains
 
 
@@ -300,7 +301,6 @@ contains
     deallocate(y_tight_coupling)
     deallocate(y)
     deallocate(dydx)
-
   end subroutine integrate_perturbation_eqns
 
   subroutine derivs_tc(x,y_tc, dydx)

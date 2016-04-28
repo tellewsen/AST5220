@@ -29,6 +29,12 @@ program cmbspec
 
     integer :: i
 
+    !Time keeping variables
+    real(dp) :: start_time,end_time
+
+    !Start timer
+    call cpu_time(start_time)
+
     !Initialize time_mod and save to file
     write(*,*) 'initialize_time_mod'
     call initialize_time_mod
@@ -123,6 +129,10 @@ program cmbspec
     close (out_unit17)
     close (out_unit18)
     close (out_unit19)
+
+    !Print end time
+    call cpu_time(end_time)
+    print'("Time used = ",f7.2," seconds.")',end_time-start_time
 
 end program cmbspec
 
