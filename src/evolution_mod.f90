@@ -113,7 +113,7 @@ contains
        eta_precomp(i)   = get_eta(x_t(i))
     end do
     write(*,'(*(2X, ES14.6))') H_p(1),dH_p(1),ddtau(1),dtau(1),ks(1)
-    ! Task: Set up initial conditions for the Boltzmann and Einstein equations
+    !Set up initial conditions for the Boltzmann and Einstein equations
     Phi(1,:)     = 1.d0
     delta(1,:)   = 1.5d0*Phi(1,:)
     delta_b(1,:) = delta(1,:)
@@ -166,8 +166,9 @@ contains
        !write(*,*) 'x_tc =',x_tc
        !write(*,*) 'under x_tc'
 
-       ! Task: Integrate from x_init until the end of tight coupling, using
-       !       the tight coupling equations
+       !Integrate from x_init until the end of tight coupling, using
+       !the tight coupling equations
+
        !write(*,*) 'Start of tight coupling'
        !write (*,'(*(2X, ES14.6))') delta(1,k), delta_b(1,k), &
        !v(1,k), v_b(1,k), Phi(1,k), Theta(1,0,k), Theta(1,1,k),Psi(1,k)
@@ -237,8 +238,8 @@ contains
        end do
        !write(*,*) 'End of tight coupling'
 
-       ! Task: Set up variables for integration from the end of tight coupling 
-       ! until today
+       !Set up variables for integration from the end of tight coupling 
+       !until today
        y(1:7) = y_tight_coupling(1:7)
        y(8)   = Theta(1,2,k)
        do l = 3, lmax_int
@@ -257,7 +258,7 @@ contains
           !write(*,*) 'running odeint with j =', j
           call odeint(y, x_t(j-1) ,x_t(j), eps, h1, hmin, derivs, bsstep, output3)
 
-          ! Task: Store variables at time step i in global variables
+          !Store variables at time step j in global variables
           delta(j,k)   = y(1)
           delta_b(j,k) = y(2)
           v(j,k)       = y(3)
@@ -269,7 +270,7 @@ contains
           end do
           Psi(j,k)     =  - Phi(j,k) - 12.d0*H_0**2/(ck_current*a_t(j))**2*Omega_r*Theta(j,2,k)
 
-          ! Task: Store derivatives that are required for C_l estimation
+          !Store derivatives that are required for C_l estimation
           dPhi(j,k)     = Psi(j,k) -c**2*k_current**2/(3.d0*H_p(j)**2)*&
                           Phi(j,k) +H_0**2/(2.d0*H_p(j))*(Omega_m/a_t(j)*&
                           delta(j,k) +Omega_b/a_t(j)*delta_b(j,k) + 4.d0*&
@@ -443,9 +444,6 @@ contains
   end subroutine output3
 
 
-  ! Task: Complete the following routine, such that it returns the time at which
-  !       tight coupling ends. In this project, we define this as either when
-  !       dtau < 10 or c*k/(H_p*dt) > 0.1 or x > x(start of recombination)
   function get_tight_coupling_time(k)
     implicit none
 
