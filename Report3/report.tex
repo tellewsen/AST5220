@@ -51,7 +51,7 @@
   \begin{minipage}[t]{15cm}
         $^1$ Institute of Theoretical Astrophysics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway\\
 
-    {\bf Abstract.} I compute the density perturbations, and velocities of dark matter and baryons. As well as the gravitational potentials $\Phi$ and $\Psi$. More importantly I also find the temperature multi poles $\Theta_l$.
+    {\bf Abstract.} I compute the density perturbations, and velocities of dark matter and baryons. As well as the gravitational potential $\Phi$ and curvature $\Psi$. More importantly I also find the temperature multi poles $\Theta_l$.
     
   \vspace*{2ex}
   \end{minipage}
@@ -96,7 +96,7 @@ v_b^\prime &= \frac{1}{1+R}\bigg[ -v_b - \frac{ck}{\pazocal{H}}\Psi + R(q + \fra
 \Theta_1^\prime &= \frac{1}{3}(q - v_b^\prime).
  \end{align}
 
-So far I have not stated what tight coupling means. Basically because of the mathematical operations we have done, like expanding in powers of $1/tau^\prime$, we end up with some conditions on when these equations above can be used. The conditions are $|ck/(\pazocal{H}\tau^\prime)| < 1/10$, $|\tau^\prime|>10$, and that the time is before recombination.
+So far I have not stated what tight coupling means. Basically because of the mathematical operations we have done, like expanding in powers of $1/\tau^\prime$, we end up with some conditions on when these equations above can be used. The conditions are $|ck/(\pazocal{H}\tau^\prime)| < 1/10$, that the time is before recombination, and $|\tau^\prime|>10$.
  
 All of these equations refer to their respective quantities in Fourier space. This means that the $k$'s everywhere refer to Fourier modes. This is done to separate the quantities into the different scales at which they take place, with low $k$'s referring to large scales, and high $k$'s to small scales.
 
@@ -110,9 +110,9 @@ Note that this function clearly depends on which k mode we are working on.
 
 For each k we insert the initial conditions, and then run through every value of x from some start value early in the universe after inflation is done. In this case I have chosen to use the $x$ value corresponding to $a_{init} = 10^{-8}$.
 At some point through this the $x$ value becomes larger than the $x$ at the end of tight coupling. At that point we change the equations for the relevant quantities, and continue on until we reach today.
-This has to be done for all k values. I have chosen to set the limit at $k=100$ so far. With this low k value the program completes in less than five minutes.
+This has to be done for all k values. I have chosen to set the limit at $k=100$ so far. With this low k value the program completes in about 3 minutes.
 
-It should also be said that we limit our number of $l$'s to six. This can be done because we are using line of sight integration. Historically people used to include thousands of variables to trace multi poles. If we had to use this the program would use days or weeks instead of minutes.
+It should also be said that we limit our number of $l$'s to 6. This can be done because we are using line of sight integration. Historically people used to include thousands of variables to trace multi poles. If we had to use this the program would use days or weeks instead of minutes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec:results}
@@ -122,7 +122,7 @@ To get a good distribution of k modes we use a quadratic distribution in k such 
  k_i = k_{min} +(k_{max}-k_{min})(i/100)^2,
 \end{equation}
 where $k_{max} = 1000H_0/c$, and $k_{min} = 0.1H_0/c$.
-The results show the various quantities for six different k values. These k values are $k_1$,$k_5$,$k_{10}$,$k_{40}$,$k_{60}$, and $k_{100}$. See figures \ref{fig:Phi}, \ref{fig:Psi}, \ref{fig:delta}, \ref{fig:deltab}, \ref{fig:v}, \ref{fig:vb}, and \ref{fig:Theta0} for the plots. Most of what is happening is explained in the captions for each of them.
+The results show the various quantities for six different k values. These k values are $k_1$,$k_5$,$k_{10}$,$k_{40}$,$k_{60}$, and $k_{100}$. See figures \ref{fig:Phi} and \ref{fig:Psi} for $\Phi$ and $\Psi$. Figures \ref{fig:delta}, and \ref{fig:deltab} for $\delta$, and $\delta_b$. Figures \ref{fig:v}, and \ref{fig:vb} for $v$ and $v_b$. And figure \ref{fig:Theta0} for $\Theta_0$. Most of what is happening is explained in the captions for each of them.
 
 \begin{figure}[ht]
 \begin{subfigure}{.5\textwidth}
@@ -135,7 +135,7 @@ The results show the various quantities for six different k values. These k valu
  \caption{The plot for $\Psi$ for six different k's.}
  \label{fig:Psi}
 \end{subfigure}
-\caption{The first thing to note is that the plots seem to be the inverse of each other. Also all the modes of $\Phi$ start at 1, and decrease as they leave tight coupling. The higher the mode, the closer to 0 they stabilize after recombination. The higher modes oscillate a bit before stabilizing around recombination. This is not seen in the lower modes. The smallest modes do not show this oscillating behavior at all, instead they slowly decrease after tight coupling before doing a nose dive near the end. The behavior of $\Psi$ is the complete inverse of this.}
+\caption{The first thing to note is that the plots seem to be the inverse of each other. Also all the modes of $\Phi$ start at 1, and decrease as they leave tight coupling. The higher the mode, the closer to 0 they stabilize after recombination. The higher modes oscillate a bit before stabilizing around recombination. This is not seen in the lower modes. The smallest modes do not show this oscillating behavior at all, instead they slowly decrease after tight coupling before doing a nose dive near the end. The behavior of $\Psi$ is the complete inverse of this. This behavior is as expected since the gravitational potential should be high with things far apart, and small when they are close. Thus higher modes fall first since matter and dark matter for high modes can clump together earlier, shrinkign the potential. This of course creatse curvature, and that is why we see the opposite effect for $\Psi$. The lowest modes simply have not had time to collapse as much as they can yet.}
 \end{figure}
 
 \begin{figure}[ht]
@@ -149,7 +149,7 @@ The results show the various quantities for six different k values. These k valu
  \caption{The plot for $\delta_b$ for six different k's.}
  \label{fig:deltab}
 \end{subfigure}
-\caption{Note the special y axis on the plot for $\delta_b$. The dark matter perturbations behave nicely. The higher the mode the earlier it can start growing, just as expected due to the fact that forces don't propagate instantaneously. Note also that all the dark matter perturbations remain positive. This is not the case for baryons. When we start approaching recombination all the higher order modes start oscillating, and it is only after recombination is done that they are allowed to start growing again, and now they can behave like dark matter.}
+\caption{Note the special y axis on the plot for $\delta_b$. The dark matter perturbations behave nicely. The higher the mode the earlier it can start growing, just as expected due to the fact that forces don't propagate instantaneously. Note also that all the dark matter perturbations remain positive. This is not the case for baryons. When we start approaching recombination all the higher order modes start oscillating, and it is only after recombination is done that they are allowed to start growing again, and now they can behave like dark matter. The reason for this is of course that dark matter does not interact with electromagnetic radiation while regular matter does. Thus dark matter has no other force than gravity acting on it and thus it can collapse even though the universe is dominated by radiation. This is not the case for regular matter, as we see in the plot. The radiation rips everything apart.}
 \end{figure}
 
 \begin{figure}[ht]
@@ -175,7 +175,7 @@ The results show the various quantities for six different k values. These k valu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions} \label{sec:conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In this project we have calculated the density perturbations and velocities of dark matter and baryons. We also found the gravitational potentials $\Psi$ and $\Phi$. And most importantly we found the evolution of the temperature multi poles $\Theta_l$ which will enable us to make a map of the cosmic microwave background in the next and final part of the project.
+In this project we have calculated the density perturbations and velocities of dark matter and baryons. We also found the gravitational potential $\Phi$ and curvature $\Psi$. And most importantly we found the evolution of the temperature multi poles $\Theta_l$ which will enable us to make a map of the cosmic microwave background in the next and final part of the project.
 
 I was also able to appreciate the power of precomputing certain quantities, this enabled me to speed up the program by a factor of 10.
 
