@@ -168,7 +168,8 @@ contains
        ! Task: Integrate from x_init until the end of tight coupling, using
        !       the tight coupling equations
        !write(*,*) 'Start of tight coupling'
-       !write (*,'(*(2X, ES14.6))') delta(1,k), delta_b(1,k), v(1,k), v_b(1,k), Phi(1,k), Theta(1,0,k), Theta(1,1,k),Psi(1,k)
+       !write (*,'(*(2X, ES14.6))') delta(1,k), delta_b(1,k), &
+       !v(1,k), v_b(1,k), Phi(1,k), Theta(1,0,k), Theta(1,1,k),Psi(1,k)
        !write (*,'(*(2X, ES14.6))') x_t(1),dv_b(1,k),dPsi(1,k),dPhi(1,k),dTheta(1,0,k),dTheta(1,1,k),dTheta(1,2,k)
 
        do j=2,n_t

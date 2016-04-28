@@ -46,13 +46,12 @@
 \vspace*{4ex}
 
 \begin{center}
-  {\Large \bf blablabla}\\[4ex]
+  {\Large \bf The evolution of structures in the universe}\\[4ex]
   {\large \bf Andreas Ellewsen$^1$}\\[4ex]
   \begin{minipage}[t]{15cm}
         $^1$ Institute of Theoretical Astrophysics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway\\
-             
-        
-    {\bf Abstract.} I compute the density perturbations, and velocities of dark matter and baryons. As well as the gravitational potentials $\Phi$ and $\Psi$. More importantly I also find $\Theta_0$.
+
+    {\bf Abstract.} I compute the density perturbations, and velocities of dark matter and baryons. As well as the gravitational potentials $\Phi$ and $\Psi$. More importantly I also find the temperature multi poles $\Theta_l$.
     
   \vspace*{2ex}
   \end{minipage}
@@ -62,12 +61,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}\label{sec:introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In this project I will follow the algorithm presented in Callin (2005)[1] for simulating the cosmic microwave background.  
+In this project I am following the algorithm presented in Callin (2005)[1] for simulating the cosmic microwave background.  
 This is part three of four for this project.
 
 In the first part I set up the background cosmology of the universe, and made a function that could find the conformal time as a function of $x$. In the second part I computed the electron fraction, electron density, optical depth and visibility function for times around and during recombination. 
 
-In this part I will use some of these functions along with the Einstein-Boltzmann equations without polarization and neutrinos to compute the density perturbations, and velocities of dark matter and baryons. As well as the temperature multi poles $\Theta_l$.
+In this part I will use some of these functions along with the Einstein-Boltzmann equations without polarization and neutrinos to compute the density perturbations, and velocities of dark matter and baryons. I will also compute the temperature multi poles $\Theta_l$.
 
 As previously done I will continue building on the skeleton code provided.
 
@@ -88,7 +87,7 @@ The full set of Einstein-Boltzmann equations without polarization and neutrinos 
  R =& \frac{4\Omega_r}{3\Omega_b a}.
 \end{align}
 
-These equations are the ones we will use when we are not in the tight coupling regime. When in the tight coupling regime the factor $(3\Theta_1+v_b)$ is very close to zero. In the equation for $v_b^\prime$ this is multiplied by $\tau^\prime$ which is very large in, making this equation terribly unstable. The same thing makes the equation for $\Theta^\prime_1$ unstable. Because of this one expand $(3\Theta_1+v_b)$ in powers of $1/tau^\prime$. This results in 
+These equations are the ones we will use when we are not in the tight coupling regime. When in the tight coupling regime the factor $(3\Theta_1+v_b)$ is very close to zero. In the equation for $v_b^\prime$ this is multiplied by $\tau^\prime$ which is very large in, making this equation terribly unstable. The same thing makes the equation for $\Theta^\prime_1$ unstable. Because of this one can expand $(3\Theta_1+v_b)$ in powers of $1/tau^\prime$. This results in 
 a slight change in the set of equations for $v_b^\prime$ and $\Theta_l$.
 
 \begin{align} 
@@ -100,6 +99,8 @@ v_b^\prime &= \frac{1}{1+R}\bigg[ -v_b - \frac{ck}{\pazocal{H}}\Psi + R(q + \fra
 So far I have not stated what tight coupling means. Basically because of the mathematical operations we have done, like expanding in powers of $1/tau^\prime$, we end up with some conditions on when these equations above can be used. The conditions are $|ck/(\pazocal{H}\tau^\prime)| < 1/10$, $|\tau^\prime|>10$, and that the time is before recombination.
  
 All of these equations refer to their respective quantities in Fourier space. This means that the $k$'s everywhere refer to Fourier modes. This is done to separate the quantities into the different scales at which they take place, with low $k$'s referring to large scales, and high $k$'s to small scales.
+
+Because of this it is expected that quantities relating to large $k$'s start changing earlier than those relating to low $k$'s, simply because no causal physics has been able to work on such large scales.
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
@@ -107,7 +108,7 @@ All of these equations refer to their respective quantities in Fourier space. Th
 The way to solve all these equations is to first make a function that finds the time where tight coupling ends.
 Note that this function clearly depends on which k mode we are working on.
 
-For each k we insert the initial conditions, and then run through every value of x from some start value early in the universe. In this case I have chosen to use the $x$ value corresponding to $a_{init} = 10^{-8}$.
+For each k we insert the initial conditions, and then run through every value of x from some start value early in the universe after inflation is done. In this case I have chosen to use the $x$ value corresponding to $a_{init} = 10^{-8}$.
 At some point through this the $x$ value becomes larger than the $x$ at the end of tight coupling. At that point we change the equations for the relevant quantities, and continue on until we reach today.
 This has to be done for all k values. I have chosen to set the limit at $k=100$ so far. With this low k value the program completes in less than five minutes.
 
@@ -121,9 +122,9 @@ To get a good distribution of k modes we use a quadratic distribution in k such 
  k_i = k_{min} +(k_{max}-k_{min})(i/100)^2,
 \end{equation}
 where $k_{max} = 1000H_0/c$, and $k_{min} = 0.1H_0/c$.
-The results show the various quantities for six different k values. These k values are $k_1,k_5,k_{10},k_{40},k_{60},k_{100}$. 
+The results show the various quantities for six different k values. These k values are $k_1$,$k_5$,$k_{10}$,$k_{40}$,$k_{60}$, and $k_{100}$. See figures \ref{fig:Phi}, \ref{fig:Psi}, \ref{fig:delta}, \ref{fig:deltab}, \ref{fig:v}, \ref{fig:vb}, and \ref{fig:Theta0} for the plots. Most of what is happening is explained in the captions for each of them.
 
-\begin{figure}
+\begin{figure}[ht]
 \begin{subfigure}{.5\textwidth}
   \includegraphics[width=\textwidth]{Phi.png}
  \caption{The plot for $\Phi$ for six different k's.}
@@ -137,7 +138,7 @@ The results show the various quantities for six different k values. These k valu
 \caption{The first thing to note is that the plots seem to be the inverse of each other. Also all the modes of $\Phi$ start at 1, and decrease as they leave tight coupling. The higher the mode, the closer to 0 they stabilize after recombination. The higher modes oscillate a bit before stabilizing around recombination. This is not seen in the lower modes. The smallest modes do not show this oscillating behavior at all, instead they slowly decrease after tight coupling before doing a nose dive near the end. The behavior of $\Psi$ is the complete inverse of this.}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht]
 \begin{subfigure}{.5\textwidth}
   \includegraphics[width=\textwidth]{delta.png}
  \caption{The plot for $\delta$ for six different k's.}
@@ -148,10 +149,10 @@ The results show the various quantities for six different k values. These k valu
  \caption{The plot for $\delta_b$ for six different k's.}
  \label{fig:deltab}
 \end{subfigure}
-\caption{Note the special y axis on the plot for $\delta_b$. The dark matter perturbations behave nicely. The higher the mode the earlier it can start growing, just as expected due to the fact that forces don't propagate instantaneously. Note also that all the dark matter perturbations remain positive. This is not the case for baryons. When we start approaching recombination all the higher order modes start oscillating, and it is only after recombination is done that they are allowed to start growing again, and now the can behave like dark matter.}
+\caption{Note the special y axis on the plot for $\delta_b$. The dark matter perturbations behave nicely. The higher the mode the earlier it can start growing, just as expected due to the fact that forces don't propagate instantaneously. Note also that all the dark matter perturbations remain positive. This is not the case for baryons. When we start approaching recombination all the higher order modes start oscillating, and it is only after recombination is done that they are allowed to start growing again, and now they can behave like dark matter.}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht]
 \begin{subfigure}{.5\textwidth}
   \includegraphics[width=\textwidth]{v.png}
  \caption{The plot for $v$ for six different k's.}
@@ -165,20 +166,19 @@ The results show the various quantities for six different k values. These k valu
 \caption{As before there is a clear difference between the velocities of the two components. The highest modes start growing first, and since they are larger when approaching recombination they slow down more. Note the yellow and purple curves in the $v$ plot. The lower modes don't slow down, but they don't increase as fast, while the smallest modes don't notice anything special happening. The velocity of the baryons is very different. As the dark matter, the highest modes start growing first, but as they exit tight coupling they start to oscillate, expanding and contracting, until after recombination where they speed up again to catch up with the dark matter. Note that the lowest modes don't notice anything special happening here either. In fact, they are fairly equal for dark matter and baryons.}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht]
  \includegraphics[width=\textwidth]{Theta0.png}
  \caption{The plot shows $\Theta_0$ for six different k's. The low modes stay constant until the time at which their corresponding baryon perturbations start growing. This is as expected since $\Theta_0$ measures the mean temperature, and this should increases as baryons clump together because of gravity. The high modes oscillate like their corresponding perturbation modes do. However, they do not grow after recombination, instead they stabilize around values fairly close to zero. The intermediate modes like $k_{10}$ oscillate around some value between 0.5 and 1.}
  \label{fig:Theta0}
 \end{figure}
 
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions} \label{sec:conclusions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We have calculated the density perturbations and velocities of dark matter and baryons. We also found the gravitational potentials $\Psi$ and $\Phi$. And most importantly we found the evolution of the temperature multi poles $\Theta_l$ which will enable us to make a map of the cosmic microwave background in the next and final part of the project.
+In this project we have calculated the density perturbations and velocities of dark matter and baryons. We also found the gravitational potentials $\Psi$ and $\Phi$. And most importantly we found the evolution of the temperature multi poles $\Theta_l$ which will enable us to make a map of the cosmic microwave background in the next and final part of the project.
+
+I was also able to appreciate the power of precomputing certain quantities, this enabled me to speed up the program by a factor of 10.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{References}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -193,7 +193,7 @@ We have calculated the density perturbations and velocities of dark matter and b
 The source code for the evolution\_mod file is included for inspection. This file depends on all files previously used in the two earlier parts of the project.
 
 \begin{verbatim}
- module evolution_mod
+module evolution_mod
   use healpix_types
   use params
   use time_mod
@@ -640,7 +640,7 @@ contains
     end do
   end function get_tight_coupling_time
 
-end module evolution_mod
+end module evolution_mod 
 \end{verbatim}
 
 
