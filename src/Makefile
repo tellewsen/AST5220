@@ -35,15 +35,18 @@ FFLAGS  = $(HEALPIX) $(LAPACK)
 
 # List of source files to be compiled
 OBJS    = math_tools.o spline_1D_mod.o rk_mod.o bs_mod.o ode_solver.o \
-	  params.o time_mod.o rec_mod.o cmbspec.o evolution_mod.o
+	  params.o time_mod.o rec_mod.o cmbspec.o evolution_mod.o \
+          spline_2D_mod.o cl_mod.o sphbess_mod.o
 
 # Linking stage
 cmbspec: $(OBJS)
 	$(FC) $(FFLAGS) $(OPTIM) -o $(OUTPUT) $(OBJS) $(LAPACK)
 
 # Dependencies
-cmbspec.o       : time_mod.o rec_mod.o evolution_mod.o
+cmbspec.o       : time_mod.o rec_mod.o evolution_mod.o cl_mod.o
 time_mod.o      : params.o spline_1D_mod.o
+evolution_mod.o : spline_2D_mod.o
+cl_mod.o        : sphbess_mod.o
 
 # Compilation of source files
 %.o : %.f90

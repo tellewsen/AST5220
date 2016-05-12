@@ -4,6 +4,7 @@ module evolution_mod
   use time_mod
   use ode_solver
   use rec_mod
+  use spline_2D_mod
   implicit none
 
   !Use j,k,l as global variable
@@ -12,7 +13,8 @@ module evolution_mod
   ! Accuracy parameters
   real(dp),     parameter, private :: k_min    = 0.1d0 * H_0 / c
   real(dp),     parameter, private :: k_max    = 1.d3  * H_0 / c
-  integer(i4b), parameter          :: n_k      = 100
+  integer(i4b), parameter          :: n_k      = 5!100
+
   integer(i4b), parameter, private :: lmax_int = 6
 
   ! Perturbation quantities
@@ -42,48 +44,106 @@ module evolution_mod
   real(dp),     private :: k_current,ck_current,ckH_p
   integer(i4b), private :: npar = 6+lmax_int
 
- 
+  !Milestone 4 variables
+  real(dp),     pointer,     dimension(:,:,:,:) :: S_coeff
 
+  !real(dp), pointer, dimension(:) :: x_high,k_high
+  integer(i4b), parameter             :: n_k_highres = 5000
+  integer(i4b), parameter             :: n_x_highres = 5000
 contains
 
 
   ! NB!!! New routine for 4th milestone only; disregard until then!!!
-  !subroutine get_hires_source_function(k, x, S)
-  !  implicit none
+  subroutine get_hires_source_function(x_hires, k_hires, S)
+    implicit none
 
-  !  real(dp), pointer, dimension(:),   intent(out) :: k, x
-  !  real(dp), pointer, dimension(:,:), intent(out) :: S
+    real(dp), allocatable, dimension(:),   intent(out) :: x_hires, k_hires
+    real(dp), allocatable, dimension(:,:), intent(out) :: S
 
-  !   integer(i4b) :: i, j
-  !  real(dp)     :: g, dg, ddg, tau, dt, ddt, H_p, dH_p, ddHH_p, Pi, dPi, ddPi
-  !  real(dp), allocatable, dimension(:,:) :: S_lores
+    integer(i4b) :: i,k
+    real(dp)     :: g, dg, ddg, dt, tau, ddt, ddH_p, Pi, dPi, ddPi!,H_p, dH_p
+    real(dp), allocatable, dimension(:,:) :: S_lores
 
     ! Task: Output a pre-computed 2D array (over k and x) for the 
     !       source function, S(k,x). Remember to set up (and allocate) output 
     !       k and x arrays too. 
-    !
+
+    allocate(x_hires(n_x_highres),k_hires(n_k_highres))
+
+    do i=1,n_x_highres    
+        do k=1,n_k_highres
+            x_hires(i) = x_init + (x_0-x_init)*(i-1.d0)/(n_x_highres-1.d0)
+            k_hires(k) = k_min  + (k_max -k_min)*((k-1.d0)/(n_k_highres-1.d0))**2
+        end do 
+    end do
+
+    !Test of x and k grid.
+    !write(*,*) 'x_hires'
+    !write(*,*) x_hires(1),x_hires(n_x_highres)
+    !write(*,*) 'k_hires'
+    !write(*,*) k_hires(1),k_hires(n_k_highres)
+    !write(*,*) 'ks'
+    !write(*,*) ks(1),ks(n_k)
+
     ! Substeps:
     !   1) First compute the source function over the existing k and x
     !      grids
-    !   2) Then spline this function with a 2D spline
-    !   3) Finally, resample the source function on a high-resolution uniform
+    allocate(S_lores(1:n_t,1:n_k))
+    allocate(S_coeff(4,4,n_t,n_k))
+
+
+
+    do k=1,n_k
+        k_current = ks(k)
+        ck_current= c*k_current
+        do i=1,n_t
+        g     = get_g(x_t(i))
+        dg    = get_dg(x_t(i))
+        ddg   = get_ddg(x_t(i))
+        tau   = get_tau(x_t(i))
+        dt    = dtau(i)
+        ddt   = ddtau(i)
+        !H_p   = get_H_p(x_t(i))
+        !dH_p  = get_dH_p(x_t(i))
+
+        Pi    = Theta(i,2,k)
+        dPi   = dTheta(i,2,k)
+        ddPi  = 2.d0*ck_current/5.d0/H_p(i)*(-dH_p(i)/H_p(i)*Theta(i,1,k)+dTheta(i,1,k)) + 3.d0/10.d0*(ddt*Pi+dt*dPi) -3.d0*ck_current/(5.d0*H_p(i))*(-dH_p(i)/H_p(i)*Theta(i,3,k) + dTheta(i,3,k))
+
+        ddH_p = get_ddH_p(x_t(i))
+
+        S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) +exp(-tau)* &
+                       (dPsi(i,k)-dPhi(i,k)) -1.d0/k_current*(H_p(i)*g*dv_b(i,k)+&
+                       g*v_b(i,k)*dH_p(i) + H_p(i)*v_b(i,k)*dg) +3.d0/4.d0/k_current**2*&
+                       ((H_p(i)*ddH_p+H_p(i)**2)*g*Pi+3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*&
+                       (ddg*Pi +2*dg*dPi+g*ddPi))
+        end do
+    end do
+
+    !2) Then spline this function with a 2D spline
+    call splie2_full_precomp(x_t, ks, S_lores,S_coeff)
+
+    !3) Finally, resample the source function on a high-resolution uniform
     !      5000 x 5000 grid and return this, together with corresponding
     !      high-resolution k and x arrays
+    do k=1,n_k
+        do i=1,n_t
+            S = splin2_full_precomp(x_t, ks, S_coeff, x_hires(i), k_hires(k))
+        end do
+    end do
 
- ! end subroutine get_hires_source_function
+  end subroutine get_hires_source_function
 
 
   ! Routine for initializing and solving the Boltzmann and Einstein equations
   subroutine initialize_perturbation_eqns
     implicit none
     integer(i4b) :: i
-    real(dp)     :: k_min = 0.1d0*H_0/c
-    real(dp)     :: k_max = 1000.d0*H_0/c
 
-    !Initialize k-grid, ks; quadratic between k_min and k_max
+  !Initialize k-grid, ks; quadratic between k_min and k_max
     allocate(ks(n_k))
     do k=1,n_k
-        ks(k) = k_min +(k_max -k_min)*((k-1)/100.d0)**2
+        ks(k) = k_min +(k_max -k_min)*((k-1.d0)/(n_k-1.d0))**2
     end do
 
     !Allocate arrays for perturbation quantities
@@ -110,9 +170,10 @@ contains
        ddtau(i) = get_ddtau(x_t(i))
        H_p(i)   = get_H_p(x_t(i))
        dH_p(i)  = get_dH_p(x_t(i))
-       eta_precomp(i)   = get_eta(x_t(i))
+       eta_precomp(i)   = eta_t(i) !was calculated in time_mod
     end do
-    write(*,'(*(2X, ES14.6))') H_p(1),dH_p(1),ddtau(1),dtau(1),ks(1)
+
+    !write(*,'(*(2X, ES14.6))') H_p(1),dH_p(1),ddtau(1),dtau(1),ks(1)
     !Set up initial conditions for the Boltzmann and Einstein equations
     Phi(1,:)     = 1.d0
     delta(1,:)   = 1.5d0*Phi(1,:)
@@ -271,7 +332,7 @@ contains
           Psi(j,k)     =  - Phi(j,k) - 12.d0*H_0**2/(ck_current*a_t(j))**2*Omega_r*Theta(j,2,k)
 
           !Store derivatives that are required for C_l estimation
-          dPhi(j,k)     = Psi(j,k) -c**2*k_current**2/(3.d0*H_p(j)**2)*&
+          dPhi(j,k)     = Psi(j,k) -ck_current**2/(3.d0*H_p(j)**2)*&
                           Phi(j,k) +H_0**2/(2.d0*H_p(j))*(Omega_m/a_t(j)*&
                           delta(j,k) +Omega_b/a_t(j)*delta_b(j,k) + 4.d0*&
                           Omega_r/a_t(j)**2*Theta(j,0,k))
@@ -395,34 +456,25 @@ contains
       Theta6  = y(12)
 
       R         = (4.d0*Omega_r)/(3.d0*Omega_b*a_t(j))
-
       Psi       = -Phi - 12.d0*(H_0/ck_current/a_t(j))**2.d0*Omega_r*Theta2
-
       dPhi      = Psi - ckH_p**2/3.d0*Phi + (H_0/H_p(j))**2/ &
                   2.d0*(Omega_m/a_t(j)*delta + Omega_b/a_t(j)* &
                   delta_b + 4.d0*Omega_r/a_t(j)**2*Theta0)
-
       dTheta0   = -ckH_p*Theta1 - dPhi
-
       d_delta   = ckH_p*v   - 3.d0*dPhi
-
       d_delta_b = ckH_p*v_b - 3.d0*dPhi
-
       d_v       = -v -ckH_p*Psi
-
       dv_b      = -v_b -ckH_p*Psi +dtau(j)*R*(3.d0*Theta1+v_b)
-
       dTheta1   = ckH_p/3.d0*Theta0 -2.d0/3.d0*ckH_p*Theta2 + &
                   ckH_p/3.d0*Psi +dtau(j)*(Theta1+v_b/3.d0)
       dTheta2   = l/(2.d0*l+1)*ckH_p*Theta1 - (l+1.d0)/&
                   (2.d0*l+1.d0)*ckH_p*Theta3+dtau(j)*0.9d0*Theta2
-
       do i=3,lmax_int-1
-          dydx(6+i) = l/(2.d0*l+1)*ckH_p*y(5+i) - &
-                      (l+1.d0)/(2.d0*l+1.d0)*ckH_p*y(7+i) +dtau(j)*y(6+i)
+          dydx(6+i) = i/(2.d0*i+1)*ckH_p*y(5+i) - &
+                      (i+1.d0)/(2.d0*i+1.d0)*ckH_p*y(7+i) +dtau(j)*y(6+i)
       end do
 
-      dydx(12) = ckH_p*Theta5 -c*(l+1.d0)/H_p(j)/eta_precomp(j)*Theta6 +dtau(j)*Theta6
+      dydx(12) = ckH_p*Theta5 -c*(lmax_int+1.d0)/H_p(j)/eta_precomp(j)*Theta6 +dtau(j)*Theta6
 
       dydx(1) = d_delta
       dydx(2) = d_delta_b
@@ -432,8 +484,6 @@ contains
       dydx(6) = dTheta0
       dydx(7) = dTheta1
       dydx(8) = dTheta2
-      !write(*,*) 'dydx(1) =',dydx(1)
-      !write(*,*) 'dydx(2) =',dydx(2)
   end subroutine derivs
 
   subroutine output3(x, y)
@@ -454,7 +504,6 @@ contains
     n =1d4
     do i=0,n
         x = x_init +i*(0.d0-x_init)/n
-        !write(*,*) x,x_start_rec
         if (x < x_start_rec .and. &
             abs(c*k/(get_H_p(x)*get_dtau(x))) <= 0.1d0 .and.& 
             abs(get_dtau(x)) > 10.d0) then 

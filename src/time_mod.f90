@@ -5,17 +5,39 @@ module time_mod
     use ode_solver
     implicit none
 
+
+    integer(i4b)                           :: n1, n2,n3
     integer(i4b)                           :: n_t                ! Number of x-values
+    integer(i4b)                           :: n_eta              ! Number of eta grid poins
     real(dp),    allocatable, dimension(:) :: x_t                ! Grid of relevant x-values
     real(dp),    allocatable, dimension(:) :: a_t                ! Grid of relevant a-values
     real(dp),    allocatable, dimension(:) :: eta_t              ! Grid of relevant eta-values
+ 
+    real(dp),    allocatable, dimension(:) :: Omega_mx           !Relative densities
+    real(dp),    allocatable, dimension(:) :: Omega_bx
+    real(dp),    allocatable, dimension(:) :: Omega_rx 
+    real(dp),    allocatable, dimension(:) :: Omega_nux 
+    real(dp),    allocatable, dimension(:) :: Omega_lambdax 
 
-    integer(i4b)                           :: n_eta              ! Number of eta grid poins
-    real(dp),    allocatable, dimension(:) :: z_eta 		 !Grid points for eta
+
+    real(dp),    allocatable, dimension(:) :: H                  !Hubble constant as func of x
+    real(dp)				   :: x_init,x_start_rec, x_end_rec
+    real(dp)                               :: a_init,a_end
+
+
     real(dp),    allocatable, dimension(:) :: x_eta              ! Grid points for eta
     real(dp),    allocatable, dimension(:) :: a_eta              ! Grid points for eta
+    real(dp),    allocatable, dimension(:) :: z_eta 		 ! Grid points for eta
     real(dp),    allocatable, dimension(:) :: eta, eta2          ! Eta and eta'' at each grid point
-    !real(dp),    allocatable, dimension(:) :: dydx
+
+contains
+  subroutine initialize_time_mod
+    implicit none
+
+    integer(i4b) :: i
+    real(dp)     :: z_start_rec, z_end_rec, z_0, x_0
+    real(dp)     :: dx, x_eta1, x_eta2,h1,eta_init,rho_crit0,rho_crit
+    real(dp)     :: eps,hmin,yp1,ypn
 
     real(dp)                               :: rho_m0             !Matter density today
     real(dp) 				   :: rho_b0             !Baryon density today
@@ -29,26 +51,9 @@ module time_mod
     real(dp),    allocatable, dimension(:) :: rho_nu             !Neutrino density
     real(dp),    allocatable, dimension(:) :: rho_lambda         !Vacuum energy density
 
-    real(dp),    allocatable, dimension(:) :: Omega_mx           !Relative densities
-    real(dp),    allocatable, dimension(:) :: Omega_bx
-    real(dp),    allocatable, dimension(:) :: Omega_rx 
-    real(dp),    allocatable, dimension(:) :: Omega_nux 
-    real(dp),    allocatable, dimension(:) :: Omega_lambdax 
-    real(dp)				   :: x_init,x_start_rec, x_end_rec
-    real(dp),    allocatable, dimension(:) :: H !Huble constant as func of x
-    integer(i4b) :: n1, n2,n3
-    real(dp)                               :: a_init,a_end
-contains
-  subroutine initialize_time_mod
-    implicit none
-
-    integer(i4b) :: i
-    real(dp)     :: z_start_rec, z_end_rec, z_0, x_0
-    real(dp)     :: dx, x_eta1, x_eta2,h1,eta_init,rho_crit0,rho_crit
-    real(dp)     :: eps,hmin,yp1,ypn
 
     ! Define two epochs, 1) during and 2) after recombination.
-    n1          = 100                       !Number of grid points before recombination
+    n1          = 300                       !Number of grid points before recombination
     n2          = 200                       !Number of grid points during recombination
     n3          = 300                       !Number of grid points after recombination
     n_t         = n1 + n2 +n3               !Total number of grid points
@@ -81,7 +86,7 @@ contains
     do i = 1,n1
         x_t(i)       = x_init + (i-1)*(x_start_rec-x_init)/(n1-1)
     end do
-    do i = 1,n2+1 ! Fill interval during recombination
+    do i = 1,n2 ! Fill interval during recombination
         x_t(n1+i)    = x_start_rec + i*(x_end_rec-x_start_rec)/(n2)
     end do
     do i = 1,n3 !Fill from end of recomb to today
@@ -240,6 +245,28 @@ contains
                  + Omega_lambda*exp2x) * (-(Omega_m+Omega_b)/expx-2.d0*(Omega_r+Omega_nu)/exp2x &
                  + 2.d0*Omega_lambda*exp2x)
   end function get_dH_p
+
+  !Function computes d^2h/d^2x
+  function get_ddH_p(x)
+      implicit none
+
+      real(dp), intent(in) :: x
+      real(dp)             :: get_ddH_p
+      real(dp)             :: exp2x,expx
+      real(dp)             :: const1,const2,const3
+      exp2x     = exp(2.d0*x)
+      expx      = exp(x)
+
+      const3    = (Omega_m+Omega_b)/expx+(Omega_r+Omega_nu)/exp2x &
+                  + Omega_lambda*exp2x
+      const1    = sqrt(const3)
+      const2    = ((Omega_m+Omega_b)/expx-2.d0*(Omega_r+Omega_nu)/exp2x+&
+                  2.d0*Omega_lambda*exp2x)/2.d0/const3
+
+      get_ddH_p = H_0/(2.d0*const1)*(-(Omega_m+Omega_b)/expx*(-1.d0+const2)&
+                  -2.d0*(Omega_r+Omega_nu)/exp2x*(-2.d0+const2)+ 2.d0&
+                  *Omega_lambda*exp2x*(2.d0+const2))
+  end function get_ddH_p
 
   ! Task: Write a function that computes eta(x), using the previously precomputed splined function
   function get_eta(x_in)

@@ -13,12 +13,12 @@ contains
     integer(i4b) :: i, j, l, l_num, x_num, n_spline
     real(dp)     :: dx, S_func, j_func, z, eta, eta0, x0, x_min, x_max, d, e
     integer(i4b), allocatable, dimension(:)       :: ls
-    real(dp),     allocatable, dimension(:)       :: integrand,zs
+    real(dp),     allocatable, dimension(:)       :: integrand
     real(dp),     pointer,     dimension(:,:)     :: j_l, j_l2
     real(dp),     pointer,     dimension(:)       :: x_arg, int_arg, cls, cls2, ls_dp
     !real(dp),     pointer,     dimension(:)       :: k, x
     !real(dp),     pointer,     dimension(:,:,:,:) :: S_coeff
-    real(dp),     allocatable, dimension(:,:)     :: S, S2
+    !real(dp),     allocatable, dimension(:,:)     :: S, S2
     real(dp),     allocatable, dimension(:,:)     :: Theta
     real(dp),     allocatable, dimension(:)       :: z_spline, j_l_spline, j_l_spline2
     real(dp),     allocatable, dimension(:)       :: x_hires, k_hires
@@ -36,32 +36,18 @@ contains
          & 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200 /)
 
     ! Task: Get source function from evolution_mod
-    allocate(S(1:n_x_highres,1:n_k_highres))
-    write(*,*) 'before get_hires'
+    !allocate(S(1:n_x_highres,1:n_k_highres))
+
     call get_hires_source_function(x_hires, k_hires, S)
 
     ! Task: Initialize spherical Bessel functions for each l; use 5400 sampled points between 
     !       z = 0 and 3500. Each function must be properly splined
 
-    allocate(j_l(5400,l_num))
-    allocate(zs(5400))
-
-    do i=1,5400
-        zs(i) = 0.d0 + (i-1)*(3500.d0-0.d0)/(5400.d0-1.d0)
-    end do 
-
-    !Test zs
-    write(*,*) 'zs'
-    write(*,*) zs(1), zs(5400)
-
-    do z =1,5400
+    do i=1,n_x_highres
         do l=1,l_num
-            call sphbes(ls(l),zs(z), j_l(z,l))
+            call sphbes(ls(l_num), k_hires(k)*get_eta(x_hires(i)), j_func)
         end do
     end do
-
-
-
     ! Hint: It may be useful for speed to store the splined objects on disk in an unformatted
     !       Fortran (= binary) file, so that these only has to be computed once. Then, if your
     !       cache file exists, read from that; if not, generate the j_l's on the fly.
