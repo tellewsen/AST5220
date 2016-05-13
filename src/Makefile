@@ -2,7 +2,7 @@
 
 ###UIO PART###
 FC        = ifort     # F90 compiler at uio
-OPTIM     = -g -C #-O3      # Optimization flags; set to -g -C for useful debug information
+OPTIM     = -O3#-g -C # Optimization flags; set to -g -C for useful debug information
 
 # It should hopefully not be necessary to edit anything below
 FITSDIR = /mn/stornext/u3/hke/local/lib      # Directory containing libcfitsio.a
@@ -46,7 +46,6 @@ cmbspec: $(OBJS)
 cmbspec.o       : time_mod.o rec_mod.o evolution_mod.o cl_mod.o
 time_mod.o      : params.o spline_1D_mod.o
 evolution_mod.o : spline_2D_mod.o
-cl_mod.o        : sphbess_mod.o
 
 # Compilation of source files
 %.o : %.f90

@@ -36,14 +36,27 @@ contains
          & 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200 /)
 
     ! Task: Get source function from evolution_mod
-    allocate(S(1:n_x_highres,1:n_k_highres))
+    allocate(S(n_x_highres,n_k_highres))
+    allocate(x_hires(n_x_highres),k_hires(n_k_highres))
+
+
     write(*,*) 'before get_hires'
     call get_hires_source_function(x_hires, k_hires, S)
+    
+    !Test source func
+    write(*,*) 'S'
+    write(*,*) S(1,1),S(n_x_highres,n_k_highres)
+
+
+    !Test of x and k grid.
+    write(*,*) 'x_hires'
+    write(*,*) x_hires(1),x_hires(n_x_highres)
+    write(*,*) 'k_hires'
+    write(*,*) k_hires(1),k_hires(n_k_highres)
 
     ! Task: Initialize spherical Bessel functions for each l; use 5400 sampled points between 
     !       z = 0 and 3500. Each function must be properly splined
 
-    allocate(j_l(5400,l_num))
     allocate(zs(5400))
 
     do i=1,5400
@@ -54,17 +67,22 @@ contains
     write(*,*) 'zs'
     write(*,*) zs(1), zs(5400)
 
+
+    allocate(j_l(5400,l_num))
+
     do z =1,5400
         do l=1,l_num
-            call sphbes(ls(l),zs(z), j_l(z,l))
+            if(zs(z) > 2.d0) then
+                call sphbes(ls(l),zs(z), j_l(z,l))
+            endif
         end do
     end do
-
 
 
     ! Hint: It may be useful for speed to store the splined objects on disk in an unformatted
     !       Fortran (= binary) file, so that these only has to be computed once. Then, if your
     !       cache file exists, read from that; if not, generate the j_l's on the fly.
+
     n_spline = 5400
     allocate(z_spline(n_spline))    ! Note: z is *not* redshift, but simply the dummy argument of j_l(z)
     allocate(j_l(n_spline, l_num))

@@ -13,7 +13,7 @@ module evolution_mod
   ! Accuracy parameters
   real(dp),     parameter, private :: k_min    = 0.1d0 * H_0 / c
   real(dp),     parameter, private :: k_max    = 1.d3  * H_0 / c
-  integer(i4b), parameter          :: n_k      = 5!100
+  integer(i4b), parameter          :: n_k      = 100
 
   integer(i4b), parameter, private :: lmax_int = 6
 
@@ -91,32 +91,33 @@ contains
     allocate(S_lores(1:n_t,1:n_k))
     allocate(S_coeff(4,4,n_t,n_k))
 
-
+    allocate(S(n_x_highres,n_k_highres))
 
     do k=1,n_k
         k_current = ks(k)
         ck_current= c*k_current
+
         do i=1,n_t
-        g     = get_g(x_t(i))
-        dg    = get_dg(x_t(i))
-        ddg   = get_ddg(x_t(i))
-        tau   = get_tau(x_t(i))
-        dt    = dtau(i)
-        ddt   = ddtau(i)
-        !H_p   = get_H_p(x_t(i))
-        !dH_p  = get_dH_p(x_t(i))
-
-        Pi    = Theta(i,2,k)
-        dPi   = dTheta(i,2,k)
-        ddPi  = 2.d0*ck_current/5.d0/H_p(i)*(-dH_p(i)/H_p(i)*Theta(i,1,k)+dTheta(i,1,k)) + 3.d0/10.d0*(ddt*Pi+dt*dPi) -3.d0*ck_current/(5.d0*H_p(i))*(-dH_p(i)/H_p(i)*Theta(i,3,k) + dTheta(i,3,k))
-
-        ddH_p = get_ddH_p(x_t(i))
-
-        S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) +exp(-tau)* &
-                       (dPsi(i,k)-dPhi(i,k)) -1.d0/k_current*(H_p(i)*g*dv_b(i,k)+&
-                       g*v_b(i,k)*dH_p(i) + H_p(i)*v_b(i,k)*dg) +3.d0/4.d0/k_current**2*&
-                       ((H_p(i)*ddH_p+H_p(i)**2)*g*Pi+3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*&
-                       (ddg*Pi +2*dg*dPi+g*ddPi))
+            g     = get_g(x_t(i))
+            dg    = get_dg(x_t(i))
+            ddg   = get_ddg(x_t(i))
+            tau   = get_tau(x_t(i))
+            dt    = dtau(i)
+            ddt   = ddtau(i)
+            !H_p   = get_H_p(x_t(i))
+            !dH_p  = get_dH_p(x_t(i))
+            Pi    = Theta(i,2,k)
+            dPi   = dTheta(i,2,k)
+            ddPi  = 2.d0*ck_current/5.d0/H_p(i)*(-dH_p(i)/H_p(i)*&
+                    Theta(i,1,k)+dTheta(i,1,k)) + 3.d0/10.d0*&
+                    (ddt*Pi+dt*dPi) -3.d0*ck_current/(5.d0*H_p(i))*&
+                    (-dH_p(i)/H_p(i)*Theta(i,3,k) + dTheta(i,3,k))
+            ddH_p = get_ddH_p(x_t(i))
+            S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) +exp(-tau)* &
+                           (dPsi(i,k)-dPhi(i,k)) -1.d0/k_current*(H_p(i)*g*dv_b(i,k)+&
+                           g*v_b(i,k)*dH_p(i) + H_p(i)*v_b(i,k)*dg) +3.d0/4.d0/k_current**2*&
+                           ((H_p(i)*ddH_p+H_p(i)**2)*g*Pi+3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*&
+                           (ddg*Pi +2*dg*dPi+g*ddPi))
         end do
     end do
 
@@ -128,7 +129,7 @@ contains
     !      high-resolution k and x arrays
     do k=1,n_k
         do i=1,n_t
-            S = splin2_full_precomp(x_t, ks, S_coeff, x_hires(i), k_hires(k))
+            S(i,k) = splin2_full_precomp(x_t, ks, S_coeff, x_hires(i), k_hires(k))
         end do
     end do
 
