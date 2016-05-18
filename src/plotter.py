@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from numpy import *
 from matplotlib import rc 
 rc('font',**{'family':'serif'}) # This is for Latex writing
-"""
+
 #Import datafiles
 #Relative densities
 nu,lamda                 = loadtxt("omega_nulambda.dat",unpack=True)
@@ -22,7 +22,7 @@ ddtau,tau_test,dtau_test = loadtxt("tau2.dat",unpack=True)
 ddtau_test,g,g_test      = loadtxt("tau3.dat",unpack=True)
 dg,dg_test,ddg           = loadtxt("g.dat",unpack=True)
 ddg_test                 = loadtxt("g2.dat",unpack=True)
-"""
+
 
 #Test x,test eta
 x_t,eta_t                = loadtxt("eta_t.dat",unpack=True)
@@ -100,7 +100,8 @@ plt.xlim([x_rec[0],x_rec[-1]])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tau$,$|\tau^\prime|$,$|\tau^{\prime\prime}|$')
 plt.legend()
-
+"""
+"""
 plt.figure(7)
 plt.plot(x_rec , g,            '-',label = r'$\tilde g(x)$')
 #plt.plot(x_test, g_test,       '-' ,label = r'$\tilde g_{test}(x)$')
@@ -110,11 +111,12 @@ plt.plot(x_rec , ddg/300.,     '-.',label = r'$\tilde g^{\prime\prime}(x)$')
 #plt.plot(x_test, ddg_test/300.,'-' ,label = r'$\tilde g^{\prime\prime}_{test}(x)$')
 #plt.yscale('log')
 #plt.xscale('log')
-plt.xlim([-7.5,-6])
+#plt.xlim([-7.5,-6])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tilde g$,$\tilde g^\prime/10$,$\tilde g^{\prime\prime}/300$')
 plt.legend()
 plt.show()
+"""
 """
 delta = loadtxt("delta.dat",unpack=True)
 deltab = loadtxt("delta_b.dat",unpack=True)
@@ -215,5 +217,40 @@ plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$\Theta_{0,k}$')
 plt.show()
+"""
 
 
+#Milestone 4 
+x,S1,S2,S3,S4,S5,S6     = loadtxt("Source.dat",unpack=True)
+S_lores1,S_lores2,S_lores3,S_lores4,S_lores5,S_lores6  =  loadtxt("S_low.dat",unpack=True)
+
+#Low res for testing
+plt.figure(14)
+plt.title('THIS IS THE LOW RES SOURCE FOR TESTING')
+#plt.plot(x_t,S_lores1,label = r'$S_{1}$')
+#plt.plot(x_t,S_lores2,label = r'$S_{5}$')
+#plt.plot(x_t,S_lores3,label = r'$S_{10}$')
+plt.plot(x_t,S_lores4,label = r'$S_{40}$')
+#plt.plot(x_t,S_lores5,label = r'$S_{60}$')
+#plt.plot(x_t,S_lores6,label = r'$S_{100}$')
+plt.xlim([min(x),max(x)])
+plt.legend(loc='best')
+plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$S_k$')
+
+#High res for further use
+plt.figure(15)
+#plt.plot(x,S1,label = r'$S_{50}$')
+#plt.plot(x,S2,label = r'$S_{250}$')
+#plt.plot(x,S3,label = r'$S_{500}$')
+plt.plot(x,S4,label = r'$S_{2000}$')
+#plt.plot(x,S5,label = r'$S_{3000}$')
+#plt.plot(x,S6,label = r'$S_{5000}$')
+
+plt.xlim([min(x),max(x)])
+plt.legend(loc='best')
+plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$S_k$')
+plt.show()

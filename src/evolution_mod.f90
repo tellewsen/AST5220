@@ -7,6 +7,8 @@ module evolution_mod
   use spline_2D_mod
   implicit none
 
+
+
   !Use j,k,l as global variable
   integer(i4b) :: j,k,l
 
@@ -46,6 +48,7 @@ module evolution_mod
 
   !Milestone 4 variables
   real(dp),     pointer,     dimension(:,:,:,:) :: S_coeff
+  real(dp), allocatable, dimension(:,:) :: S_lores
 
   !real(dp), pointer, dimension(:) :: x_high,k_high
   integer(i4b), parameter             :: n_k_highres = 5000
@@ -61,8 +64,7 @@ contains
     real(dp), allocatable, dimension(:,:), intent(out) :: S
 
     integer(i4b) :: i,k
-    real(dp)     :: g, dg, ddg, dt, tau, ddt, ddH_p, Pi, dPi, ddPi!,H_p, dH_p
-    real(dp), allocatable, dimension(:,:) :: S_lores
+    real(dp)     :: g, dg, ddg, dt, tau, ddt, ddH_p, Pi, dPi, ddPi
 
     ! Task: Output a pre-computed 2D array (over k and x) for the 
     !       source function, S(k,x). Remember to set up (and allocate) output 
@@ -108,16 +110,16 @@ contains
             !dH_p  = get_dH_p(x_t(i))
             Pi    = Theta(i,2,k)
             dPi   = dTheta(i,2,k)
-            ddPi  = 2.d0*ck_current/5.d0/H_p(i)*(-dH_p(i)/H_p(i)*&
-                    Theta(i,1,k)+dTheta(i,1,k)) + 3.d0/10.d0*&
-                    (ddt*Pi+dt*dPi) -3.d0*ck_current/(5.d0*H_p(i))*&
-                    (-dH_p(i)/H_p(i)*Theta(i,3,k) + dTheta(i,3,k))
+            ddPi  = 2.d0*ck_current/(5.d0*H_p(i))*(-dH_p(i)/H_p(i)*Theta(i,1,k) + dTheta(i,1,k)) &
+                    +0.3d0*(ddt*Pi+dt*dPi) &
+                    -3.d0*ck_current/(5.d0*H_p(i))*(-dH_p(i)/H_p(i)*Theta(i,3,k) + dTheta(i,3,k))
+
             ddH_p = get_ddH_p(x_t(i))
-            S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) +exp(-tau)* &
-                           (dPsi(i,k)-dPhi(i,k)) -1.d0/k_current*(H_p(i)*g*dv_b(i,k)+&
-                           g*v_b(i,k)*dH_p(i) + H_p(i)*v_b(i,k)*dg) +3.d0/4.d0/k_current**2*&
-                           ((H_p(i)*ddH_p+H_p(i)**2)*g*Pi+3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*&
-                           (ddg*Pi +2*dg*dPi+g*ddPi))
+
+            S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) &
+                           +exp(-tau)*(dPsi(i,k)-dPhi(i,k))&
+                           -1.d0/k_current*(H_p(i)*(g*dv_b(i,k) + v_b(i,k)*dg) + g*v_b(i,k)*dH_p(i)) &
+                           +.75d0/k_current**2*((H_p(i)*ddH_p+dH_p(i)**2)*g*Pi+3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*(ddg*Pi +2.d0*dg*dPi+g*ddPi))
         end do
     end do
 
@@ -127,12 +129,12 @@ contains
     !3) Finally, resample the source function on a high-resolution uniform
     !      5000 x 5000 grid and return this, together with corresponding
     !      high-resolution k and x arrays
-    do k=1,n_k
-        do i=1,n_t
+    do k=1,n_k_highres
+        do i=1,n_x_highres
             S(i,k) = splin2_full_precomp(x_t, ks, S_coeff, x_hires(i), k_hires(k))
         end do
     end do
-
+    !write(*,*) S(1,1),S(n_x_highres,n_k_highres)
   end subroutine get_hires_source_function
 
 
@@ -198,6 +200,8 @@ contains
     real(dp)     :: eps, hmin, h1, x_tc, j_tc, dt, t1, t2
     real(dp)     :: R,d_v,d_v_b,q
     real(dp), allocatable, dimension(:) :: y, y_tight_coupling, dydx
+    logical(lgt)                        :: exist
+
     eps    = 1.d-8
     hmin   = 0.d0
     h1     = 1.d-5
@@ -206,6 +210,24 @@ contains
     allocate(y_tight_coupling(7))
 
     dydx(:) = 0
+
+    ! Check if data files exist. If not, compute data.
+    inquire(file='precomp_perturb.unf', exist=exist)
+    if (exist) then
+    open(58,file='precomp_perturb.unf', form='unformatted')
+        read(58) Theta
+        read(58) delta
+        read(58) delta_b
+        read(58) Phi
+        read(58) Psi
+        read(58) v
+        read(58) v_b
+        read(58) dPhi
+        read(58) dPsi
+        read(58) dv_b
+        read(58) dTheta
+        close(58)
+    else
 
     ! Propagate each k-mode independently
     do k = 1, n_k
@@ -364,6 +386,24 @@ contains
     deallocate(y_tight_coupling)
     deallocate(y)
     deallocate(dydx)
+
+
+        ! Write to file
+        open(58,file='precomp_perturb.unf', form='unformatted')
+        write(58) Theta
+        write(58) delta
+        write(58) delta_b
+        write(58) Phi
+        write(58) Psi
+        write(58) v
+        write(58) v_b
+        write(58) dPhi
+        write(58) dPsi
+        write(58) dv_b
+        write(58) dTheta
+        close(58)
+  end if
+
   end subroutine integrate_perturbation_eqns
 
   subroutine derivs_tc(x,y_tc, dydx)
