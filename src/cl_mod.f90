@@ -77,6 +77,8 @@ contains
 
 
     !Calculate spherical bessel functions for select ls
+
+    write(*,*) 'Compute spherical Bessel functions'
     do i =1,n_spline
         do l=1,l_num
             if(z_spline(i) > 2.d0) then
@@ -90,6 +92,7 @@ contains
     !       cache file exists, read from that; if not, generate the j_l's on the fly.
 
     !Spline across z for each l
+    write(*,*) 'splining bessel'
     do l=1,l_num
           call spline(z_spline, j_l(:,l), yp1, ypn, j_l2(:,l))
     end do
@@ -100,17 +103,21 @@ contains
        ! For this I use trapezoidal intergration. Better methods should be implemented
        ! for better precision.
     allocate(Theta_l(l_num,n_k_highres))
+
     do l = 1, l_num
-       Theta_l()
 
-       do i=1,n_intergration
-           Theta_l()
-       end do
-
-       ! Task: Integrate P(k) * (Theta_l^2 / k) over k to find un-normalized C_l's
+      !n_integration = SOMETHING
+      !do i=1,n_intergration
+      !     integrand = S(x,k)*j_lfunc(k_hires(k)*eta(x_hires(i)),l)
 
 
-       ! Task: Store C_l in an array. Optionally output to file
+
+      !end do
+      !Theta_l() = 
+      ! Task: Integrate P(k) * (Theta_l^2 / k) over k to find un-normalized C_l's
+
+
+      ! Task: Store C_l in an array. Optionally output to file
 
     end do
 

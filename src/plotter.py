@@ -117,11 +117,15 @@ plt.ylabel(r'$\tilde g$,$\tilde g^\prime/10$,$\tilde g^{\prime\prime}/300$')
 plt.legend()
 plt.show()
 """
-"""
-delta = loadtxt("delta.dat",unpack=True)
+
+#Milestone 3 starts here
+
+delta  = loadtxt("delta.dat",unpack=True)
 deltab = loadtxt("delta_b.dat",unpack=True)
 Phi    = loadtxt("Phi.dat",unpack=True)
+dPhi   = loadtxt("dPhi.dat",unpack=True)
 Psi    = loadtxt("Psi.dat",unpack=True)
+dPsi   = loadtxt("dPsi.dat",unpack=True)
 Theta0 = loadtxt("Theta0.dat",unpack=True)
 v      = loadtxt("v.dat",unpack=True)
 vb     = loadtxt("v_b.dat",unpack=True)
@@ -178,6 +182,7 @@ plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$v_{k}$')
 
+
 plt.figure(13)
 plt.plot(x_t,Phi[0],label = r'$\Phi_{1}$')
 plt.plot(x_t,Phi[1],label = r'$\Phi_{5}$')
@@ -216,16 +221,41 @@ plt.legend(loc='best')
 plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$\Theta_{0,k}$')
+
+plt.figure(16)
+plt.plot(x_t,dPsi[0],label = r'$\Psi^\prime_{1}$')
+plt.plot(x_t,dPsi[1],label = r'$\Psi^\prime_{5}$')
+plt.plot(x_t,dPsi[2],label = r'$\Psi^\prime_{10}$')
+plt.plot(x_t,dPsi[3],label = r'$\Psi^\prime_{40}$')
+plt.plot(x_t,dPsi[4],label = r'$\Psi^\prime_{60}$')
+plt.plot(x_t,dPsi[5],label = r'$\Psi^\prime_{100}$')
+plt.xlim([min(x_t),max(x_t)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$\Psi^\prime_{k}$')
+
+plt.figure(17)
+plt.plot(x_t,dPhi[0],label = r'$\Phi^\prime_{1}$')
+plt.plot(x_t,dPhi[1],label = r'$\Phi^\prime_{5}$')
+plt.plot(x_t,dPhi[2],label = r'$\Phi^\prime_{10}$')
+plt.plot(x_t,dPhi[3],label = r'$\Phi^\prime_{40}$')
+plt.plot(x_t,dPhi[4],label = r'$\Phi^\prime_{60}$')
+plt.plot(x_t,dPhi[5],label = r'$\Phi^\prime_{100}$')
+plt.xlim([min(x_t),max(x_t)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$\Phi^\prime_{k}$')
+
 plt.show()
-"""
-
-
 #Milestone 4 
+
 x,S1,S2,S3,S4,S5,S6     = loadtxt("Source.dat",unpack=True)
 S_lores1,S_lores2,S_lores3,S_lores4,S_lores5,S_lores6  =  loadtxt("S_low.dat",unpack=True)
 
 #Low res for testing
-plt.figure(14)
+plt.figure(18)
 plt.title('THIS IS THE LOW RES SOURCE FOR TESTING')
 #plt.plot(x_t,S_lores1,label = r'$S_{1}$')
 #plt.plot(x_t,S_lores2,label = r'$S_{5}$')
@@ -240,7 +270,7 @@ plt.xlabel(r'x')
 plt.ylabel(r'$S_k$')
 
 #High res for further use
-plt.figure(15)
+plt.figure(19)
 #plt.plot(x,S1,label = r'$S_{50}$')
 #plt.plot(x,S2,label = r'$S_{250}$')
 #plt.plot(x,S3,label = r'$S_{500}$')
@@ -254,3 +284,4 @@ plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$S_k$')
 plt.show()
+

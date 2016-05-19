@@ -246,26 +246,6 @@ contains
                  + 2.d0*Omega_lambda*exp2x)
   end function get_dH_p
 
-  !Function computes d^2h/d^2x
-  function get_ddH_p(x)
-      implicit none
-
-      real(dp), intent(in) :: x
-      real(dp)             :: get_ddH_p
-      real(dp)             :: exp2x,expx
-      real(dp)             :: const1,const2,const3
-      exp2x     = exp(2.d0*x)
-      expx      = exp(x)
-
-      const1    = (-(Omega_m+Omega_b)/expx-2.d0*(Omega_r+Omega_nu)/exp2x+2.d0*Omega_lambda*exp2x)
-      const2    = ((Omega_m+Omega_b)/expx-2.d0*(Omega_r+Omega_nu)/exp2x+&
-                  2.d0*Omega_lambda*exp2x)
-      const3    = ((Omega_m+Omega_b)/expx+4.d0*Omega_r/exp2x+4.d0*Omega_lambda*exp2x)
-
-
-
-      get_ddH_p = H_0/2.d0*(-const1**2/(2.d0*const2**3)+const2*const3)
-  end function get_ddH_p
 
   ! Task: Write a function that computes eta(x), using the previously precomputed splined function
   function get_eta(x_in)
