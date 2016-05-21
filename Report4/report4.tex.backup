@@ -1,0 +1,106 @@
+% %% file: template.tex = LaTeX template for article-like report 
+%% init: sometime 1993
+%% last: Feb  8 2015  Rob Rutten  Deil
+%% site: http://www.staff.science.uu.nl/~rutte101/rrweb/rjr-edu/manuals/student-report/
+
+%% First read ``latex-bibtex-simple-manual.txt'' at
+%% http://www.staff.science.uu.nl/~rutte101/Report_recipe.html
+
+%% Start your report production by copying this file into your XXXX.tex.
+%% Small changes to the header part will make it an A&A or ApJ manuscript.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\documentclass{aa}   %% Astronomy & Astrophysics style class
+\documentclass[a4paper]{report}
+\usepackage[inner=2cm,outer=2cm]{geometry}
+%\geometry{a4paper}
+\usepackage{graphicx,url,twoopt}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage[varg]{txfonts}           %% A&A font choice
+%\usepackage{hyperref}                %% for pdflatex
+%%\usepackage[breaklinks]{hyperref}  %% for latex+dvips
+%%\usepackage{breakurl}              %% for latex+dvips
+%\usepackage{pdfcomment}              %% for popup acronym meanings
+%\usepackage{acronym}                 %% for popup acronym meanings
+\usepackage{calrsfs}
+\DeclareMathAlphabet{\pazocal}{OMS}{zplm}{m}{n}
+
+\usepackage{natbib}
+% \hypersetup{
+%   colorlinks=true,   %% links colored instead of frames
+%   urlcolor=blue,     %% external hyperlinks
+%   linkcolor=red,     %% internal latex links (eg Fig)
+% }
+
+ %\bibpunct{(}{)}{;}{a}{}{,}    %% natbib cite format used by A&A and ApJ
+ 
+%\pagestyle{plain}   %% undo the fancy A&A pagestyle 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}  
+
+%\twocolumn[{%
+\vspace*{4ex}
+
+\begin{center}
+  {\Large \bf The CMB power spectrum}\\[4ex]
+  {\large \bf Andreas Ellewsen$^1$}\\[4ex]
+  \begin{minipage}[t]{15cm}
+        $^1$ Institute of Theoretical Astrophysics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway\\
+
+    {\bf Abstract.} I compute the CMB power spectrum by following the algorithm laid out by Callin
+    
+  \vspace*{2ex}
+  \end{minipage}
+\end{center}
+%}]
+%\onecolumn
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}\label{sec:introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In this project I am following the algorithm presented in Callin (2005)[1] for simulating the cosmic microwave background.  
+This is the final part of the project.
+
+In the first part I set up the background cosmology of the universe, and made a function that could find the conformal time as a function of $x$. In the second part I computed the electron fraction, electron density, optical depth and visibility function for times around and during recombination. The third part use the two previous to compute the density perturbations, and velocities of dark matter and baryons. This also included the temperature multipoles $\Theta_l$.
+
+This final part combines all of these quantities to compute the final CMB power spectrum.
+
+As previously done I will continue building on the skeleton code provided.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Equations}\label{sec:Equations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Transfer function
+\begin{equation}
+ \Theta_l(k,x=0)=\int^0_\infty S
+\end{equation}
+
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}\label{sec:Imp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{References}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}[label= {[}\arabic*{]} ]
+ \item P. Callin, astro-ph/0606683
+\end{enumerate}
+
+\onecolumn 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Source code}\label{sec:files}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The source code for the function made for computing the high resolution source function in evolution\_mod.f90 is included as well as the file cl\_mod.f90 file used for computing the final power spectrum is included for inspection. This file depends on all files previously used in the three earlier parts of the project.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{acknowledgements}
+%\end{acknowledgements}
+
+\end{document}
