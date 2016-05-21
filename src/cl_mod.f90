@@ -4,6 +4,8 @@ module cl_mod
   use sphbess_mod
   implicit none
 
+  real(dp), allocatable, dimension(:,:) :: S, S2
+  real(dp), allocatable, dimension(:)   :: x_hires, k_hires
 contains
 
   ! Driver routine for (finally!) computing the CMB power spectrum
@@ -13,15 +15,13 @@ contains
     integer(i4b) :: i, j, l, l_num, x_num, n_spline
     real(dp)     :: dx, S_func, j_func, z, eta, eta0, x0, x_min, x_max, d, e
     integer(i4b), allocatable, dimension(:)       :: ls
-    real(dp),     allocatable, dimension(:)       :: integrand
-    real(dp),     pointer,     dimension(:,:)     :: j_l, j_l2
-    real(dp),     pointer,     dimension(:)       :: x_arg, int_arg, cls, cls2, ls_dp
-    real(dp),     pointer,     dimension(:)       :: k, x
-    real(dp),     pointer,     dimension(:,:,:,:) :: S_coeff
-    real(dp),     pointer,     dimension(:,:)     :: S, S2
-    real(dp),     allocatable, dimension(:,:)     :: Theta
+    real(dp),     allocatable, dimension(:)       :: integrand,zs
+    real(dp),     allocatable, dimension(:,:)     :: j_l, j_l2
+    real(dp),     allocatable, dimension(:)       :: x_arg, int_arg, cls, cls2, ls_dp
+    !real(dp),     pointer,     dimension(:)       :: k, x
+    !real(dp),     pointer,     dimension(:,:,:,:) :: S_coeff
+    real(dp),     allocatable, dimension(:,:)     :: Theta_l
     real(dp),     allocatable, dimension(:)       :: z_spline, j_l_spline, j_l_spline2
-    real(dp),     allocatable, dimension(:)       :: x_hires, k_hires
 
     real(dp)           :: t1, t2, integral
     logical(lgt)       :: exist
@@ -36,29 +36,88 @@ contains
          & 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200 /)
 
     ! Task: Get source function from evolution_mod
+    allocate(S(n_x_highres,n_k_highres))
+    allocate(x_hires(n_x_highres),k_hires(n_k_highres))
+
+
+    write(*,*) 'Compute hires Source function'
+    call get_hires_source_function(x_hires, k_hires, S)
+    
+    !Test source func
+    write(*,*) 'S'
+    write(*,*) S(1,1),S(n_x_highres,n_k_highres)
+
+
+    !Test of x and k grid.
+    !write(*,*) 'x_hires'
+    !write(*,*) x_hires(1),x_hires(n_x_highres)
+    !write(*,*) 'k_hires'
+    !write(*,*) k_hires(1),k_hires(n_k_highres)
+
+
 
 
     ! Task: Initialize spherical Bessel functions for each l; use 5400 sampled points between 
     !       z = 0 and 3500. Each function must be properly splined
+    n_spline = 5400
+    allocate(z_spline(n_spline))
+
+    do i=1,n_spline
+        z_spline(i) = 0.d0 + (i-1)*(3500.d0-0.d0)/(n_spline-1.d0)
+    end do 
+
+    !Test zs
+    !write(*,*) 'zs'
+    !write(*,*) zs(1), zs(n_spline)
+
+
+    allocate(j_l(n_spline,l_num))
+    allocate(j_l2(n_spline,l_num))
+    !allocate(z_spline(n_spline))    ! Note: z is *not* redshift, but simply the dummy argument of j_l(z)
+
+
+    !Calculate spherical bessel functions for select ls
+
+    write(*,*) 'Compute spherical Bessel functions'
+    do i =1,n_spline
+        do l=1,l_num
+            if(z_spline(i) > 2.d0) then
+                call sphbes(ls(l),z_spline(i), j_l(i,l))
+            endif
+        end do
+    end do
+
     ! Hint: It may be useful for speed to store the splined objects on disk in an unformatted
     !       Fortran (= binary) file, so that these only has to be computed once. Then, if your
     !       cache file exists, read from that; if not, generate the j_l's on the fly.
-    n_spline = 5400
-    allocate(z_spline(n_spline))    ! Note: z is *not* redshift, but simply the dummy argument of j_l(z)
-    allocate(j_l(n_spline, l_num))
-    allocate(j_l2(n_spline, l_num))
+
+    !Spline across z for each l
+    write(*,*) 'splining bessel'
+    do l=1,l_num
+          call spline(z_spline, j_l(:,l), yp1, ypn, j_l2(:,l))
+    end do
 
 
     ! Overall task: Compute the C_l's for each given l
+       !Compute the transfer function, Theta_l(k)
+       ! For this I use trapezoidal intergration. Better methods should be implemented
+       ! for better precision.
+    allocate(Theta_l(l_num,n_k_highres))
+
     do l = 1, l_num
 
-       ! Task: Compute the transfer function, Theta_l(k)
+      !n_integration = SOMETHING
+      !do i=1,n_intergration
+      !     integrand = S(x,k)*j_lfunc(k_hires(k)*eta(x_hires(i)),l)
 
 
-       ! Task: Integrate P(k) * (Theta_l^2 / k) over k to find un-normalized C_l's
+
+      !end do
+      !Theta_l() = 
+      ! Task: Integrate P(k) * (Theta_l^2 / k) over k to find un-normalized C_l's
 
 
-       ! Task: Store C_l in an array. Optionally output to file
+      ! Task: Store C_l in an array. Optionally output to file
 
     end do
 

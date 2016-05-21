@@ -4,9 +4,11 @@ program cmbspec
     use rec_mod
     use time_mod
     use evolution_mod
+    use cl_mod
 
     implicit none
 
+    !Output unit
     integer, parameter :: out_unit1=10
     integer, parameter :: out_unit2=20
     integer, parameter :: out_unit3=30
@@ -26,6 +28,10 @@ program cmbspec
     integer, parameter :: out_unit17=170
     integer, parameter :: out_unit18=180
     integer, parameter :: out_unit19=190
+    integer, parameter :: out_unit20=200
+    integer, parameter :: out_unit21=210
+    integer, parameter :: out_unit22=220
+    integer, parameter :: out_unit23=230
 
     integer :: i
 
@@ -103,7 +109,7 @@ program cmbspec
     write(*,*) 'integrate_perturbation_eqns'
     call integrate_perturbation_eqns
 
-    write(*,*) 'Saving variables to file'
+    write(*,*) 'Saving perturbations to file'
     open (unit=out_unit13,file="delta.dat",action="write",status="replace")
     open (unit=out_unit14,file="delta_b.dat",action="write",status="replace")
     open (unit=out_unit15,file="v.dat",action="write",status="replace")
@@ -111,6 +117,9 @@ program cmbspec
     open (unit=out_unit17,file="Phi.dat",action="write",status="replace")
     open (unit=out_unit18,file="Psi.dat",action="write",status="replace")
     open (unit=out_unit19,file="Theta0.dat",action="write",status="replace")
+    open (unit=out_unit20,file="dPhi.dat",action="write",status="replace")
+    open (unit=out_unit21,file="dPsi.dat",action="write",status="replace")
+
     do i=1,n_t            
         write (out_unit13,'(*(2X, ES14.6))') delta(i,1),delta(i,5),delta(i,10),delta(i,40),delta(i,60),delta(i,100)
         write (out_unit14,'(*(2X, ES14.6))') delta_b(i,1),delta_b(i,5),delta_b(i,10),delta_b(i,40),delta_b(i,60),delta_b(i,100)
@@ -119,7 +128,9 @@ program cmbspec
         write (out_unit17,'(*(2X, ES14.6))') Phi(i,1),Phi(i,5),Phi(i,10),Phi(i,40),Phi(i,60),Phi(i,100)
         write (out_unit18,'(*(2X, ES14.6))') Psi(i,1),Psi(i,5),Psi(i,10),Psi(i,40),Psi(i,60),Psi(i,100)
         write (out_unit19,'(*(2X, ES14.6))') Theta(i,0,1),Theta(i,0,5),Theta(i,0,10),Theta(i,0,40),Theta(i,0,60),Theta(i,0,100)
-        !,Theta(i,1,k),Theta(i,2,k)
+                    !,Theta(i,1,k),Theta(i,2,k)
+        write (out_unit20,'(*(2X, ES14.6))') dPhi(i,1),dPhi(i,5),dPhi(i,10),dPhi(i,40),dPhi(i,60),dPhi(i,100)
+        write (out_unit21,'(*(2X, ES14.6))') dPsi(i,1),dPsi(i,5),dPsi(i,10),dPsi(i,40),dPsi(i,60),dPsi(i,100)
     end do
 
     close (out_unit13)
@@ -129,10 +140,40 @@ program cmbspec
     close (out_unit17)
     close (out_unit18)
     close (out_unit19)
+    close (out_unit20)
+    close (out_unit21)
 
-    !Print end time
+
+
+    !Milestone 4 starts here
+
+    !Initialize and compute the C_l
+    write(*,*) 'initialize cl_mod'
+    call compute_cls
+
+    !Writing source func to file
+    write(*,*) 'Writing source func to file'
+    open (unit=out_unit22, file="Source.dat", action="write", status="replace")
+    do i = 1,n_x_highres
+        write (out_unit22,'(*(2X, ES14.6E3))') x_hires(i),S(i,50),S(i,250),S(i,500),S(i,2000),S(i,3000),S(i,5000)
+    end do
+    close (out_unit22)
+
+    !write low res source for testing
+    open (unit=out_unit23, file="S_low.dat", action="write", status="replace")
+    do i=1,n_t
+        write (out_unit23,'(*(2X, ES14.6E3))') S_lores(i,1),S_lores(i,5),S_lores(i,10),S_lores(i,40),S_lores(i,60),S_lores(i,100)   
+    end do
+    close (out_unit23)
+
+
+
+
+
+    !Print time used
     call cpu_time(end_time)
     print'("Time used = ",f7.2," seconds.")',end_time-start_time
+
 
 end program cmbspec
 

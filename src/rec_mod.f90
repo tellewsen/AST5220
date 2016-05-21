@@ -20,6 +20,9 @@ module rec_mod
     real(dp)                              :: x_test_end
     integer(i4b),private :: i
     integer(i4b) :: n
+    !Variables used or for splines in this file, as well as rec_mod and cl_mod
+    real(dp)     :: eps,hmin,yp1,ypn,h1,h2,h3
+
 contains
 
   subroutine initialize_rec_mod
@@ -27,7 +30,6 @@ contains
 
     real(dp)     :: saha_limit, y, T_b, n_b, dydx, xmin, xmax, dx, f, n_e0, X_e0, &
 		    X_econst, phi2,alpha2,beta,beta2,n1s,lambda_alpha,C_r
-    real(dp)     :: eps,hmin,yp1,ypn,h1,h2,h3
     real(dp)     :: z_start_rec, z_end_rec, z_0, x_before_rec,x_start_rec, x_end_rec
     logical(lgt) :: use_saha
 
@@ -114,7 +116,7 @@ contains
         else
             ! Use the Peebles equation
             X_e(i) =X_e(i-1)
-            call odeint(X_e(i:i),x_rec(i-1) ,x_rec(i), eps, h1, hmin, dX_edx, bsstep, output1) 
+            call odeint(X_e(i:i),x_rec(i-1) ,x_rec(i), eps, h1, hmin, dX_edx, bsstep, output) 
         end if
         n_e(i) = X_e(i)*n_b !Calculate electron density
         !write(*,*) use_saha,x_rec(i), X_e(i)
@@ -134,7 +136,7 @@ contains
     tau_rec(n) = 0.d0 !Optical depth today is 0
     do i=n-1,1,-1
         tau_rec(i) = tau_rec(i+1)
-        call odeint(tau_rec(i:i),x_rec(i+1),x_rec(i),eps,h1,hmin,dtaudx,bsstep,output1)
+        call odeint(tau_rec(i:i),x_rec(i+1),x_rec(i),eps,h1,hmin,dtaudx,bsstep,output)
     end do
 
     !Compute splined optical depth,and second derivative
@@ -236,12 +238,6 @@ contains
       dydx = -n_e*sigma_T/H*c
   end subroutine dtaudx
 
-  subroutine output1(x, y)
-      use healpix_types
-      implicit none
-      real(dp),               intent(in)  :: x
-      real(dp), dimension(:), intent(in)  :: y
-  end subroutine output1
   !End Stuff needed to make odeint work
 
 
@@ -292,7 +288,7 @@ contains
       get_g = -dtau*exp(-tau)
   end function get_g
 
-  !Routine for computing the derivative of the visibility function, g, at arbitray x
+  !Routine for computing the derivative of the visibility function, g, at arbitrary x
   function get_dg(x_in)
       implicit none
       real(dp), intent(in) :: x_in
@@ -300,7 +296,7 @@ contains
       get_dg= splint_deriv(x_rec,g,ddg,x_in)
   end function get_dg
 
-  !Routine for computing the second derivative of the visibility function, g, at arbitray x
+  !Routine for computing the second derivative of the visibility function, g, at arbitrary x
   function get_ddg(x_in)
       implicit none
       real(dp), intent(in) :: x_in
