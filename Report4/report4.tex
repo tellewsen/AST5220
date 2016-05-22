@@ -64,7 +64,11 @@
 In this project I am following the algorithm presented in Callin (2005)[1] for simulating the cosmic microwave background.  
 This is the final part of the project.
 
-In the first part I set up the background cosmology of the universe, and made a function that could find the conformal time as a function of $x$. In the second part I computed the electron fraction, electron density, optical depth and visibility function for times around and during recombination. The third part use the two previous to compute the density perturbations, and velocities of dark matter and baryons. This also included the temperature multipoles $\Theta_l$.
+In the first part I set up the background cosmology of the universe, and made a function that could find the conformal time as a function of $x$. 
+
+In the second part I computed the electron fraction, electron density, optical depth and visibility function for times around and during recombination. 
+
+The third part use the two previous to compute the density perturbations, and velocities of dark matter and baryons. This also included the temperature multipoles $\Theta_l$.
 
 This final part combines all of these quantities to compute the final CMB power spectrum.
 
@@ -78,8 +82,11 @@ Transfer function
 \begin{equation}
  \Theta_l(k,x=0)=\int^0_\infty \tilde{S}(k,x)j_l[k(\eta_0-\eta)]dx,
 \end{equation}
-where $j_l$ is the spherical Bessel functions, and S is the source function
- 
+where $j_l$ is the spherical Bessel functions, and S is the source function defined as
+\begin{equation}
+\tilde{S}(k,x) = \tilde{g}\bigg[\Theta_0+\Psi+\frac{1}{4}\Pi\bigg]+e^{-\tau}\bigg[\Psi^\prime-\Phi^\prime\bigg] - \frac{1}{k}\frac{d}{dx}(\pazocal{H}\tilde{g} v_b)+\frac{3}{4k^2}\frac{d}{dx}\bigg[\pazocal{H}\frac{d}{dx}(\pazocal{H}\tilde{g}\Pi)\bigg].
+\end{equation}
+Here $\Pi = \Theta_2 +\Theta_0^P+\Theta_2^P$, where the last two terms concern the polarization of the temperature multi poles. Since we have skipped neutrinos and polarization in the previous projects both of these terms are set to zero.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +94,7 @@ where $j_l$ is the spherical Bessel functions, and S is the source function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}\label{sec:Conc}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Unfortunately time did not allow me to use a Metropolis algorithm to estimate the values of the various cosmological parameters. This is something I will have to do on my own time afterwards. This is unfortunate as this would have been the icing on the cake.
+Unfortunately time did not allow me to use a Metropolis algorithm to estimate the values of the various cosmological parameters. This is something I will have to do on my own time afterwards. This is unfortunate as this would have been the icing on the cake for this project.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
