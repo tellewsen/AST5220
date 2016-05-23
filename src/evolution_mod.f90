@@ -115,10 +115,10 @@ contains
                     -3.d0*ck_current/(5.d0*H_p(i))*(-dH_p(i)/H_p(i)*Theta(i,3,k) + dTheta(i,3,k))
 
             S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) &
-                           +exp(-tau)*(dPsi(i,k)-dPhi(i,k)) !&
-                           !-1.d0/k_current*(H_p(i)*(g*dv_b(i,k) + v_b(i,k)*dg) + g*v_b(i,k)*dH_p(i)) !&
-                           !+.75d0/k_current**2*((H_0/2.d0*((Omega_m+Omega_b)/exp(x_t(i))+4.d0*Omega_r/exp(2.d0*x_t(i)) +4.d0*Omega_lambda*exp(2.d0*x_t(i))))*g*Pi &
-                           !+3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*(ddg*Pi +2.d0*dg*dPi+g*ddPi))
+                           +exp(-tau)*(dPsi(i,k)-dPhi(i,k)) &
+                           -1.d0/k_current*(H_p(i)*(g*dv_b(i,k) + v_b(i,k)*dg) + g*v_b(i,k)*dH_p(i)) &
+                           +.75d0/k_current**2*((H_0/2.d0*((Omega_m+Omega_b)/exp(x_t(i))+4.d0*Omega_r/exp(2.d0*x_t(i)) +4.d0*Omega_lambda*exp(2.d0*x_t(i))))*g*Pi &
+                           +3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*(ddg*Pi +2.d0*dg*dPi+g*ddPi))
 
 
         end do
@@ -165,10 +165,10 @@ contains
     allocate(dTheta(1:n_t, 0:lmax_int, n_k))
 
     !Set these to zero so we only have to fill in those that are non zero later
-    Theta(:,:,:) = 0
-    dTheta(:,:,:) = 0
-    dPhi(:,:) = 0
-    dPsi(:,:) = 0
+    Theta(:,:,:) = 0.d0
+    dTheta(:,:,:) = 0.d0
+    dPhi(:,:) = 0.d0
+    dPsi(:,:) = 0.d0
 
     !Allocate arrays for precomputed variables
     allocate(dtau(n_t),H_p(n_t),dH_p(n_t))
@@ -273,7 +273,7 @@ contains
                    ckH_p = ck_current/H_p(j)
 
                    !Solve next step
-                   call odeint(y_tight_coupling,x_t(j-1),x_t(j),eps,h1,hmin,derivs_tc, bsstep, output3)
+                   call odeint(y_tight_coupling,x_t(j-1),x_t(j),eps,h1,hmin,derivs_tc, bsstep, output)
 
                    !Save variables
                    delta(j,k)   = y_tight_coupling(1)
@@ -313,81 +313,81 @@ contains
                    j_tc = j
                    exit
                end if
-       end do
-       !write(*,*) 'End of tight coupling'
+           end do
+           !write(*,*) 'End of tight coupling'
 
-       !Set up variables for integration from the end of tight coupling 
-       !until today
-       y(1:7) = y_tight_coupling(1:7)
-       y(8)   = Theta(1,2,k)
-       do l = 3, lmax_int
-          y(6+l) = Theta(1,l,k)
-       end do
+           !Set up variables for integration from the end of tight coupling 
+           !until today
+           y(1:7) = y_tight_coupling(1:7)
+           y(8)   = Theta(1,2,k)
+           do l = 3, lmax_int
+              y(6+l) = Theta(1,l,k)
+           end do
 
 
-       !Continue after tight coupling
-       !write(*,*) 'start of rec'       
-       do j = j_tc, n_t
+           !Continue after tight coupling
+           !write(*,*) 'start of rec'       
+           do j = j_tc, n_t
+    
+              !Precompute some variables
+              ckH_p = ck_current/H_p(j)
+    
+              !Integrate equations from tight coupling to today
+              !write(*,*) 'running odeint with j =', j
+              call odeint(y, x_t(j-1) ,x_t(j), eps, h1, hmin, derivs, bsstep, output)
+    
+              !Store variables at time step j in global variables
+              delta(j,k)   = y(1)
+              delta_b(j,k) = y(2)
+              v(j,k)       = y(3)
+              v_b(j,k)     = y(4)
+              Phi(j,k)     = y(5)
+              
+              do l = 0, lmax_int
+                 Theta(j,l,k) = y(6+l)
+              end do
+              Psi(j,k)     =  - Phi(j,k) - (12.d0*H_0**2.d0)/(ck_current*a_t(j))**2.d0*Omega_r*Theta(j,2,k)
+    
+              !Store derivatives that are required for C_l estimation
+              call derivs(x_t(j),y,dydx)
+              dv_b(j,k)     = dydx(4)
+              dPhi(j,k)     = dydx(5)
+              if(k==40) then
+                  write(*,*) 'dPhi(',j,k,') =', dPhi(j,k)
+              endif            
+              dTheta(j,0,k) = dydx(6)
+              dTheta(j,1,k) = dydx(7)                          
+              dTheta(j,2,k) = dydx(8)
+    
+              do l=3,lmax_int-1
+                  dTheta(j,l,k) = dydx(6+l)
+              end do
+              dTheta(j,lmax_int,k) = dydx(6+lmax_int)
+    
+              dPsi(j,k)     = -dPhi(j,k) - 12.d0*H_0**2.d0/(ck_current*a_t(j))**2.d0*&
+                               Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))
+           end do
+        end do
 
-          !Precompute some variables
-          ckH_p = ck_current/H_p(j)
-
-          !Integrate equations from tight coupling to today
-          !write(*,*) 'running odeint with j =', j
-          call odeint(y, x_t(j-1) ,x_t(j), eps, h1, hmin, derivs, bsstep, output3)
-
-          !Store variables at time step j in global variables
-          delta(j,k)   = y(1)
-          delta_b(j,k) = y(2)
-          v(j,k)       = y(3)
-          v_b(j,k)     = y(4)
-          Phi(j,k)     = y(5)
-          
-          do l = 0, lmax_int
-             Theta(j,l,k) = y(6+l)
-          end do
-          Psi(j,k)     =  - Phi(j,k) - (12.d0*H_0**2.d0)/(ck_current*a_t(j))**2.d0*Omega_r*Theta(j,2,k)
-
-          !Store derivatives that are required for C_l estimation
-          call derivs(x_t(j),y,dydx)
-          dv_b(j,k)     = dydx(4)
-          dPhi(j,k)     = dydx(5)
-          if(k==40) then
-              write(*,*) 'dPhi(',j,k,') =', dPhi(j,k)
-          endif            
-          dTheta(j,0,k) = dydx(6)
-          dTheta(j,1,k) = dydx(7)                          
-          dTheta(j,2,k) = dydx(8)
-
-          do l=3,lmax_int-1
-              dTheta(j,l,k) = dydx(6+l)
-          end do
-          dTheta(j,lmax_int,k) = dydx(6+lmax_int)
-
-          dPsi(j,k)     = -dPhi(j,k) - 12.d0*H_0**2.d0/(ck_current*a_t(j))**2.d0*&
-                           Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))
-       end do
-    end do
-
-    deallocate(y_tight_coupling)
-    deallocate(y)
-    deallocate(dydx)
+        deallocate(y_tight_coupling)
+        deallocate(y)
+        deallocate(dydx)
 
         ! Write to file
         open(58,file='precomp_perturb.unf', form='unformatted')
-        write(58) Theta
-        write(58) delta
-        write(58) delta_b
-        write(58) Phi
-        write(58) Psi
-        write(58) v
-        write(58) v_b
-        write(58) dPhi
-        write(58) dPsi
-        write(58) dv_b
-        write(58) dTheta
+            write(58) Theta
+            write(58) delta
+            write(58) delta_b
+            write(58) Phi
+            write(58) Psi
+            write(58) v
+            write(58) v_b
+            write(58) dPhi
+            write(58) dPsi
+            write(58) dv_b
+            write(58) dTheta
         close(58)
-  end if
+    end if
   end subroutine integrate_perturbation_eqns
 
 
@@ -483,9 +483,6 @@ contains
 
       dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p(j)**2.d0)*(Omega_m/a_t(j)*delta+Omega_b/a_t(j)*delta_b+4.d0*Omega_r/a_t(j)**2.d0*Theta0)
 
-
-
-
       dTheta0   = -ckH_p*Theta1 - dPhi
       d_delta   = ckH_p*v   - 3.d0*dPhi
       d_delta_b = ckH_p*v_b - 3.d0*dPhi
@@ -500,7 +497,7 @@ contains
                       (l+1.d0)/(2.d0*l+1.d0)*ckH_p*y(7+l) +dtau(j)*y(6+l)
       end do
 
-      dydx(12) = ckH_p*Theta5 -c*(lmax_int+1.d0)/H_p(j)/eta_precomp(j)*Theta6 +dtau(j)*Theta6
+      dydx(6+lmax_int) = ckH_p*Theta5 -c*(lmax_int+1.d0)/H_p(j)/eta_precomp(j)*Theta6 +dtau(j)*Theta6
 
       dydx(1) = d_delta
       dydx(2) = d_delta_b
@@ -511,14 +508,6 @@ contains
       dydx(7) = dTheta1
       dydx(8) = dTheta2
   end subroutine derivs
-
-  subroutine output3(x, y)
-      use healpix_types
-      implicit none
-      real(dp),               intent(in)  :: x
-      real(dp), dimension(:), intent(in)  :: y
-  end subroutine output3
-
 
   function get_tight_coupling_time(k)
     implicit none
