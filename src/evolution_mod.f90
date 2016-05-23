@@ -18,6 +18,7 @@ module evolution_mod
   integer(i4b), parameter          :: n_k      = 100
 
   integer(i4b), parameter, private :: lmax_int = 6
+  real(dp),allocatable, dimension(:) :: dydx
 
   ! Perturbation quantities
   real(dp), allocatable, dimension(:,:,:) :: Theta
@@ -206,7 +207,7 @@ contains
     real(dp)     :: x1, x2, x_init
     real(dp)     :: eps, hmin, h1, x_tc, j_tc, dt, t1, t2
     real(dp)     :: R,d_v,d_v_b,q
-    real(dp), allocatable, dimension(:) :: y, y_tight_coupling, dydx
+    real(dp), allocatable, dimension(:) :: y, y_tight_coupling
     logical(lgt)                        :: exist
 
     eps    = 1.d-8
@@ -283,14 +284,13 @@ contains
                    Phi(j,k)     = y_tight_coupling(5)
                    Theta(j,0,k) = y_tight_coupling(6)
                    Theta(j,1,k) = y_tight_coupling(7)
-                   Theta(j,2,k) = -(20.d0*ckH_p)/(45.d0*dtau(j))*Theta(j,1,k)
+                   Theta(j,2,k) = Theta(1,2,k)
                    do l = 3, lmax_int
-                      Theta(j,l,k) = -l/(2.d0*l+1.d0)*ckH_p/dtau(j)*Theta(j,l-1,k)
+                      Theta(j,l,k) = Theta(1,l,k)
                    end do	
                    Psi(j,k)      = -Phi(j,k) - 12.d0*H_0**2.d0/(ck_current*a_t(j))**2.d0*Omega_r*Theta(j,2,k)
 
                    !Store derivatives that are required for C_l estimation
-
                    call derivs_tc(x_t(j),y_tight_coupling,dydx)
                    dv_b(j,k)     = dydx(4)
                    dPhi(j,k)     = dydx(5)
@@ -331,7 +331,7 @@ contains
     
               !Precompute some variables
               ckH_p = ck_current/H_p(j)
-    
+
               !Integrate equations from tight coupling to today
               !write(*,*) 'running odeint with j =', j
               call odeint(y, x_t(j-1) ,x_t(j), eps, h1, hmin, derivs, bsstep, output)
@@ -365,7 +365,7 @@ contains
               dTheta(j,lmax_int,k) = dydx(6+lmax_int)
     
               dPsi(j,k)     = -dPhi(j,k) - 12.d0*H_0**2.d0/(ck_current*a_t(j))**2.d0*&
-                               Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))
+                               Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k)) 
            end do
         end do
 
@@ -420,7 +420,7 @@ contains
 
       Psi       = -Phi - 12.d0*(H_0/ck_current/a_t(j))**2.d0*Omega_r*Theta2
 
-      dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p(j)**2.d0)*(Omega_m/a_t(j)*delta+Omega_b/a_t(j)*delta_b+4.d0*Omega_r/a_t(j)**2.d0*Theta0)
+      dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p(j)**2.d0)*(Omega_m/a_t(j)*delta+Omega_b/a_t(j)*delta_b+4.d0*Omega_r*Theta0/a_t(j)**2.d0)
 
       dTheta0   = -ckH_p*Theta1 - dPhi
 
@@ -481,20 +481,21 @@ contains
       R         = (4.d0*Omega_r)/(3.d0*Omega_b*a_t(j))
       Psi       = -Phi - 12.d0*(H_0/ck_current/a_t(j))**2.d0*Omega_r*Theta2
 
-      dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p(j)**2.d0)*(Omega_m/a_t(j)*delta+Omega_b/a_t(j)*delta_b+4.d0*Omega_r/a_t(j)**2.d0*Theta0)
+      dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p(j)**2.d0)*(Omega_m/a_t(j)*delta+Omega_b/a_t(j)*delta_b+4.d0*Omega_r*Theta0/a_t(j)**2.d0)
 
       dTheta0   = -ckH_p*Theta1 - dPhi
       d_delta   = ckH_p*v   - 3.d0*dPhi
       d_delta_b = ckH_p*v_b - 3.d0*dPhi
       d_v       = -v -ckH_p*Psi
+
       dv_b      = -v_b -ckH_p*Psi +dtau(j)*R*(3.d0*Theta1+v_b)
       dTheta1   = ckH_p/3.d0*Theta0 -2.d0/3.d0*ckH_p*Theta2 + &
                   ckH_p/3.d0*Psi +dtau(j)*(Theta1+v_b/3.d0)
       dTheta2   = 2.d0/5.d0*ckH_p*Theta1 - (2.d0+1.d0)/&
                   5.d0*ckH_p*Theta3+dtau(j)*0.9d0*Theta2
-      do l=3,lmax_int-1
-          dydx(6+l) = l/(2.d0*l+1.d0)*ckH_p*y(5+l) - &
-                      (l+1.d0)/(2.d0*l+1.d0)*ckH_p*y(7+l) +dtau(j)*y(6+l)
+      do i=3,lmax_int-1
+          dydx(6+i) = i/(2.d0*i+1.d0)*ckH_p*y(5+i) - &
+                      (i+1.d0)/(2.d0*i+1.d0)*ckH_p*y(7+i) +dtau(j)*y(6+i)
       end do
 
       dydx(6+lmax_int) = ckH_p*Theta5 -c*(lmax_int+1.d0)/H_p(j)/eta_precomp(j)*Theta6 +dtau(j)*Theta6
