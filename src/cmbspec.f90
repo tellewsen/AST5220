@@ -149,20 +149,20 @@ program cmbspec
 
     !Initialize and compute the C_l
     write(*,*) 'initialize cl_mod'
-    !call compute_cls
+    call compute_cls
 
     !Writing source func to file
     write(*,*) 'Writing source func to file'
     open (unit=out_unit22, file="Source.dat", action="write", status="replace")
     do i = 1,n_x_highres
-    !    write (out_unit22,'(*(2X, ES14.6E3))') x_hires(i),S(i,50),S(i,250),S(i,500),S(i,2000),S(i,3000),S(i,5000)
+        write (out_unit22,'(*(2X, ES14.6E3))') x_hires(i),S(i,50),S(i,250),S(i,500),S(i,2000),S(i,3000),S(i,5000)
     end do
     close (out_unit22)
 
     !write low res source for testing
     open (unit=out_unit23, file="S_low.dat", action="write", status="replace")
     do i=1,n_t
-     !   write (out_unit23,'(*(2X, ES14.6E3))') S_lores(i,1),S_lores(i,5),S_lores(i,10),S_lores(i,40),S_lores(i,60),S_lores(i,100)   
+        write (out_unit23,'(*(2X, ES14.6E3))') S_lores(i,1),S_lores(i,5),S_lores(i,10),S_lores(i,40),S_lores(i,60),S_lores(i,100)   
     end do
     close (out_unit23)
 

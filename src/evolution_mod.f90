@@ -117,8 +117,8 @@ contains
 
             S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) &
                            +exp(-tau)*(dPsi(i,k)-dPhi(i,k)) &
-                           -1.d0/k_current*(H_p(i)*(g*dv_b(i,k) + v_b(i,k)*dg) + g*v_b(i,k)*dH_p(i)) &
-                           +.75d0/k_current**2*((H_0/2.d0*((Omega_m+Omega_b)/exp(x_t(i))+4.d0*Omega_r/exp(2.d0*x_t(i)) +4.d0*Omega_lambda*exp(2.d0*x_t(i))))*g*Pi &
+                           -1.d0/ck_current*(H_p(i)*(g*dv_b(i,k) + v_b(i,k)*dg) + g*v_b(i,k)*dH_p(i)) &
+                           +.75d0/ck_current**2*((H_0**2/2.d0*((Omega_m+Omega_b)/exp(x_t(i))+4.d0*Omega_r/exp(2.d0*x_t(i)) +4.d0*Omega_lambda*exp(2.d0*x_t(i))))*g*Pi &
                            +3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*(ddg*Pi +2.d0*dg*dPi+g*ddPi))
 
 

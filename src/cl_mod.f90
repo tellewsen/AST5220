@@ -88,7 +88,7 @@ contains
     do i =1,n_spline
         do l=1,l_num
             if(z_spline(i) > 2.d0) then
-                call sphbes(ls(l),z_spline(i), j_l(i,l))
+                !call sphbes(ls(l),z_spline(i), j_l(i,l))
             endif
         end do
     end do
@@ -100,7 +100,7 @@ contains
     !Spline across z for each l
     write(*,*) 'splining bessel'
     do l=1,l_num
-          call spline(z_spline, j_l(:,l), yp1, ypn, j_l2(:,l))
+          !call spline(z_spline, j_l(:,l), yp1, ypn, j_l2(:,l))
     end do
 
     
@@ -110,82 +110,82 @@ contains
     !Compute the transfer function, Theta_l(k)
     ! For this I use trapezoidal intergration. Better methods should be implemented
     ! for better precision.
-    write(*,*) 'Starting integration of Theta_l'
-    allocate(Theta_l(l_num,n_k_highres))
-    allocate(integrand(l_num,n_x_highres,n_k_highres))
-    allocate(cls(l_num))
-    allocate(cls2(l_num))
+    !write(*,*) 'Starting integration of Theta_l'
+   ! allocate(Theta_l(l_num,n_k_highres))
+  !  allocate(integrand(l_num,n_x_highres,n_k_highres))
+ !   allocate(cls(l_num))
+!    allocate(cls2(l_num))
 
-    do l =1,l_num
-        write(*,*)'l =',l
-        do k=1,n_k_highres
+    !do l =1,l_num
+     !   write(*,*)'l =',l
+      !  do k=1,n_k_highres
             !write(*,*)'k = ',k
             !trapezoidal method start
-            a = x_hires(1)
-            b = x_hires(n_x_highres)
-            h = (b-a)/n_x_highres
+       !     a = x_hires(1)
+        !    b = x_hires(n_x_highres)
+         !   h = (b-a)/n_x_highres
             !write(*,*)'still working'
 
             
-            do i=1,n_x_highres
+          !  do i=1,n_x_highres
                 !write(*,*) 'i =',i
-                integrand(l,i,k) = S(i,k)*j_lfunc(l,k_hires(k),x_hires(i))
-            end do
-            Theta_l(l,k) = 0.5d0*(integrand(l,1,k)+integrand(l,n_x_highres,k))
+                !integrand(l,i,k) = S(i,k)*j_lfunc(l,k_hires(k),x_hires(i))
+           ! end do
+            !Theta_l(l,k) = 0.5d0*(integrand(l,1,k)+integrand(l,n_x_highres,k))
 
-            do i=2,n_x_highres-1
-                Theta_l(l,k) = Theta_l(l-1,k) +integrand(l,i,k)
-            end do
-        end do
+            !do i=2,n_x_highres-1
+                !Theta_l(l,k) = Theta_l(l-1,k) +integrand(l,i,k)
+!            end do
+ !       end do
         !trapezoidal method end
 
         !Integrate P(k) * (Theta_l^2 / k) over k to find un-normalized C_l's
         !trapezoidal method start
         !write(*,*)'doing c_l integration'
-        a = k_hires(1)
-        b = k_hires(n_k_highres)
-        h = (b-a)/n_k_highres
-        C_lint = 0.5d0*( (a/H_0)**(n_s-1.d0)*Theta_l(l,1)**2/a + (b/H_0)**(n_s-1.d0)*Theta_l(l,n_k_highres)**2/b)
-        do k=2,n_k_highres-1
+  !      a = k_hires(1)
+   !     b = k_hires(n_k_highres)
+    !    h = (b-a)/n_k_highres
+     !   C_lint = 0.5d0*( (a/H_0)**(n_s-1.d0)*Theta_l(l,1)**2/a + (b/H_0)**(n_s-1.d0)*Theta_l(l,n_k_highres)**2/b)
+      !  do k=2,n_k_highres-1
                 !write(*,*) 'k=',k
-                C_lint = C_lint + (k_hires(k)/H_0)**(n_s-1.d0)*Theta_l(l,k)**2/k_hires(k)
-        end do
+       !         C_lint = C_lint + (k_hires(k)/H_0)**(n_s-1.d0)*Theta_l(l,k)**2/k_hires(k)
+        !end do
 
         !Store C_l in an array. Optionally output to file
-        cls(l) = h*C_lint *ls(l)*(ls(l)+1)/(2.d0*pi)
+!        cls(l) = h*C_lint *ls(l)*(ls(l)+1)/(2.d0*pi)
         !trapezoidal method end
-    end do
+ !   end do
 
 
     ! Task: Spline C_l's found above, and output smooth C_l curve for each integer l
 
     !This is needed to make the spline funciton happy(it demands double precision)
 
-    write(*,*) 'converting ls to double precision'
-    allocate(ls_dp(l_num))
-    do l=1,l_num
-        ls_dp(l) = ls(l)
-    end do
+  !  write(*,*) 'converting ls to double precision'
+   ! allocate(ls_dp(l_num))
+    !do l=1,l_num
+     !   ls_dp(l) = ls(l)
+!    end do
 
-    write(*,*)'splining cls'
-    call spline(ls_dp, cls, yp1, ypn, cls2)
+ !   write(*,*)'splining cls'
+  !  call spline(ls_dp, cls, yp1, ypn, cls2)
 
-    write(*,*)'done splining cls'
+   ! write(*,*)'done splining cls'
 
-    allocate(l_hires(int(maxval(ls))))
-    allocate(cl_hires(int(maxval(ls))))
+    !allocate(l_hires(int(maxval(ls))))
+!    allocate(cl_hires(int(maxval(ls))))
 
-    write(*,*) 'making l_hires'
-    do l=1,int(maxval(ls))
-        l_hires(l) = l
-    end do
+ !   write(*,*) 'making l_hires'
+  !  do l=1,int(maxval(ls))
+!        l_hires(l) = l
+ !   end do
 
     !Find Cls for all ls, also those not in the original list
 
-    write(*,*)'saving splined cls'
-    do l=1,int(maxval(ls))
-        cl_hires(l) = splint(ls_dp, cls, cls2, l_hires(l))
-    end do
+!    write(*,*)'saving splined cls'
+ !   do l=1,int(maxval(ls))
+  !      cl_hires(l) = splint(ls_dp, cls, cls2, l_hires(l))
+   ! end do
 
   end subroutine compute_cls
   
