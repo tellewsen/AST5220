@@ -34,17 +34,17 @@ module evolution_mod
   real(dp), allocatable, dimension(:,:,:) :: dTheta
 
   !Precomputing variables
-  !real(dp), allocatable, dimension(:) :: dtau
-  !real(dp), allocatable, dimension(:) :: ddtau
-  !real(dp), allocatable, dimension(:) :: H_p
-  !real(dp), allocatable, dimension(:) :: dH_p
-  !real(dp), allocatable, dimension(:) :: eta_precomp
+  real(dp), allocatable, dimension(:) :: dtau
+  real(dp), allocatable, dimension(:) :: ddtau
+  real(dp), allocatable, dimension(:) :: H_p
+  real(dp), allocatable, dimension(:) :: dH_p
+  real(dp), allocatable, dimension(:) :: eta_precomp
 
   ! Fourier mode list
   real(dp), allocatable, dimension(:) :: ks
 
   ! Book-keeping variables
-  real(dp),     private :: k_current,ck_current
+  real(dp),     private :: k_current,ck_current,ckH_p
   integer(i4b), private :: npar = 6+lmax_int
 
   !Milestone 4 variables
@@ -65,7 +65,7 @@ contains
     real(dp), allocatable, dimension(:,:), intent(out) :: S
 
     integer(i4b) :: i,k
-    real(dp)     :: g, dg, ddg, dt, tau, ddt, Pi, dPi, ddPi,H_p,dH_p
+    real(dp)     :: g, dg, ddg, dt, tau, ddt, Pi, dPi, ddPi
 
     ! Task: Output a pre-computed 2D array (over k and x) for the 
     !       source function, S(k,x). Remember to set up (and allocate) output 
@@ -105,22 +105,22 @@ contains
             dg    = get_dg(x_t(i))
             ddg   = get_ddg(x_t(i))
             tau   = get_tau(x_t(i))
-            dt    = get_dtau(x_t(i))
-            ddt   = get_ddtau(x_t(i))
-            H_p   = get_H_p(x_t(i))
-            dH_p  = get_dH_p(x_t(i))
+            dt    = dtau(i)
+            ddt   = ddtau(i)
+            !H_p   = get_H_p(x_t(i))
+            !dH_p  = get_dH_p(x_t(i))
             Pi    = Theta(i,2,k)
             dPi   = dTheta(i,2,k)
 
-            ddPi  = 2.d0*ck_current/(5.d0*H_p)*(-dH_p/H_p*Theta(i,1,k) + dTheta(i,1,k)) &
+            ddPi  = 2.d0*ck_current/(5.d0*H_p(i))*(-dH_p(i)/H_p(i)*Theta(i,1,k) + dTheta(i,1,k)) &
                     +0.3d0*(ddt*Pi+dt*dPi) &
-                    -3.d0*ck_current/(5.d0*H_p)*(-dH_p/H_p*Theta(i,3,k) + dTheta(i,3,k))
+                    -3.d0*ck_current/(5.d0*H_p(i))*(-dH_p(i)/H_p(i)*Theta(i,3,k) + dTheta(i,3,k))
 
             S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) &
                            +exp(-tau)*(dPsi(i,k)-dPhi(i,k)) &
-                           -1.d0/ck_current*(H_p*(g*dv_b(i,k) + v_b(i,k)*dg) + g*v_b(i,k)*dH_p) &
+                           -1.d0/ck_current*(H_p(i)*(g*dv_b(i,k) + v_b(i,k)*dg) + g*v_b(i,k)*dH_p(i)) &
                            +.75d0/ck_current**2*((H_0**2/2.d0*((Omega_m+Omega_b)/exp(x_t(i))+4.d0*Omega_r/exp(2.d0*x_t(i)) +4.d0*Omega_lambda*exp(2.d0*x_t(i))))*g*Pi &
-                           +3.d0*H_p*dH_p*(dg*Pi+g*dPi)+H_p**2*(ddg*Pi +2.d0*dg*dPi+g*ddPi))
+                           +3.d0*H_p(i)*dH_p(i)*(dg*Pi+g*dPi)+H_p(i)**2*(ddg*Pi +2.d0*dg*dPi+g*ddPi))
         end do
     end do
 
@@ -170,16 +170,17 @@ contains
     dPsi(:,:) = 0.d0
 
     !Allocate arrays for precomputed variables
-    !allocate(dtau(n_t),H_p(n_t),dH_p(n_t))
-    !allocate(ddtau(n_t),eta_precomp(n_t))
+    allocate(dtau(n_t),H_p(n_t),dH_p(n_t))
+    allocate(ddtau(n_t),eta_precomp(n_t))
 
     !Precompute useful variables
-    !do i=1,n_t
-    !   dtau(i)  = get_dtau(x_t(i))
-    !   ddtau(i) = get_ddtau(x_t(i))
-    !   H_p(i)   = get_H_p(x_t(i))
-    !   dH_p(i)  = get_dH_p(x_t(i))
-    !end do
+    do i=1,n_t
+       dtau(i)  = get_dtau(x_t(i))
+       ddtau(i) = get_ddtau(x_t(i))
+       H_p(i)   = get_H_p(x_t(i))
+       dH_p(i)  = get_dH_p(x_t(i))
+       eta_precomp(i)   = eta_t(i) !was calculated in time_mod
+    end do
     !write(*,*) 'dtau(1)'
     !write(*,*) dtau(1)
     !stop
@@ -192,12 +193,12 @@ contains
     delta_b(1,:) = delta(1,:)
     Theta(1,0,:) = 0.5d0*Phi(1,:)
     do k = 1, n_k
-        v(1,k)       = c*ks(k)/(2.d0*get_H_p(x_t(1)))*Phi(1,k)
+        v(1,k)       = c*ks(k)/(2.d0*H_p(1))*Phi(1,k)
         v_b(1,k)     = v(1,k)
-        Theta(1,1,k) = -c*ks(k)/(6.d0*get_H_p(x_t(1)))*Phi(1,k)
-        Theta(1,2,k) = -20.d0*c*ks(k)/(45.d0*get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(1,1,k) !without polarization
+        Theta(1,1,k) = -c*ks(k)/(6.d0*H_p(1))*Phi(1,k)
+        Theta(1,2,k) = -20.d0*c*ks(k)/(45.d0*H_p(1)*dtau(1))*Theta(1,1,k) !without polarization
         do l = 3, lmax_int
-            Theta(1,l,k) = -l/(2.d0*l+1.d0)*c*ks(k)/(get_H_p(x_t(1))*get_dtau(x_t(1)))*Theta(1,l-1,k)
+            Theta(1,l,k) = -l/(2.d0*l+1.d0)*c*ks(k)/(H_p(1)*dtau(1))*Theta(1,l-1,k)
         end do
         Psi(1,k)     = -Phi(1,k) - 12.d0*H_0**2/(ks(k)*c*a_t(1))**2*Omega_r*Theta(1,2,k)
     end do
@@ -275,6 +276,8 @@ contains
 
            do j=2,n_t
                if (x_t(j)< x_tc) then 
+                   !precompute some variables
+                   ckH_p = ck_current/H_p(j)
 
                    !Solve next step
                    call odeint(y_tight_coupling,x_t(j-1),x_t(j),eps,h1,hmin,derivs_tc, bsstep, output)
@@ -300,9 +303,9 @@ contains
                    dTheta(j,0,k) = dydx(6)
                    dTheta(j,1,k) = dydx(7)
 
-                   !if(k==40) then
-                   !    write(*,*) 'dPhi(',j,k,') =', dPhi(j,k)
-                   !endif                   
+                   if(k==40) then
+                       write(*,*) 'dPhi(',j,k,') =', dPhi(j,k)
+                   endif                   
                    dPsi(j,k)     = -dPhi(j,k) - 12.d0*H_0**2.d0/(ck_current*a_t(j))**2.d0&
                                    *Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k))
 
@@ -334,6 +337,9 @@ contains
 
            do j = j_tc, n_t
               
+              !Precompute some variables
+              ckH_p = ck_current/H_p(j)
+
               !Integrate equations from tight coupling to today
               !write(*,*) 'running odeint with j =', j
               call odeint(y, x_t(j-1) ,x_t(j), eps, h1, hmin, derivs, bsstep, output)
@@ -407,8 +413,6 @@ contains
 
       real(dp) :: delta,delta_b,v,v_b,Phi,Theta0,Theta1,Theta2
       real(dp) :: Psi,dPhi,dTheta0,dv_b,dTheta1
-      real(dp) :: dtau,ddtau,a,H_p,dH_p,ckH_p
-
 
       delta   = y_tc(1)
       delta_b = y_tc(2)
@@ -418,21 +422,13 @@ contains
       Theta0  = y_tc(6)
       Theta1  = y_tc(7)
 
-      dtau  = get_dtau(x)
-      ddtau = get_ddtau(x)
-      a     = exp(x)
-      H_p   = get_H_p(x)
-      dH_p  = get_dH_p(x)
-      ckH_p = ck_current/H_p
+      Theta2    = -20.d0*ckH_p/(45.d0*dtau(j))*Theta1
 
+      R         = (4.d0*Omega_r)/(3.d0*Omega_b*a_t(j))
 
-      Theta2    = -20.d0*ckH_p/(45.d0*dtau)*Theta1
+      Psi       = -Phi - 12.d0*(H_0/ck_current/a_t(j))**2.d0*Omega_r*Theta2
 
-      R         = (4.d0*Omega_r)/(3.d0*Omega_b*a)
-
-      Psi       = -Phi - 12.d0*(H_0/(ck_current*a))**2.d0*Omega_r*Theta2
-
-      dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p**2.d0)*(Omega_m/a*delta+Omega_b/a*delta_b+4.d0*Omega_r*Theta0/a**2.d0)
+      dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p(j)**2.d0)*(Omega_m/a_t(j)*delta+Omega_b/a_t(j)*delta_b+4.d0*Omega_r*Theta0/a_t(j)**2.d0)
 
       dTheta0   = -ckH_p*Theta1 - dPhi
 
@@ -442,10 +438,10 @@ contains
 
       d_v       = -v -ckH_p*Psi
 
-      q         = ( -((1.d0-2.d0*R)*dtau + (1.d0+R)*ddtau) *&
-                  (3.d0*Theta1+v_b) - ckH_p*Psi +(1.d0-dH_p/H_p)*&
+      q         = ( -((1.d0-2.d0*R)*dtau(j) + (1.d0+R)*ddtau(j)) *&
+                  (3.d0*Theta1+v_b) - ckH_p*Psi +(1.d0-dH_p(j)/H_p(j))*&
                   ckH_p*(-Theta0 + 2.d0*Theta2) - ckH_p*dTheta0) / &
-                  ((1.d0+R)*dtau+dH_p/H_p -1.d0)
+                  ((1.d0+R)*dtau(j)+dH_p(j)/H_p(j) -1.d0)
 
       dv_b      = (1.d0/(1.d0+R)) *(-v_b - ckH_p*Psi + &
                   R*(q+ckH_p*(-Theta0 + 2.d0*Theta2)-ckH_p*Psi))
@@ -472,11 +468,10 @@ contains
       real(dp) :: d_delta
       real(dp) :: d_delta_b
       real(dp) :: d_v
-      real(dp) :: R
+      real(dp) :: q,R
       integer(i4b) :: l
       real(dp) :: delta,delta_b,v,v_b,Phi,Theta0,Theta1,Theta2,Theta3,Theta4,Theta5,Theta6
       real(dp) :: Psi,dPhi,dTheta0,dv_b,dTheta1,dTheta2
-      real(dp) :: a,H_p,ckH_p,dtau
 
       delta   = y(1)
       delta_b = y(2)
@@ -491,33 +486,27 @@ contains
       Theta5  = y(11)
       Theta6  = y(12)
 
-      a = exp(x)
-      H_p = get_H_p(x)
-      ckH_p = ck_current/H_p
-      dtau = get_dtau(x)
+      R         = (4.d0*Omega_r)/(3.d0*Omega_b*a_t(j))
+      Psi       = -Phi - 12.d0*(H_0/ck_current/a_t(j))**2.d0*Omega_r*Theta2
 
-
-      R         = (4.d0*Omega_r)/(3.d0*Omega_b*a)
-      Psi       = -Phi - 12.d0*(H_0/ck_current/a)**2.d0*Omega_r*Theta2
-
-      dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p**2.d0)*(Omega_m/a*delta+Omega_b/a*delta_b+4.d0*Omega_r*Theta0/a**2.d0)
+      dPhi      = Psi -(ckH_p**2.d0)/3.d0*Phi + H_0**2.d0/(2.d0*H_p(j)**2.d0)*(Omega_m/a_t(j)*delta+Omega_b/a_t(j)*delta_b+4.d0*Omega_r*Theta0/a_t(j)**2.d0)
 
       dTheta0   = -ckH_p*Theta1 - dPhi
       d_delta   = ckH_p*v   - 3.d0*dPhi
       d_delta_b = ckH_p*v_b - 3.d0*dPhi
       d_v       = -v -ckH_p*Psi
 
-      dv_b      = -v_b -ckH_p*Psi +dtau*R*(3.d0*Theta1+v_b)
+      dv_b      = -v_b -ckH_p*Psi +dtau(j)*R*(3.d0*Theta1+v_b)
       dTheta1   = ckH_p/3.d0*Theta0 -2.d0/3.d0*ckH_p*Theta2 + &
-                  ckH_p/3.d0*Psi +dtau*(Theta1+v_b/3.d0)
+                  ckH_p/3.d0*Psi +dtau(j)*(Theta1+v_b/3.d0)
 
-      dTheta2   = 2.d0/5.d0*ckH_p*Theta1 - 3.d0/5.d0*ckH_p*Theta3+dtau*0.9d0*Theta2
+      dTheta2   = 2.d0/5.d0*ckH_p*Theta1 - 3.d0/5.d0*ckH_p*Theta3+dtau(j)*0.9d0*Theta2
       do l=3,lmax_int-1
           dydx(6+l) = l/(2.d0*l+1.d0)*ckH_p*y(5+l) - &
-                      (l+1.d0)/(2.d0*l+1.d0)*ckH_p*y(7+l) +dtau*y(6+l)
+                      (l+1.d0)/(2.d0*l+1.d0)*ckH_p*y(7+l) +dtau(j)*y(6+l)
       end do
 
-      dydx(6+lmax_int) = ckH_p*y(6+lmax_int-1) -c*(lmax_int+1.d0)/H_p/get_eta(x)*y(6+lmax_int) +dtau*y(lmax_int)
+      dydx(6+lmax_int) = ckH_p*y(6+lmax_int-1) -c*(lmax_int+1.d0)/H_p(j)/eta_t(j)*y(6+lmax_int) +dtau(j)*y(lmax_int)
 
       dydx(1) = d_delta
       dydx(2) = d_delta_b

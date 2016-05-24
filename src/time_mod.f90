@@ -183,8 +183,6 @@ contains
         eta_t(i) = get_eta(x_t(i))
     end do
 
-
-    
   end subroutine initialize_time_mod
 
 

@@ -100,8 +100,8 @@ plt.xlim([x_rec[0],x_rec[-1]])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tau$,$|\tau^\prime|$,$|\tau^{\prime\prime}|$')
 plt.legend()
-"""
-"""
+
+
 plt.figure(7)
 plt.plot(x_rec , g,            '-',label = r'$\tilde g(x)$')
 #plt.plot(x_test, g_test,       '-' ,label = r'$\tilde g_{test}(x)$')
@@ -142,6 +142,7 @@ plt.legend(loc='best')
 plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$\delta_{k}$')
+
 
 plt.figure(10)
 plt.plot(x_t,deltab[0],label = r'$\delta_{b,1}$')

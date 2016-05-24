@@ -82,7 +82,8 @@ contains
         x_rec(n1+n2+i) = x_end_rec + i*(x_0-x_end_rec)/(n3)
     end do
 
-    !write(*,*) x_rec
+    !write(*,*) 'x_rec(1),x_rec(100)'
+    !write(*,*) x_rec(1),x_rec(100)
     a_rec = exp(x_rec)
     z_rec = 1.d0/a_rec -1.d0
     
@@ -138,6 +139,8 @@ contains
         tau_rec(i) = tau_rec(i+1)
         call odeint(tau_rec(i:i),x_rec(i+1),x_rec(i),eps,h1,hmin,dtaudx,bsstep,output)
     end do
+    !write(*,*)'sum(tau_rec)'
+    !write(*,*) sum(tau_rec)
 
     !Compute splined optical depth,and second derivative
     call spline(x_rec, tau_rec, yp1, ypn,ddtau_rec)
@@ -161,8 +164,9 @@ contains
     do i=1,n
         g(i) = -dtau_rec(i)*exp(-tau_rec(i))
     end do
-
-
+    !write(*,*)'sum(g)'
+    !write(*,*) sum(g)
+    !stop
     !Compute splined visibility function, and second derivative
     call spline(x_rec,g,yp1,ypn,ddg)
     call spline(x_rec,ddg,yp1,ypn,d4g)
@@ -264,7 +268,11 @@ contains
       implicit none
       real(dp), intent(in) :: x_in
       real(dp)             :: get_dtau
-      get_dtau = splint_deriv(x_rec,tau_rec,ddtau_rec,x_in)
+      real(dp)             :: n_e,a,H_p
+      H_p = get_H_p(x_in)
+      a = exp(x_in)
+      n_e = get_n_e(x_in)
+      get_dtau = -n_e*sigma_T*a*c/H_p!splint_deriv(x_rec,tau_rec,ddtau_rec,x_in)
   end function get_dtau
 
   !Routine for computing the second derivative of tau at arbitrary x, 
