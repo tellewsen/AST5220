@@ -32,6 +32,7 @@ program cmbspec
     integer, parameter :: out_unit21=210
     integer, parameter :: out_unit22=220
     integer, parameter :: out_unit23=230
+    integer, parameter :: out_unit24=240
 
     integer :: i
 
@@ -128,7 +129,6 @@ program cmbspec
         write (out_unit17,'(*(2X, ES14.6))') Phi(i,1),Phi(i,5),Phi(i,10),Phi(i,40),Phi(i,60),Phi(i,100)
         write (out_unit18,'(*(2X, ES14.6))') Psi(i,1),Psi(i,5),Psi(i,10),Psi(i,40),Psi(i,60),Psi(i,100)
         write (out_unit19,'(*(2X, ES14.6))') Theta(i,0,1),Theta(i,0,5),Theta(i,0,10),Theta(i,0,40),Theta(i,0,60),Theta(i,0,100)
-                    !,Theta(i,1,k),Theta(i,2,k)
         write (out_unit20,'(*(2X, ES14.6))') dPhi(i,1),dPhi(i,5),dPhi(i,10),dPhi(i,40),dPhi(i,60),dPhi(i,100)
         write (out_unit21,'(*(2X, ES14.6))') dPsi(i,1),dPsi(i,5),dPsi(i,10),dPsi(i,40),dPsi(i,60),dPsi(i,100)
     end do
@@ -166,9 +166,12 @@ program cmbspec
     end do
     close (out_unit23)
 
-
-
-
+    write(*,*)'writing integrand to file'
+    open (unit=out_unit24, file="Sj_l.dat", action="write", status="replace")
+    do i=1,n_x_highres
+      !  write (out_unit24,'(*(2X, ES14.6E3))') integrand(5,i,500)
+    end do 
+    close (out_unit24)
 
     !Print time used
     call cpu_time(end_time)

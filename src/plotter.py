@@ -100,8 +100,8 @@ plt.xlim([x_rec[0],x_rec[-1]])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tau$,$|\tau^\prime|$,$|\tau^{\prime\prime}|$')
 plt.legend()
-"""
-"""
+
+
 plt.figure(7)
 plt.plot(x_rec , g,            '-',label = r'$\tilde g(x)$')
 #plt.plot(x_test, g_test,       '-' ,label = r'$\tilde g_{test}(x)$')
@@ -129,7 +129,7 @@ dPsi   = loadtxt("dPsi.dat",unpack=True)
 Theta0 = loadtxt("Theta0.dat",unpack=True)
 v      = loadtxt("v.dat",unpack=True)
 vb     = loadtxt("v_b.dat",unpack=True)
-
+"""
 plt.figure(9)
 plt.plot(x_t,delta[0],label = r'$\delta_{1}$')
 plt.plot(x_t,delta[1],label = r'$\delta_{5}$')
@@ -142,6 +142,7 @@ plt.legend(loc='best')
 plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$\delta_{k}$')
+
 
 plt.figure(10)
 plt.plot(x_t,deltab[0],label = r'$\delta_{b,1}$')
@@ -182,6 +183,19 @@ plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$v_{k}$')
 
+plt.figure(15)
+plt.plot(x_t,Theta0[0],label = r'$\Theta_{0,1}$')
+plt.plot(x_t,Theta0[1],label = r'$\Theta_{0,5}$')
+plt.plot(x_t,Theta0[2],label = r'$\Theta_{0,10}$')
+plt.plot(x_t,Theta0[3],label = r'$\Theta_{0,40}$')
+plt.plot(x_t,Theta0[4],label = r'$\Theta_{0,60}$')
+plt.plot(x_t,Theta0[5],label = r'$\Theta_{0,100}$')
+plt.xlim([min(x_t),max(x_t)])
+plt.legend(loc='best')
+plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$\Theta_{0,k}$')
+"""
 
 plt.figure(13)
 plt.plot(x_t,Phi[0],label = r'$\Phi_{1}$')
@@ -209,18 +223,7 @@ plt.legend(loc='best')
 plt.xlabel(r'x')
 plt.ylabel(r'$\Psi_{k}$')
 
-plt.figure(15)
-plt.plot(x_t,Theta0[0],label = r'$\Theta_{0,1}$')
-plt.plot(x_t,Theta0[1],label = r'$\Theta_{0,5}$')
-plt.plot(x_t,Theta0[2],label = r'$\Theta_{0,10}$')
-plt.plot(x_t,Theta0[3],label = r'$\Theta_{0,40}$')
-plt.plot(x_t,Theta0[4],label = r'$\Theta_{0,60}$')
-plt.plot(x_t,Theta0[5],label = r'$\Theta_{0,100}$')
-plt.xlim([min(x_t),max(x_t)])
-plt.legend(loc='best')
-plt.yscale('symlog')
-plt.xlabel(r'x')
-plt.ylabel(r'$\Theta_{0,k}$')
+
 
 plt.figure(16)
 plt.plot(x_t,dPsi[0],label = r'$\Psi^\prime_{1}$')
