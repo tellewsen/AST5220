@@ -73,25 +73,46 @@ As previously done I will continue building on the skeleton code provided.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Equations}\label{sec:Equations}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Transfer function
+In this final part of the project we finally combine everything from the previous projects into the final CMB power spectrum. This is done by a few equations, the first of which is the Transfer function defined
 \begin{equation}
  \Theta_l(k,x=0)=\int^0_\infty \tilde{S}(k,x)j_l[k(\eta_0-\eta)]dx,
 \end{equation}
 where $j_l$ is the spherical Bessel functions, and S is the source function defined
 \begin{equation}
- \tilde{S}(k,x) = \tilde{g}\bigg[\Theta_0+\Psi+\frac{1}{4}\Pi\bigg]+e^{-\tau}[\Psi^\prime-\Phi^\prime]-\frac{1}{k}\frac{d}{dx}(\pazocal{H}\tilde{g}v_b) +\frac{3}{4k^2}\frac{d}{dx}\bigg[\pazocal{H}\frac{d}{dx}(\pazocal
+ \tilde{S}(k,x) = \tilde{g}\bigg[\Theta_0+\Psi+\frac{1}{4}\Pi\bigg]+e^{-\tau}[\Psi^\prime-\Phi^\prime]-\frac{1}{ck}\frac{d}{dx}(\pazocal{H}\tilde{g}v_b) +\frac{3}{4c^2k^2}\frac{d}{dx}\bigg[\pazocal{H}\frac{d}{dx}(\pazocal
 {H}\tilde{g}\Pi) \bigg].
 \end{equation}
 The only variable not explained earlier in this equation is $\Pi = \Theta_2 +\Theta_0^P+\Theta_2^P$, which contain two not previously used variables $\Theta_0^P$, and $\Theta_2^P$. These two are related to the polarization of the temperature multi poles. Since we chose to not include polarization and neutrinos in the last part of the project, these two can be set to zero, which means that for our case $\Pi = \Theta_2$.
 
-The CMB power spectrum reads 
+The Source function deserves a bit of explaining. Its job is, as expected from its name, to source the spectrum for all $k$ modes at all $x$ values. It consist of four distinct terms each describing different effects. 
+
+The first is the local monopole weighted by the visibility function $\tilde{g}$, this term also includes the fact that the photons climb out of a gravitational potential $\Psi$ and a small correction term $\Pi$. This redshifting of the photons is known as the Sachs-Wolfe effect. 
+
+The second term is the integrated Sachs-Wolfe effect. This term takes care of the change due to changing gravitational fields the photons encounter on their way from the last scattering surface to us today.
+
+The third term corrects for the doppler effect, and the fourth term FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS 
+
+
+This is then multiplied by the spherical bessel functions which projects this three dimensional field onto the surface of a sphere. This gives us the so-called Transfer function. Note however that this only takes care of the $x$ values. We still need to account for all $k$ modes, and all directions. And furthermore we have not yet included the spectrum left over by inflation which is what we started out with. (This is fine as was discused previously since we use linearized equations.)
+
+The full CMB power spectrum then reads 
 \begin{equation}
  C_l = \int\frac{d^3k}{(2\pi)^3}P(k)\Theta_l^2(k)
 \end{equation}
 Here we finally scale by $P(k)$. Recall that we set $\Phi = 1$ as the initial condition, instead of $\Phi = P(k)$. This is fine since we are working with linearized equations. If the reader wants to use higher order equations this needs to be taken into account from the beginning.
 
-Furthermore, if we assume that 
+Furthermore, if we consider that most inflationary models predict a Harrrison-Zel'dovich spectrum where 
+\begin{equation}
+ \frac{k^3}{2\pi^2}P(k) = \bigg(\frac{ck}{H_0}\bigg)^{n-1}
+\end{equation}
+holds, we can write the CMB power spectrum as
+\begin{equation}
+  C_l = \int_0^\infty\bigg(\frac{ck}{H_0}\bigg)^{n_s-1}\Theta_l^2(k)\frac{dk}{k}.
+\end{equation}
+Here $n_s$ is the spectral index, which according to the latest data from Planck[2] is $n_s = 0.968\pm0.006$.
+Since the overall trend of the power spectrum is to drop as $l^{-2}$, it is a good idea to plot the spectrum in units of $l(l+1)/2\pi$ in $\mu K^2$. This makes it easier to see features in it. So far we have not normalized the spectrum in any way. Since we want to compare it to the observed spectrum, we simply say that the maximum is $5775\mu K^2$, when measured in the above units.
+
+With this we should now get a power specturm that can be fitted to the data, making it possible to estimate the density components of the universe.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
@@ -108,6 +129,8 @@ Unfortunately time did not allow me to use a Metropolis algorithm to estimate th
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}[label= {[}\arabic*{]} ]
  \item P. Callin, astro-ph/0606683
+ \item P. A. R. Ade et al. [Planck Collaboration], arXiv:1502.02114 [astro-ph.CO].
+ 
 \end{enumerate}
 
 \onecolumn 
