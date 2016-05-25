@@ -299,7 +299,14 @@ contains
                    dPhi(j,k)     = dydx(5)
                    dTheta(j,0,k) = dydx(6)
                    dTheta(j,1,k) = dydx(7)
-                   dTheta(j,2,k) = dydx(8)
+
+                   dTheta(j,2,k) = 2.d0/5.d0*ck_current/get_H_p(x_t(j))*Theta(j,1,k) - 3.d0/5.d0*ck_current/get_H_p(x_t(j))*Theta(j,3,k)+get_dtau(x_t(j))*0.9d0*Theta(j,2,k)
+
+                   do l=3,lmax_int-1
+                   dTheta(j,l,k) = l/(2.d0*l+1.d0)*ck_current/get_H_p(x_t(j))*dTheta(j,l-1,k) - &
+                               (l+1.d0)/(2.d0*l+1.d0)*ck_current/get_H_p(x_t(j))*dTheta(j,l+1,k) +get_dtau(x_t(j))*Theta(j,l,k)
+                   end do
+                   
 
                    !if(k==40) then
                    !    write(*,*) 'dPhi(',j,k,') =', dPhi(j,k)
@@ -334,7 +341,6 @@ contains
            !write(*,*) 'start of rec'       
 
            do j = j_tc, n_t
-              
               !Integrate equations from tight coupling to today
               !write(*,*) 'running odeint with j =', j
               call odeint(y, x_t(j-1) ,x_t(j), eps, h1, hmin, derivs, bsstep, output)
