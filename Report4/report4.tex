@@ -75,7 +75,7 @@ As previously done I will continue building on the skeleton code provided.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In this final part of the project we finally combine everything from the previous projects into the final CMB power spectrum. This is done by a few equations, the first of which is the Transfer function defined
 \begin{equation}
- \Theta_l(k,x=0)=\int^0_\infty \tilde{S}(k,x)j_l[k(\eta_0-\eta)]dx,
+ \Theta_l(k,x=0)=\int^0_{-\infty} \tilde{S}(k,x)j_l[k(\eta_0-\eta)]dx,
 \end{equation}
 where $j_l$ is the spherical Bessel functions, and S is the source function defined
 \begin{equation}
@@ -117,6 +117,15 @@ With this we should now get a power specturm that can be fitted to the data, mak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+From the earlier projects we have arrays with $x$, and $k$ values. We use these to calculate the source function. The result is then splined onto a high resolution grid in $x$ and $k$. We also see in the Transfer function that we want values for $j_l$ for a combination of $k$ and $\eta(x)$ values. It turns out that these numbers are in the range $[0,3400]$. Thus we sample $5400$ values linearly in this range, and then spline that so we can find arbitrary values in between them. 
+
+We now have the spherical bessel functions and Source functions for all values in our high resolution $k$ and $x$ grid making it possible to calculate the Transfer function. The $x$ and $k$ grids have $5000$ values in the same range as earlier, only this time the steps are linear through $x$, while $k$ is quadratic like before.
+
+To find the Transfer function we need a numerical integration method. I have chosen to use the trapezoidal method. The integration limits go from $-\infty$ to $0$. Luckily for us the Source function is zero for almost all times except around the last scattering surface. Because of this we simply set the lower integration limit to a very low $x$ value still inside our grid.
+
+The next step is to calculate $C_l$. This is done in precisely the same fashion. The only difference is the integration limits. We integrate over the $5000$ k values in our grid. For information on why we only need this many k values for the integration see Callin(2005)[1]. In short it has to do with getting a good amount of values between each oscillation of the  Bessel function. 
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}\label{sec:Conc}

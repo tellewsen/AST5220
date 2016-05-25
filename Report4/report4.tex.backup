@@ -75,7 +75,7 @@ As previously done I will continue building on the skeleton code provided.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In this final part of the project we finally combine everything from the previous projects into the final CMB power spectrum. This is done by a few equations, the first of which is the Transfer function defined
 \begin{equation}
- \Theta_l(k,x=0)=\int^0_\infty \tilde{S}(k,x)j_l[k(\eta_0-\eta)]dx,
+ \Theta_l(k,x=0)=\int^0_{-\infty} \tilde{S}(k,x)j_l[k(\eta_0-\eta)]dx,
 \end{equation}
 where $j_l$ is the spherical Bessel functions, and S is the source function defined
 \begin{equation}
@@ -93,16 +93,15 @@ The second term is the integrated Sachs-Wolfe effect. This term takes care of th
 The third term corrects for the doppler effect, and the fourth term FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS FIGURE OUT WHAT THIS IS 
 
 
-This is then multiplied by the spherical bessel functions which projects this three dimensional field onto the surface of a sphere. This gives us the so-called Transfer function.
+This is then multiplied by the spherical bessel functions which projects this three dimensional field onto the surface of a sphere. This gives us the so-called Transfer function. Note however that this only takes care of the $x$ values. We still need to account for all $k$ modes, and all directions. And furthermore we have not yet included the spectrum left over by inflation which is what we started out with. (This is fine as was discused previously since we use linearized equations.)
 
-
-The CMB power spectrum reads 
+The full CMB power spectrum then reads 
 \begin{equation}
  C_l = \int\frac{d^3k}{(2\pi)^3}P(k)\Theta_l^2(k)
 \end{equation}
 Here we finally scale by $P(k)$. Recall that we set $\Phi = 1$ as the initial condition, instead of $\Phi = P(k)$. This is fine since we are working with linearized equations. If the reader wants to use higher order equations this needs to be taken into account from the beginning.
 
-Furthermore, if conser that most inflationary models predict a Harrrison-Zel'dovich spectrum where 
+Furthermore, if we consider that most inflationary models predict a Harrrison-Zel'dovich spectrum where 
 \begin{equation}
  \frac{k^3}{2\pi^2}P(k) = \bigg(\frac{ck}{H_0}\bigg)^{n-1}
 \end{equation}
@@ -113,9 +112,18 @@ holds, we can write the CMB power spectrum as
 Here $n_s$ is the spectral index, which according to the latest data from Planck[2] is $n_s = 0.968\pm0.006$.
 Since the overall trend of the power spectrum is to drop as $l^{-2}$, it is a good idea to plot the spectrum in units of $l(l+1)/2\pi$ in $\mu K^2$. This makes it easier to see features in it. So far we have not normalized the spectrum in any way. Since we want to compare it to the observed spectrum, we simply say that the maximum is $5775\mu K^2$, when measured in the above units.
 
+With this we should now get a power specturm that can be fitted to the data, making it possible to estimate the density components of the universe.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}\label{sec:Imp}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+From the earlier projects we have arrays with $x$, and $k$ values. We use these to calculate the source function. The result is then splined onto a high resolution grid in $x$ and $k$. We also see in the Transfer function that we want values for $j_l$ for a combination of $k$ and $\eta(x)$ values. It turns out that these numbers are in the range $[0,3400]$. Thus we sample $5400$ values linearly in this range, and then spline that so we can find arbitrary values in between them. 
+
+We now have the spherical bessel functions and Source functions for all values in our high resolution $k$ and $x$ grid making it possible to calculate the Transfer function. The $x$ and $k$ grids have $5000$ values in the same range as earlier, only this time the steps are linear through $x$, while $k$ is quadratic like before.
+
+To find the Transfer function we need a numerical integration method. I have chosen to use the trapezoidal method. The integration limits go from $-\infty$ to $0$. Luckily for us the Source function is zero for almost all times except around the last scattering surface. Because of this we simply set the lower integration limit to a very low $x$ value still inside our grid.
+
+The next step is to calculate $C_l$. This is done in precisely the same fashion. The only difference is the integration limits. We integrate over the $5000$ k values in our grid. For information on why we only need this many k values for the integration see Callin(2005)[1]. In short it has to do with getting a good amount of values between each oscillation of the  Bessel function. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}\label{sec:Conc}
