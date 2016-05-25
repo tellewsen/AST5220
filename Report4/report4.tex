@@ -123,11 +123,22 @@ We now have the spherical bessel functions and Source functions for all values i
 
 To find the Transfer function we need a numerical integration method. I have chosen to use the trapezoidal method. The integration limits go from $-\infty$ to $0$. Luckily for us the Source function is zero for almost all times except around the last scattering surface. Because of this we simply set the lower integration limit to a very low $x$ value still inside our grid.
 
-The next step is to calculate $C_l$. This is done in precisely the same fashion. The only difference is the integration limits. We integrate over the $5000$ k values in our grid. For information on why we only need this many k values for the integration see Callin(2005)[1]. In short it has to do with getting a good amount of values between each oscillation of the  Bessel function. 
+The next step is to calculate $C_l$. This is done in precisely the same fashion. The only difference is the integration limits. We integrate over the $5000$ $k$values in our grid. For information on why we only need this many k values for the integration see Callin(2005)[1]. In short it has to do with getting a good amount of values between each oscillation of the  Bessel function. 
 
-% \begin{figure}
-%  
-% \end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}\label{sec:results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Underway through the workings of the program I have plotted various quantities to make sure that they return sensible results. An example is the integrand in the Transfer function (figure \ref{fig:integrand}).
+
+\begin{figure}[ht]
+ \includegraphics[width=\textwidth]{integrand.png}
+ \caption{The integrand in the Transfer function integral for $l= 100$, and $k = ADJHASIUDHSAUIDHUSADHUSA$. This is sensible. The source function gives a spike around recombiniation, while the Bessel function makes it oscillate at late times.}
+ \label{fig:integrand}
+\end{figure}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
