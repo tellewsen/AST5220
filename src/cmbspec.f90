@@ -166,12 +166,14 @@ program cmbspec
     end do
     close (out_unit23)
 
-    write(*,*)'writing integrand to file'
-    open (unit=out_unit24, file="Sj_l.dat", action="write", status="replace")
-    do i=1,n_x_highres
-      !  write (out_unit24,'(*(2X, ES14.6E3))') integrand(5,i,500)
-    end do 
-    close (out_unit24)
+
+    !write cls and ls to file
+    open (unit=out_unit23, file="C_l.dat", action="write", status="replace")
+    do i=1,1200
+        write (out_unit23,'(*(2X, ES14.6E3))') l_hires(i),cl_hires(i)
+    end do
+    close (out_unit23)
+     
 
     !Print time used
     call cpu_time(end_time)

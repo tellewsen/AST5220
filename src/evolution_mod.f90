@@ -287,9 +287,9 @@ contains
                    Phi(j,k)     = y_tight_coupling(5)
                    Theta(j,0,k) = y_tight_coupling(6)
                    Theta(j,1,k) = y_tight_coupling(7)
-                   Theta(j,2,k) = Theta(1,2,k)
+                   Theta(j,2,k) = -20.d0*ck_current/45.d0/get_H_p(x_t(j))/get_dtau(x_t(j))*Theta(j,1,k)
                    do l = 3, lmax_int
-                      Theta(j,l,k) = Theta(1,l,k)
+                      Theta(j,l,k) = -l/(2.d0*l+1.d0)*ck_current/get_H_p(x_t(j))/get_dtau(x_t(j))*Theta(j,l-1,k)
                    end do	
                    Psi(j,k)      = -Phi(j,k) - 12.d0*H_0**2.d0/(ck_current*a_t(j))**2.d0*Omega_r*Theta(j,2,k)
 
@@ -299,6 +299,7 @@ contains
                    dPhi(j,k)     = dydx(5)
                    dTheta(j,0,k) = dydx(6)
                    dTheta(j,1,k) = dydx(7)
+                   dTheta(j,2,k) = dydx(8)
 
                    !if(k==40) then
                    !    write(*,*) 'dPhi(',j,k,') =', dPhi(j,k)
@@ -354,17 +355,13 @@ contains
               call derivs(x_t(j),y,dydx)
               dv_b(j,k)     = dydx(4)
               dPhi(j,k)     = dydx(5)
-              if(k==40) then
-                  write(*,*) 'dPhi(',j,k,') =', dPhi(j,k)
-              endif            
-              dTheta(j,0,k) = dydx(6)
-              dTheta(j,1,k) = dydx(7)                          
-              dTheta(j,2,k) = dydx(8)
+              !if(k==40) then
+              !    write(*,*) 'dPhi(',j,k,') =', dPhi(j,k)
+              !endif            
     
-              do l=3,lmax_int-1
+              do l=0,lmax_int
                   dTheta(j,l,k) = dydx(6+l)
               end do
-              dTheta(j,lmax_int,k) = dydx(6+lmax_int)
     
               dPsi(j,k)     = -dPhi(j,k) - 12.d0*H_0**2.d0/(ck_current*a_t(j))**2.d0*&
                                Omega_r*(-2.d0*Theta(j,2,k)+dTheta(j,2,k)) 
@@ -517,7 +514,7 @@ contains
                       (l+1.d0)/(2.d0*l+1.d0)*ckH_p*y(7+l) +dtau*y(6+l)
       end do
 
-      dydx(6+lmax_int) = ckH_p*y(6+lmax_int-1) -c*(lmax_int+1.d0)/H_p/get_eta(x)*y(6+lmax_int) +dtau*y(lmax_int)
+      dydx(6+lmax_int) = ckH_p*y(6+lmax_int-1) -c*(lmax_int+1.d0)/H_p/get_eta(x)*y(6+lmax_int) +dtau*y(6+lmax_int)
 
       dydx(1) = d_delta
       dydx(2) = d_delta_b

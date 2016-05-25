@@ -196,7 +196,7 @@ plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$\Theta_{0,k}$')
 """
-
+"""
 plt.figure(13)
 plt.plot(x_t,Phi[0],label = r'$\Phi_{1}$')
 plt.plot(x_t,Phi[1],label = r'$\Phi_{5}$')
@@ -223,8 +223,6 @@ plt.legend(loc='best')
 plt.xlabel(r'x')
 plt.ylabel(r'$\Psi_{k}$')
 
-
-
 plt.figure(16)
 plt.plot(x_t,dPsi[0],label = r'$\Psi^\prime_{1}$')
 plt.plot(x_t,dPsi[1],label = r'$\Psi^\prime_{5}$')
@@ -250,13 +248,14 @@ plt.legend(loc='best')
 #plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$\Phi^\prime_{k}$')
+"""
 
-plt.show()
 #Milestone 4 
 
 x,S1,S2,S3,S4,S5,S6     = loadtxt("Source.dat",unpack=True)
 S_lores1,S_lores2,S_lores3,S_lores4,S_lores5,S_lores6  =  loadtxt("S_low.dat",unpack=True)
 
+"""
 #Low res for testing
 plt.figure(18)
 plt.title('THIS IS THE LOW RES SOURCE FOR TESTING')
@@ -271,7 +270,9 @@ plt.legend(loc='best')
 plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$S_k$')
+"""
 
+"""
 #High res for further use
 plt.figure(19)
 #plt.plot(x,S1,label = r'$S_{50}$')
@@ -280,11 +281,63 @@ plt.figure(19)
 plt.plot(x,S4,label = r'$S_{2000}$')
 #plt.plot(x,S5,label = r'$S_{3000}$')
 #plt.plot(x,S6,label = r'$S_{5000}$')
-
 plt.xlim([min(x),max(x)])
 plt.legend(loc='best')
 plt.yscale('symlog')
 plt.xlabel(r'x')
 plt.ylabel(r'$S_k$')
+
+bessel = loadtxt("besseltest.dat",unpack=True)
+plt.figure(20)
+plt.plot(x,bessel)#,label=r'$$')
+plt.xlim([min(x),max(x)])
+#plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$j_l[k(\eta_0-\eta(x))]$')
+"""
+Sj_l = loadtxt("Sj_l.dat",unpack=True)
+plt.figure(21)
+plt.plot(x,Sj_l/1e-3)#,label=r'$$')
+plt.xlim([min(x),max(x)])
+#plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$\tilde{S}(k,x)j_l[k(\eta_0-\eta(x))]/10^{-3}$')
+
+
+l,Cl = loadtxt("C_l.dat",unpack=True,skiprows=1)
+
+#load planck data
+planck1  = loadtxt("COM_PowerSpect_CMB-TT-loL-full_R2.02.txt",unpack=True,skiprows=3)
+planck2  = loadtxt("COM_PowerSpect_CMB-TT-hiL-full_R2.02.txt",unpack=True,skiprows=3)
+planck_l1 = planck1[0]
+planck_l2 = planck2[0]
+
+
+C_llow = planck1[1]
+#print C_llow
+C_lhi  = planck2[1]
+#print C_lhi
+
+
+Clplanck = hstack([C_llow,C_lhi])
+planck_l = hstack([planck_l1,planck_l2])
+
+Cl = Cl/max(Cl)*max(Clplanck)
+#print planckmax
+
+
+plt.figure(22)
+plt.plot(l,Cl)#,label=r'$$')
+plt.plot(planck_l,Clplanck)
+plt.xlim([min(l),max(l)])
+#plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$C_l$')
+
 plt.show()
+
+
 
