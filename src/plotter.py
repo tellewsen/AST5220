@@ -329,14 +329,13 @@ Cl = Cl/max(Cl)*max(Clplanck)
 
 
 plt.figure(22)
-plt.plot(l,Cl)#,label=r'$$')
-plt.plot(planck_l,Clplanck)
+plt.plot(l,Cl,label='Calculated')
+plt.plot(planck_l,Clplanck,label='Planck data')
 plt.xlim([min(l),max(l)])
 #plt.legend(loc='best')
 #plt.yscale('symlog')
-plt.xlabel(r'x')
-plt.ylabel(r'$C_l$')
-
+plt.xlabel(r'l')
+plt.ylabel(r'$l(l+1)C_l/2\pi$')
 plt.show()
 
 
