@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  25 MAY 2016 21:08
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.4.5)  26 MAY 2016 10:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -437,26 +437,32 @@ File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 <integrand.png, id=14, 586.8324pt x 442.2924pt>
 File: integrand.png Graphic file (type png)
  <use integrand.png>
-Package pdftex.def Info: integrand.png used on input line 137.
+Package pdftex.def Info: integrand.png used on input line 136.
 (pdftex.def)             Requested size: 483.69687pt x 364.56503pt.
  [2]
-<Cl.png, id=19, 586.8324pt x 442.2924pt>
+<transfer.png, id=19, 578.16pt x 433.62pt>
+File: transfer.png Graphic file (type png)
+ <use transfer.png>
+Package pdftex.def Info: transfer.png used on input line 143.
+(pdftex.def)             Requested size: 483.69687pt x 362.76945pt.
+
+<Cl.png, id=20, 593.3367pt x 433.62pt>
 File: Cl.png Graphic file (type png)
  <use Cl.png>
-Package pdftex.def Info: Cl.png used on input line 143.
-(pdftex.def)             Requested size: 483.69687pt x 364.56503pt.
+Package pdftex.def Info: Cl.png used on input line 153.
+(pdftex.def)             Requested size: 483.69687pt x 353.50635pt.
  [3 <./integrand.png>]
-[4 <./Cl.png>] [5
+[4 <./transfer.png>] [5 <./Cl.png>] [6
 
 ] (./report4.aux) ) 
 Here is how much of TeX's memory you used:
- 5193 strings out of 494985
- 74614 string characters out of 6180357
- 138861 words of memory out of 5000000
- 8300 multiletter control sequences out of 15000+600000
+ 5199 strings out of 494985
+ 74707 string characters out of 6180357
+ 138869 words of memory out of 5000000
+ 8305 multiletter control sequences out of 15000+600000
  41062 words of font info for 108 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 42i,5n,40p,503b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,6n,40p,503b,259s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}<
 /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/s
 hare/texlive/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texliv
@@ -465,10 +471,10 @@ e/texmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist
 /public/txfonts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/u
 tmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report4.pdf (5 pages, 150073 bytes).
+Output written on report4.pdf (6 pages, 162834 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
- 38 compressed objects within 1 object stream
+ 63 PDF objects out of 1000 (max. 8388607)
+ 40 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
