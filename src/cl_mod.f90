@@ -20,7 +20,7 @@ contains
     real(dp)     :: S_func, j_func, z, eta, eta0, x0, x_min, x_max, d, e
     real(dp),     allocatable, dimension(:)       :: cls, cls2, ls_dp
     real(dp),     allocatable, dimension(:)       :: j_l_spline, j_l_spline2
-    real(dp)                                      :: a1,a2,h,C_lint
+    real(dp)                                      :: ax1,ax2,ak1,ak2,h1,h2,C_lint
 
     real(dp)           :: t1, t2, integral
     logical(lgt)       :: exist
@@ -146,9 +146,9 @@ contains
         do k=1,n_k_highres
             !write(*,*)'k = ',k
             !trapezoidal method start
-            a1 = x_hires(1)
-            a2 = x_hires(n_x_highres)
-            h = (a2-a1)/n_x_highres
+            ax1 = x_hires(1)
+            ax2 = x_hires(n_x_highres)
+            h1 = (ax2-ax1)/n_x_highres
 
             !write(*,*) 'Before integrand part'
             do i=1,n_x_highres
@@ -169,7 +169,7 @@ contains
             do i=2,n_x_highres-1
                 Theta_l(l,k) = Theta_l(l,k) +integrand(i)
             end do
-            Theta_l(l,k) = h*Theta_l(l,k)
+            Theta_l(l,k) = h1*Theta_l(l,k)
             !write(*,*) 'after trapezoidal part'
         end do
         !write(*,*) 'After theta_l integration'
@@ -179,9 +179,9 @@ contains
         !trapezoidal method start
         !write(*,*)'doing c_l integration'
 
-        a1 = k_hires(1)
-        a2 = k_hires(n_k_highres)
-        h = (a2-a1)/n_k_highres
+        ak1 = k_hires(1)
+        ak2 = k_hires(n_k_highres)
+        h2 = (ak2-ak1)/n_k_highres
 
         do k=1,n_k_highres
             integrand2(l,k) = (c*k_hires(k)/H_0)**(n_s-1.d0)*Theta_l(l,k)**2/k_hires(k)
@@ -229,7 +229,7 @@ contains
         end do
 
         !Store C_l in an array.
-        cls(l) = h*C_lint *ls(l)*(ls(l)+1.d0)/(2.d0*pi)
+        cls(l) = h2*C_lint *ls(l)*(ls(l)+1.d0)/(2.d0*pi)
         !trapezoidal method end
     end do
 

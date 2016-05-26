@@ -382,28 +382,31 @@ plt.show()
 #Plot Power spectrum
 l,Cl = loadtxt("C_l.dat",unpack=True,skiprows=1)
 #load planck data
-#planck1  = loadtxt("COM_PowerSpect_CMB-TT-loL-full_R2.02.txt",unpack=True,skiprows=3)
-#planck2  = loadtxt("COM_PowerSpect_CMB-TT-hiL-full_R2.02.txt",unpack=True,skiprows=3)
-#planck_l1 = planck1[0]
-#planck_l2 = planck2[0]
+planck1  = loadtxt("COM_PowerSpect_CMB-TT-loL-full_R2.02.txt",unpack=True,skiprows=3)
+planck2  = loadtxt("COM_PowerSpect_CMB-TT-hiL-full_R2.02.txt",unpack=True,skiprows=3)
+planck_l1 = planck1[0]
+planck_l2 = planck2[0]
 
-planck3  = loadtxt("COM_PowerSpect_CMB-TT-hiL-binned_R2.02.txt",unpack=True,skiprows=3)
-
-planck_l = planck3[0]
-Clplanck = planck3[3]
-error    = planck3[4]
-
-#C_llow = planck1[1]
+C_llow = planck1[1]
 #print C_llow
-#C_lhi  = planck2[1]
+C_lhi  = planck2[1]
 #print C_lhi
+error1 = planck1[2]
+error2 = planck2[2]
+Clplanck = hstack([C_llow,C_lhi])
+planck_l = hstack([planck_l1,planck_l2])
+error = hstack([error1,error2])
+
+#planck3  = loadtxt("COM_PowerSpect_CMB-TT-hiL-binned_R2.02.txt",unpack=True,skiprows=3)
+#planck_l = planck3[0]
+#Clplanck = planck3[3]
+#error    = planck3[4]
 
 
-#Clplanck = hstack([C_llow,C_lhi])
-#planck_l = hstack([planck_l1,planck_l2])
+
 
 #normalize Cl to planck
-Cl = Cl/max(Cl)*max(Clplanck)
+Cl = Cl/max(Cl)*5775
 
 
 #plot
