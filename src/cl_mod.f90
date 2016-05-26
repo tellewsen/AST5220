@@ -9,6 +9,8 @@ module cl_mod
   real(dp), allocatable, dimension(:)   :: z_spline
   real(dp), allocatable, dimension(:,:) :: j_l,j_l2
   real(dp), allocatable, dimension(:)   :: integrand,besseltest
+  real(dp),     allocatable, dimension(:,:)     :: Theta_l
+  integer(i4b), allocatable, dimension(:)       :: ls
 contains
   ! Driver routine for (finally!) computing the CMB power spectrum
   subroutine compute_cls
@@ -16,12 +18,8 @@ contains
 
     integer(i4b) :: i, j, l, l_num, x_num, n_spline
     real(dp)     :: S_func, j_func, z, eta, eta0, x0, x_min, x_max, d, e
-    integer(i4b), allocatable, dimension(:)       :: ls
-
     real(dp),     allocatable, dimension(:)       :: cls, cls2, ls_dp
-    real(dp),     allocatable, dimension(:,:)     :: Theta_l
     real(dp),     allocatable, dimension(:)       :: j_l_spline, j_l_spline2
-
     real(dp)                                      :: a1,a2,h,C_lint
 
     real(dp)           :: t1, t2, integral

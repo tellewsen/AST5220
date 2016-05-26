@@ -197,6 +197,36 @@ plt.xlabel(r'x')
 plt.ylabel(r'$\Theta_{0,k}$')
 """
 """
+dTheta2 = loadtxt("dTheta2.dat",unpack=True)
+Theta2 = loadtxt("Theta2.dat",unpack=True)
+plt.figure(22)
+plt.plot(x_t,dTheta2[0],label = r'$d\Theta_{2,1}/dx$')
+plt.plot(x_t,dTheta2[1],label = r'$d\Theta_{2,5}/dx$')
+plt.plot(x_t,dTheta2[2],label = r'$d\Theta_{2,10}/dx$')
+plt.plot(x_t,dTheta2[3],label = r'$d\Theta_{2,40}/dx$')
+plt.plot(x_t,dTheta2[4],label = r'$d\Theta_{2,60}/dx$')
+plt.plot(x_t,dTheta2[5],label = r'$d\Theta_{2,100}/dx$')
+plt.xlim([min(x_t),max(x_t)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$d\Theta_{2,k}/dx$')
+
+plt.figure(23)
+plt.plot(x_t,Theta2[0],label = r'$\Theta_{2,1}$')
+plt.plot(x_t,Theta2[1],label = r'$\Theta_{2,5}$')
+plt.plot(x_t,Theta2[2],label = r'$\Theta_{2,10}$')
+plt.plot(x_t,Theta2[3],label = r'$\Theta_{2,40}$')
+plt.plot(x_t,Theta2[4],label = r'$\Theta_{2,60}$')
+plt.plot(x_t,Theta2[5],label = r'$\Theta_{2,100}$')
+plt.xlim([min(x_t),max(x_t)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'x')
+plt.ylabel(r'$\Theta_{2,k}$')
+plt.show()
+"""
+"""
 plt.figure(13)
 plt.plot(x_t,Phi[0],label = r'$\Phi_{1}$')
 plt.plot(x_t,Phi[1],label = r'$\Phi_{5}$')
@@ -306,28 +336,54 @@ plt.xlabel(r'x')
 plt.ylabel(r'$\tilde{S}(k,x)j_l[k(\eta_0-\eta(x))]/10^{-3}$')
 
 
-l,Cl = loadtxt("C_l.dat",unpack=True,skiprows=1)
+Theta_l = loadtxt("Theta_l.dat",unpack=True)
+ls = loadtxt("ls.dat",unpack=True)
+#plot trasnfer function
+plt.figure(22)
+plt.plot(ls,Theta_l[0],label = r'$\Theta_l(50)$')
+plt.plot(ls,Theta_l[1],label = r'$\Theta_l(250)}$')
+plt.plot(ls,Theta_l[2],label = r'$\Theta_l(500)}$')
+plt.plot(ls,Theta_l[3],label = r'$\Theta_l(2000)}$')
+plt.plot(ls,Theta_l[4],label = r'$\Theta_l(3000)}$')
+plt.plot(ls,Theta_l[5],label = r'$\Theta_l(5000)}$')
+plt.xlim([min(ls),max(ls)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'l')
+plt.ylabel(r'$\Theta_l(k)$')
+plt.show()
 
+
+
+
+
+#Plot Power spectrum
+l,Cl = loadtxt("C_l.dat",unpack=True,skiprows=29)
 #load planck data
-planck1  = loadtxt("COM_PowerSpect_CMB-TT-loL-full_R2.02.txt",unpack=True,skiprows=3)
-planck2  = loadtxt("COM_PowerSpect_CMB-TT-hiL-full_R2.02.txt",unpack=True,skiprows=3)
-planck_l1 = planck1[0]
-planck_l2 = planck2[0]
+#planck1  = loadtxt("COM_PowerSpect_CMB-TT-loL-full_R2.02.txt",unpack=True,skiprows=3)
+#planck2  = loadtxt("COM_PowerSpect_CMB-TT-hiL-full_R2.02.txt",unpack=True,skiprows=3)
+#planck_l1 = planck1[0]
+#planck_l2 = planck2[0]
 
+planck3  = loadtxt("COM_PowerSpect_CMB-TT-hiL-binned_R2.02.txt",unpack=True,skiprows=3)
 
-C_llow = planck1[1]
+planck_l = planck3[0]
+Clplanck = planck3[3]
+
+#C_llow = planck1[1]
 #print C_llow
-C_lhi  = planck2[1]
+#C_lhi  = planck2[1]
 #print C_lhi
 
 
-Clplanck = hstack([C_llow,C_lhi])
-planck_l = hstack([planck_l1,planck_l2])
+#Clplanck = hstack([C_llow,C_lhi])
+#planck_l = hstack([planck_l1,planck_l2])
 
+#normalize Cl to planck
 Cl = Cl/max(Cl)*max(Clplanck)
-#print planckmax
 
 
+#plot
 plt.figure(22)
 plt.plot(l,Cl,label='Calculated')
 plt.plot(planck_l,Clplanck,label='Planck data')

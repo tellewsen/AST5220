@@ -133,6 +133,17 @@ program cmbspec
         write (out_unit21,'(*(2X, ES14.6))') dPsi(i,1),dPsi(i,5),dPsi(i,10),dPsi(i,40),dPsi(i,60),dPsi(i,100)
     end do
 
+    open (unit=123,file="dTheta2.dat",action="write",status="replace")
+    open (unit=124,file="Theta2.dat",action="write",status="replace")
+    do i=1,n_t            
+        write (123,'(*(2X, ES14.6))') dTheta(i,2,1),dTheta(i,2,5),dTheta(i,2,10),dTheta(i,2,40),dTheta(i,2,60),dTheta(i,2,100)
+        write (124,'(*(2X, ES14.6))') Theta(i,2,1),Theta(i,2,5),Theta(i,2,10),Theta(i,2,40),Theta(i,2,60),Theta(i,2,100)
+    end do
+    close (123)
+    close (124)
+
+
+
     close (out_unit13)
     close (out_unit14)
     close (out_unit15)
@@ -166,13 +177,22 @@ program cmbspec
     end do
     close (out_unit23)
 
+    !write Theta_l for six different ks
+    open (unit=12, file="Theta_l.dat", action="write", status="replace")
+    open (unit=13, file="ls.dat", action="write", status="replace")
+    do l=1,44
+        write (12,'(*(2X, ES14.6E3))') Theta_l(l,50),Theta_l(l,250),Theta_l(l,500),Theta_l(l,2000),Theta_l(l,3000),Theta_l(l,5000)
+        write (13,*) ls(l)
+    end do
+    close (12)
+    close (13)
 
     !write cls and ls to file
-    open (unit=out_unit23, file="C_l.dat", action="write", status="replace")
+    open (unit=out_unit24, file="C_l.dat", action="write", status="replace")
     do i=1,1200
-        write (out_unit23,'(*(2X, ES14.6E3))') l_hires(i),cl_hires(i)
+        write (out_unit24,'(*(2X, ES14.6E3))') l_hires(i),cl_hires(i)
     end do
-    close (out_unit23)
+    close (out_unit24)
      
 
     !Print time used
@@ -181,5 +201,6 @@ program cmbspec
 
 
 end program cmbspec
+
 
 
