@@ -21,7 +21,7 @@ module params
   real(dp), parameter :: T_0          = 2.725d0
   real(dp), parameter :: n_s          = 0.968d0
   real(dp), parameter :: A_s          = 1.d0
-  real(dp), parameter :: h0           = 0.7d0
+  real(dp), parameter :: h0           = 0.68d0
   real(dp), parameter :: H_0          = h0 * 100.d0 * 1.d3 / Mpc
 
   ! General constants

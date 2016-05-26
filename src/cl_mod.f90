@@ -9,7 +9,7 @@ module cl_mod
   real(dp), allocatable, dimension(:)   :: z_spline
   real(dp), allocatable, dimension(:,:) :: j_l,j_l2
   real(dp), allocatable, dimension(:)   :: integrand,besseltest
-  real(dp),     allocatable, dimension(:,:)     :: Theta_l
+  real(dp),     allocatable, dimension(:,:)     :: Theta_l,integrand2
   integer(i4b), allocatable, dimension(:)       :: ls
 contains
   ! Driver routine for (finally!) computing the CMB power spectrum
@@ -127,8 +127,17 @@ contains
     write(*,*) 'Starting integration of Theta_l'
     allocate(Theta_l(l_num,n_k_highres))
     allocate(integrand(n_x_highres))
+    allocate(integrand2(l_num,n_k_highres))
     allocate(cls(l_num))
     allocate(cls2(l_num))
+
+    open (unit=123, file="integrand1.dat", action="write", status="replace")
+    open (unit=124, file="integrand2.dat", action="write", status="replace")
+    open (unit=125, file="integrand3.dat", action="write", status="replace")
+    open (unit=126, file="integrand4.dat", action="write", status="replace")
+    open (unit=127, file="integrand5.dat", action="write", status="replace")
+    open (unit=128, file="integrand6.dat", action="write", status="replace")
+
 
     do l =1,l_num
         write(*,*)'l =',ls(l)
@@ -173,10 +182,50 @@ contains
         a1 = k_hires(1)
         a2 = k_hires(n_k_highres)
         h = (a2-a1)/n_k_highres
-        C_lint = 0.5d0*( (a1/H_0)**(n_s-1.d0)*Theta_l(l,1)**2/a1 + (a2/H_0)**(n_s-1.d0)*Theta_l(l,n_k_highres)**2/a2)
+
+        do k=1,n_k_highres
+            integrand2(l,k) = (k_hires(k)/H_0)**(n_s-1.d0)*Theta_l(l,k)**2/k_hires(k)
+        end do
+
+
+        !write the integrand in cl integral to file
+        if(ls(l)==2) then
+            do k=1,n_k_highres
+                write (123,'(*(2X, ES14.6E3))') c*k_hires(k)/H_0 , ls(l)*(ls(l)+1.d0)*Theta_l(l,k)**2/(c*k_hires(k)/H_0)
+            end do
+        end if 
+        if(ls(l)==50) then
+            do k=1,n_k_highres
+                write (124,'(*(2X, ES14.6E3))') ls(l)*(ls(l)+1.d0)*Theta_l(l,k)**2/(c*k_hires(k)/H_0)
+            end do
+        end if 
+        if(ls(l)==200) then
+            do k=1,n_k_highres
+                write (125,'(*(2X, ES14.6E3))') ls(l)*(ls(l)+1.d0)*Theta_l(l,k)**2/(c*k_hires(k)/H_0)
+            end do
+        end if 
+        if(ls(l)==500) then
+            do k=1,n_k_highres
+                write (126,'(*(2X, ES14.6E3))') ls(l)*(ls(l)+1.d0)*Theta_l(l,k)**2/(c*k_hires(k)/H_0)
+            end do
+        end if 
+        if(ls(l)==800) then
+            do k=1,n_k_highres
+                write (127,'(*(2X, ES14.6E3))') ls(l)*(ls(l)+1.d0)*Theta_l(l,k)**2/(c*k_hires(k)/H_0)
+            end do
+        end if 
+        if(ls(l)==1200) then
+            do k=1,n_k_highres
+                write (128,'(*(2X, ES14.6E3))') ls(l)*(ls(l)+1.d0)*Theta_l(l,k)**2/(c*k_hires(k)/H_0)
+            end do
+        end if 
+
+
+
+        C_lint = 0.5d0*(integrand2(l,1)+integrand2(l,n_k_highres))
         do k=2,n_k_highres-1
                 !write(*,*) 'k=',k
-                C_lint = C_lint + (k_hires(k)/H_0)**(n_s-1.d0)*Theta_l(l,k)**2/k_hires(k)
+                C_lint = C_lint + integrand2(l,k)
         end do
 
         !Store C_l in an array.
@@ -184,6 +233,12 @@ contains
         !trapezoidal method end
     end do
 
+    close(123)
+    close(124)
+    close(125)
+    close(126)
+    close(127)
+    close(128)
 
     !This is needed to make the spline funciton happy(it demands double precision)
     write(*,*) 'converting ls to double precision'

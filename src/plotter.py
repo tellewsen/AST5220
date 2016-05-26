@@ -351,14 +351,35 @@ plt.legend(loc='best')
 #plt.yscale('symlog')
 plt.xlabel(r'l')
 plt.ylabel(r'$\Theta_l(k)$')
+
+
+#Plot integrand in cmb spec
+integrand1 = loadtxt("integrand1.dat",unpack=True)
+integrand2 = loadtxt("integrand2.dat",unpack=True)
+integrand3 = loadtxt("integrand3.dat",unpack=True)
+integrand4 = loadtxt("integrand4.dat",unpack=True)
+integrand5 = loadtxt("integrand5.dat",unpack=True)
+integrand6 = loadtxt("integrand6.dat",unpack=True)
+ks = integrand1[0]
+integrand1 = integrand1[1]
+
+plt.figure(23)
+plt.plot(ks,integrand1,label = 'l=2')
+plt.plot(ks,integrand2,label = 'l=50')
+plt.plot(ks,integrand3,label = 'l=200')
+plt.plot(ks,integrand4,label = 'l=500')
+plt.plot(ks,integrand5,label = 'l=800')
+plt.plot(ks,integrand6,label = 'l=1200')
+plt.xlim([min(ls),max(ls)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'$ck/H_0$')
+plt.ylabel(r'$l(l+1)\Theta^2(k)H_0/ck$')
 plt.show()
 
 
-
-
-
 #Plot Power spectrum
-l,Cl = loadtxt("C_l.dat",unpack=True,skiprows=29)
+l,Cl = loadtxt("C_l.dat",unpack=True,skiprows=1)
 #load planck data
 #planck1  = loadtxt("COM_PowerSpect_CMB-TT-loL-full_R2.02.txt",unpack=True,skiprows=3)
 #planck2  = loadtxt("COM_PowerSpect_CMB-TT-hiL-full_R2.02.txt",unpack=True,skiprows=3)
@@ -384,7 +405,7 @@ Cl = Cl/max(Cl)*max(Clplanck)
 
 
 #plot
-plt.figure(22)
+plt.figure(24)
 plt.plot(l,Cl,label='Calculated')
 plt.plot(planck_l,Clplanck,label='Planck data')
 plt.xlim([min(l),max(l)])
