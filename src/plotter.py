@@ -339,6 +339,7 @@ plt.ylabel(r'$\tilde{S}(k,x)j_l[k(\eta_0-\eta(x))]/10^{-3}$')
 Theta_l = loadtxt("Theta_l.dat",unpack=True)
 ls = loadtxt("ls.dat",unpack=True)
 #plot trasnfer function
+"""
 plt.figure(22)
 plt.plot(ls,Theta_l[0],label = r'$\Theta_l(50)$')
 plt.plot(ls,Theta_l[1],label = r'$\Theta_l(250)}$')
@@ -351,7 +352,7 @@ plt.legend(loc='best')
 #plt.yscale('symlog')
 plt.xlabel(r'l')
 plt.ylabel(r'$\Theta_l(k)$')
-
+"""
 
 #Plot integrand in cmb spec
 integrand1 = loadtxt("integrand1.dat",unpack=True)
@@ -370,11 +371,11 @@ plt.plot(ks,integrand3,label = 'l=200')
 plt.plot(ks,integrand4,label = 'l=500')
 plt.plot(ks,integrand5,label = 'l=800')
 plt.plot(ks,integrand6,label = 'l=1200')
-plt.xlim([min(ls),max(ls)])
+plt.xlim([min(ls),500])
 plt.legend(loc='best')
 #plt.yscale('symlog')
 plt.xlabel(r'$ck/H_0$')
-plt.ylabel(r'$l(l+1)\Theta^2(k)H_0/ck$')
+plt.ylabel(r'$l(l+1)\Theta_l^2(k)H_0/ck$')
 plt.show()
 
 
@@ -390,6 +391,7 @@ planck3  = loadtxt("COM_PowerSpect_CMB-TT-hiL-binned_R2.02.txt",unpack=True,skip
 
 planck_l = planck3[0]
 Clplanck = planck3[3]
+error    = planck3[4]
 
 #C_llow = planck1[1]
 #print C_llow
@@ -407,7 +409,8 @@ Cl = Cl/max(Cl)*max(Clplanck)
 #plot
 plt.figure(24)
 plt.plot(l,Cl,label='Calculated')
-plt.plot(planck_l,Clplanck,label='Planck data')
+#plt.plot(planck_l,Clplanck,label='Planck data')
+plt.errorbar(planck_l,Clplanck,yerr=error,label='Planck data')#,fmt='-o')
 plt.xlim([min(l),max(l)])
 plt.legend(loc='best')
 #plt.yscale('symlog')

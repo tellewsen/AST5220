@@ -65,7 +65,7 @@ contains
     real(dp), allocatable, dimension(:,:), intent(out) :: S
 
     integer(i4b) :: i,k
-    real(dp)     :: g, dg, ddg, dt, tau, ddt, Pi, dPi, ddPi,H_p,dH_p
+    real(dp)     :: g, dg, ddg, dt, tau, ddt, Pi_c, dPi, ddPi,H_p,dH_p
 
     ! Task: Output a pre-computed 2D array (over k and x) for the 
     !       source function, S(k,x). Remember to set up (and allocate) output 
@@ -109,18 +109,18 @@ contains
             ddt   = get_ddtau(x_t(i))
             H_p   = get_H_p(x_t(i))
             dH_p  = get_dH_p(x_t(i))
-            Pi    = Theta(i,2,k)
+            Pi_c    = Theta(i,2,k)
             dPi   = dTheta(i,2,k)
 
             ddPi  = 2.d0*ck_current/(5.d0*H_p)*(-dH_p/H_p*Theta(i,1,k) + dTheta(i,1,k)) &
-                    +0.3d0*(ddt*Pi+dt*dPi) &
+                    +0.3d0*(ddt*Pi_c+dt*dPi) &
                     -3.d0*ck_current/(5.d0*H_p)*(-dH_p/H_p*Theta(i,3,k) + dTheta(i,3,k))
 
-            S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi) &
+            S_lores(i,k) = g*(Theta(i,0,k) +Psi(i,k) + .25d0*Pi_c) &
                            +exp(-tau)*(dPsi(i,k)-dPhi(i,k)) &
                            -1.d0/ck_current*(H_p*(g*dv_b(i,k) + v_b(i,k)*dg) + g*v_b(i,k)*dH_p) &
-                           +.75d0/ck_current**2*((H_0**2/2.d0*((Omega_m+Omega_b)/exp(x_t(i))+4.d0*Omega_r/exp(2.d0*x_t(i)) +4.d0*Omega_lambda*exp(2.d0*x_t(i))))*g*Pi &
-                           +3.d0*H_p*dH_p*(dg*Pi+g*dPi)+H_p**2*(ddg*Pi +2.d0*dg*dPi+g*ddPi))
+                           +.75d0/ck_current**2*((H_0**2/2.d0*((Omega_m+Omega_b)/exp(x_t(i))+4.d0*Omega_r/exp(2.d0*x_t(i)) +4.d0*Omega_lambda*exp(2.d0*x_t(i))))*g*Pi_c &
+                           +3.d0*H_p*dH_p*(dg*Pi_c+g*dPi)+H_p**2*(ddg*Pi_c +2.d0*dg*dPi+g*ddPi))
         end do
     end do
 

@@ -184,7 +184,7 @@ contains
         h = (a2-a1)/n_k_highres
 
         do k=1,n_k_highres
-            integrand2(l,k) = (k_hires(k)/H_0)**(n_s-1.d0)*Theta_l(l,k)**2/k_hires(k)
+            integrand2(l,k) = (c*k_hires(k)/H_0)**(n_s-1.d0)*Theta_l(l,k)**2/k_hires(k)
         end do
 
 
