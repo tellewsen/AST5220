@@ -119,7 +119,7 @@ plt.show()
 """
 
 #Milestone 3 starts here
-
+"""
 delta  = loadtxt("delta.dat",unpack=True)
 deltab = loadtxt("delta_b.dat",unpack=True)
 Phi    = loadtxt("Phi.dat",unpack=True)
@@ -129,6 +129,7 @@ dPsi   = loadtxt("dPsi.dat",unpack=True)
 Theta0 = loadtxt("Theta0.dat",unpack=True)
 v      = loadtxt("v.dat",unpack=True)
 vb     = loadtxt("v_b.dat",unpack=True)
+"""
 """
 plt.figure(9)
 plt.plot(x_t,delta[0],label = r'$\delta_{1}$')
@@ -281,10 +282,10 @@ plt.ylabel(r'$\Phi^\prime_{k}$')
 """
 
 #Milestone 4 
-
+"""
 x,S1,S2,S3,S4,S5,S6     = loadtxt("Source.dat",unpack=True)
 S_lores1,S_lores2,S_lores3,S_lores4,S_lores5,S_lores6  =  loadtxt("S_low.dat",unpack=True)
-
+"""
 """
 #Low res for testing
 plt.figure(18)
@@ -326,6 +327,7 @@ plt.xlim([min(x),max(x)])
 plt.xlabel(r'x')
 plt.ylabel(r'$j_l[k(\eta_0-\eta(x))]$')
 """
+"""
 Sj_l = loadtxt("Sj_l.dat",unpack=True)
 plt.figure(21)
 plt.plot(x,Sj_l/1e-3)#,label=r'$$')
@@ -335,9 +337,11 @@ plt.xlim([-8,max(x)])
 plt.xlabel(r'x')
 plt.ylabel(r'$\tilde{S}(k,x)j_l[k(\eta_0-\eta(x))]/10^{-3}$')
 
-
+"""
+"""
 Theta_l = loadtxt("Theta_l.dat",unpack=True)
 ls = loadtxt("ls.dat",unpack=True)
+"""
 #plot trasnfer function
 """
 plt.figure(22)
@@ -355,6 +359,7 @@ plt.ylabel(r'$\Theta_l(k)$')
 """
 
 #Plot integrand in cmb spec
+"""
 integrand1 = loadtxt("integrand1.dat",unpack=True)
 integrand2 = loadtxt("integrand2.dat",unpack=True)
 integrand3 = loadtxt("integrand3.dat",unpack=True)
@@ -377,22 +382,25 @@ plt.legend(loc='best')
 plt.xlabel(r'$ck/H_0$')
 plt.ylabel(r'$l(l+1)\Theta_l^2(k)H_0/ck$')
 plt.show()
-
+"""
 
 #Plot Power spectrum
-l,Cl = loadtxt("C_l.dat",unpack=True,skiprows=1)
+l,Cl = loadtxt("C_l_default.dat",unpack=True,skiprows=1)
+l,Clh066 = loadtxt("C_l_h066.dat",unpack=True,skiprows=1)
+l,Clh074 = loadtxt("C_l_h074.dat",unpack=True,skiprows=1)
 #load planck data
 planck1  = loadtxt("COM_PowerSpect_CMB-TT-loL-full_R2.02.txt",unpack=True,skiprows=3)
 planck2  = loadtxt("COM_PowerSpect_CMB-TT-hiL-full_R2.02.txt",unpack=True,skiprows=3)
+
 planck_l1 = planck1[0]
 planck_l2 = planck2[0]
 
 C_llow = planck1[1]
-#print C_llow
 C_lhi  = planck2[1]
-#print C_lhi
+
 error1 = planck1[2]
 error2 = planck2[2]
+
 Clplanck = hstack([C_llow,C_lhi])
 planck_l = hstack([planck_l1,planck_l2])
 error = hstack([error1,error2])
@@ -407,13 +415,16 @@ error = hstack([error1,error2])
 
 #normalize Cl to planck
 Cl = Cl/max(Cl)*5775
-
+Clh066 = Clh066/max(Clh066)*5775
+Clh074 = Clh074/max(Clh074)*5775
 
 #plot
-plt.figure(24)
-plt.plot(l,Cl,label='Calculated')
+
+
+plt.figure(123)
+plt.errorbar(planck_l,Clplanck,yerr=error,label='Planck data',color='grey')#,fmt='-o')
+plt.plot(l,Cl,label='Simulated')
 #plt.plot(planck_l,Clplanck,label='Planck data')
-plt.errorbar(planck_l,Clplanck,yerr=error,label='Planck data')#,fmt='-o')
 plt.xlim([min(l),max(l)])
 plt.legend(loc='best')
 #plt.yscale('symlog')
@@ -421,5 +432,57 @@ plt.xlabel(r'l')
 plt.ylabel(r'$l(l+1)C_l/2\pi$')
 plt.show()
 
+plt.figure(24)
+plt.errorbar(planck_l,Clplanck,yerr=error,label='Planck data',color='grey')#,fmt='-o')
+plt.plot(l,Cl,label='Default')
+plt.plot(l,Clh066,label='h=0.66')
+plt.plot(l,Clh074,label='h=0.74')
+#plt.plot(planck_l,Clplanck,label='Planck data')
+plt.xlim([min(l),max(l)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'l')
+plt.ylabel(r'$l(l+1)C_l/2\pi$')
+plt.show()
+
+l,Clm0200 = loadtxt("C_l_m0200.dat",unpack=True,skiprows=1)
+l,Clm0248 = loadtxt("C_l_m0248.dat",unpack=True,skiprows=1)
+
+Clm0200 = Clm0200/max(Clm0200)*5775
+Clm0248 = Clm0248/max(Clm0248)*5775
+
+plt.figure(24)
+plt.errorbar(planck_l,Clplanck,yerr=error,label='Planck data',color='grey')#,fmt='-o')
+plt.plot(l,Cl,label='Default ')
+plt.plot(l,Clm0200,label=r'$\Omega_m=0.200$')
+plt.plot(l,Clm0248,label=r'$\Omega_m=0.248$')
+#plt.plot(planck_l,Clplanck,label='Planck data')
+plt.xlim([min(l),max(l)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'l')
+plt.ylabel(r'$l(l+1)C_l/2\pi$')
+plt.show()
+
+l,Clb0042 = loadtxt("C_l_b0042.dat",unpack=True,skiprows=1)
+l,Clb0050 = loadtxt("C_l_b0050.dat",unpack=True,skiprows=1)
+
+Clb0042 = Clb0042/max(Clb0042)*5775
+Clb0050 = Clb0050/max(Clb0050)*5775
+
+
+
+plt.figure(24)
+plt.errorbar(planck_l,Clplanck,yerr=error,label='Planck data',color='grey')#,fmt='-o')
+plt.plot(l,Cl,label='Default ')
+plt.plot(l,Clb0042,label=r'$\Omega_b=0.042$')
+plt.plot(l,Clb0050,label=r'$\Omega_b=0.050$')
+#plt.plot(planck_l,Clplanck,label='Planck data')
+plt.xlim([min(l),max(l)])
+plt.legend(loc='best')
+#plt.yscale('symlog')
+plt.xlabel(r'l')
+plt.ylabel(r'$l(l+1)C_l/2\pi$')
+plt.show()
 
 
